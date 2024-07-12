@@ -76,8 +76,8 @@ export function NavigationMenuDemo() {
                       </div>
                     </ListItem>
                   <ListItem>
-                    <div className="flex font-semibold gap-2">
-                        <SlLogout size={16} className="cursor-pointer " onClick={ () => signOut({callbackUrl: '/?action=signOut'}) }/>
+                    <div className="flex font-semibold gap-2" onClick={ () => signOut({callbackUrl: '/?action=signOut'})}>
+                        <SlLogout size={16} className="cursor-pointer "/>
                         Log out
                     </div>
                   </ListItem>
