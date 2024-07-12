@@ -20,9 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <SessionProvider>
-        <body className={`px-3 flex flex-col w-screen min-h-[400px] h-screen ${inter.className}`}>
+        <body className={`px-3 flex flex-col w-full min-w-[400px] h-screen ${inter.className}`}>
           <Header/>
-          <section className="flex-grow-[1]">
+          <section className="flex-grow">
             {children}
           </section>
         </body>

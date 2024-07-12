@@ -13,9 +13,9 @@ function AuthPage() {
     const tabValue = searchParams.get('type') === 'signup' ? 'signup' : 'signin'
 
     return (
-    <div className="w-full min-h-screen flex justify-center">
+    <div className="flex-grow flex justify-center">
 
-        <Tabs defaultValue={tabValue} className="w-[400px] md:w-[620px] mt-36 md:mt-20 ">
+        <Tabs defaultValue={tabValue} className="w-[400px] md:w-[620px] mt-20 md:mt-12 ">
             <TabsList className='w-full bg-gray-100'>
                 <TabsTrigger className='w-1/2 text-center' value="signin">Sign in</TabsTrigger>
                 <TabsTrigger className='w-1/2 text-center' value="signup">Sign up</TabsTrigger>

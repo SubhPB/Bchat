@@ -3,10 +3,10 @@
 
 import React from 'react'
 
-import {z} from 'zod';
+import {string, z} from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input"
 import OAuth from './OAuth';
 import { signUpAction } from '@/server/actions/auth';
 import { useRouter } from 'next/navigation';
+import { _console } from '@/utils/console';
 
 
 const signUpFormSchema= z.object({
@@ -48,8 +49,14 @@ function Signup() {
       lastName: ''
     }
   });
+
+  const password = form.watch('password');
+  const [verifyPassword, setVerifyPassword] = React.useState<string>('')
   
   const onSubmit = async (values: signUpFormValues) => {
+    if (verifyPassword !== password){
+      return
+    }
     await signUpAction({values}).then(
       user => router.push(`/?msg=Welcome+${user.name}`)
     )
@@ -110,6 +117,18 @@ function Signup() {
             }
           >
           </FormField>
+          {/* confirmPassword */}
+            <FormItem>
+              <FormLabel className='text-black text-sm font-semibold'>Confirm Password</FormLabel>
+              <FormControl>
+                <Input onChange={(e) => setVerifyPassword(e.target.value)} value={verifyPassword}></Input>
+              </FormControl>
+              {
+                verifyPassword && verifyPassword !== password && <FormMessage className='text-xs'>Field does not match with the password</FormMessage>
+              }
+              
+            </FormItem>
+
           {/* firstName */}
           <FormField
             control={form.control}
