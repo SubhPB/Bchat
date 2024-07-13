@@ -3,10 +3,9 @@
 
 import React from 'react'
 
-import {string, z} from 'zod';
+import {z} from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -22,6 +21,7 @@ import OAuth from './OAuth';
 import { signUpAction } from '@/server/actions/auth';
 import { useRouter } from 'next/navigation';
 import { _console } from '@/utils/console';
+import PasswordField from './PasswordField';
 
 
 const signUpFormSchema= z.object({
@@ -51,14 +51,14 @@ function Signup() {
   });
 
   const password = form.watch('password');
-  const [verifyPassword, setVerifyPassword] = React.useState<string>('')
+  const [verifyPassword, setVerifyPassword] = React.useState<string>('');
   
   const onSubmit = async (values: signUpFormValues) => {
     if (verifyPassword !== password){
       return
     }
     await signUpAction({values}).then(
-      user => router.push(`/?msg=Welcome+${user.name}`)
+      user => router.push(`/auth?type=signin&msg=Account+created+need+signin`)
     )
   };
 
@@ -105,15 +105,20 @@ function Signup() {
             control={form.control}
             name='password'
             render={
-              ({field}) => (
-                <FormItem>
-                  <FormLabel className='text-black text-sm font-semibold'>Password</FormLabel>
-                  <FormControl>
-                    <Input {...field}></Input>
-                  </FormControl>
-                  <FormMessage className="text-xs"/>
-                </FormItem>
-              )
+              ({field}) => 
+              {
+                console.log('Field = ', field)
+                return  (
+                  <FormItem>
+                    <FormLabel className='text-black text-sm font-semibold'>Password</FormLabel>
+                    <FormControl>
+                      <PasswordField field={field}/>
+                    </FormControl>
+                    <FormMessage className="text-xs"/>
+                  </FormItem>
+                )
+              }
+              
             }
           >
           </FormField>
@@ -121,7 +126,14 @@ function Signup() {
             <FormItem>
               <FormLabel className='text-black text-sm font-semibold'>Confirm Password</FormLabel>
               <FormControl>
-                <Input onChange={(e) => setVerifyPassword(e.target.value)} value={verifyPassword}></Input>
+                {
+                  <PasswordField render={
+                    (type) => (
+
+                      <Input type={type} onChange={(e) => setVerifyPassword(e.target.value)} value={verifyPassword}></Input>
+                    )
+                  }/>
+                }
               </FormControl>
               {
                 verifyPassword && verifyPassword !== password && <FormMessage className='text-xs'>Field does not match with the password</FormMessage>

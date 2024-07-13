@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
+import PasswordField from './PasswordField';
+
 import OAuth from './OAuth';
 import { signIn } from 'next-auth/react';
 import { _console } from '@/utils/console';
@@ -51,8 +53,7 @@ function SignIn() {
       const result = await signIn('credentials', {
         ...values,
         redirect: true,
-        callbackUrl: '/auth?type=signin&ref=callbackUrl:54',
-        redirectTo: '/?success=Sucessfully+Logged+in.',
+        callbackUrl: '/bChat?msg=login+success',
       });
       if (result?.error){
         _console._log.doMagenta(result.error)
@@ -110,7 +111,11 @@ function SignIn() {
                 <FormItem>
                   <FormLabel className='text-black text-sm font-semibold'>Password</FormLabel>
                   <FormControl>
-                    <Input {...field}></Input>
+                    <PasswordField render={
+                      (type) => (
+                        <Input type={type} {...field}></Input>
+                      )
+                    }/>
                   </FormControl>
                   <FormMessage  className="text-xs"/>
                 </FormItem>
