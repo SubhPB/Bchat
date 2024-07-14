@@ -22,6 +22,7 @@ import { signUpAction } from '@/server/actions/auth';
 import { useRouter } from 'next/navigation';
 import { _console } from '@/utils/console';
 import PasswordField from './PasswordField';
+import FileInput from '@/components/specific/form/file-uploader';
 
 
 const signUpFormSchema= z.object({
@@ -107,7 +108,6 @@ function Signup() {
             render={
               ({field}) => 
               {
-                console.log('Field = ', field)
                 return  (
                   <FormItem>
                     <FormLabel className='text-black text-sm font-semibold'>Password</FormLabel>
@@ -175,6 +175,10 @@ function Signup() {
             }
           >
           </FormField>
+
+          <FormItem>
+            <FileInput/>
+          </FormItem>
 
           <Button type='submit' className='w-full my-4 text-center'>Submit</Button>
 
