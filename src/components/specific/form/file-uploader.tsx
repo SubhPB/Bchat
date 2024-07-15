@@ -2,18 +2,18 @@
 'use client';
 import React, { useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { _console } from '@/utils/console';
 import Image from 'next/image';
 import { RxCross2 } from "react-icons/rx";
 import toast from 'react-hot-toast';
 import { FileValidator } from '@/utils/validators/filetype';
+import { useFiles } from '@/contexts/FileContext';
 
 type Props = {
     whatToUploadTitle ?: string,
-    fileType ?: string,
+    fileType : string,
     maxFileSizeInMb ?: number,
     maxNoOfFiles ?: number
-    multiple ?: boolean
+    multiple ?: boolean,
 }
 
 function FileInput({
@@ -32,13 +32,14 @@ function FileInput({
     
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [dragActive, setDragActive] = useState(false);
-    const [files, setFiles] = useState<File[]>([]);
+    const {files, setFiles} = useFiles();
     
     
     const fileInspector = new FileValidator({
         expectedSizeInBytes: maxFileSizeInMb * (1024**2),
         expectedType: fileType
     });
+
     const setAndFilterFiles = (files: File[]) => {
 
         if (files.length > maxNoOfFiles){
@@ -63,7 +64,6 @@ function FileInput({
             }
         });
 
-        _console._log.doGreen(`_filtered files`, _filteredFiles)
         if (_filteredFiles.length > 0){
             setFiles(_filteredFiles)
         }
@@ -73,18 +73,7 @@ function FileInput({
 
         const allFiles = e?.target?.files
         if (allFiles){
-            
-            _console._log.doGreen(allFiles);
-
-            // setFiles(
-            //     () => Array.from(allFiles)
-            // )
-
             setAndFilterFiles(Array.from(allFiles))
-
-            
-            // const formData = new FormData();
-            // formData.append('file', e.target.files[0]);
         }
         dragActive && setDragActive(false);
     };
@@ -102,9 +91,6 @@ function FileInput({
         e.preventDefault();
         e.stopPropagation();
         if (e.dataTransfer.files){
-            // setFiles(
-            //     () => Array.from(e.dataTransfer.files)
-            // )
             setAndFilterFiles(Array.from(e.dataTransfer.files))
         };
         setDragActive(false)
@@ -123,17 +109,9 @@ function FileInput({
         )
     };
 
-    // if (files.length > 0){
-    //     const formData = new FormData();
-    //     files.forEach(
-    //         (file, index) => formData.append(`file-${index}`, file)
-    //     );
-    //     formData.forEach(file => console.log('TTT ', file))
-    // }
-
     return (
         <div className='w-full my-2 text-center relative '>
-            <Input ref={inputRef} className='hidden' multiple={multiple} type={'file'} accept={fileType}  onChange={handleFileChange}/>
+            <Input ref={inputRef} className='hidden' multiple={multiple} type={'file'} accept={fileType}  onChange={handleFileChange} />
             <label htmlFor="input-file-upload" className={'relatve w-full flex flex-col items-center justify-center border-2 rounded-2xl border-dashed border-black bg-gray-100 '}>
                 <div className='relative w-full my-4 aspect-w-1 aspect-h-[0.7] ' onDragEnter={() => !dragActive && setDragActive(true)} >
 

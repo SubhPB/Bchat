@@ -23,7 +23,7 @@ import { useRouter } from 'next/navigation';
 import { _console } from '@/utils/console';
 import PasswordField from './PasswordField';
 import FileInput from '@/components/specific/form/file-uploader';
-
+import { FileContextProvider } from '@/contexts/FileContext';
 
 const signUpFormSchema= z.object({
   username: z.string().min(4, 'Username is required and should be atleast of 4 characters').max(50, 'Username is too lengthy'),
@@ -64,7 +64,7 @@ function Signup() {
   };
 
   return (
-    <div className="w-full grid place-content-center my-2 py-8 bg-gray-100 rounded-lg">
+    <div className="w-full grid place-content-center my-8 bg-gray-100 rounded-lg">
       <Form {...form}>
         <form className='w-[300px] md:w-[400px]' onSubmit={form.handleSubmit(onSubmit)}>
           {/* username */}
@@ -177,7 +177,9 @@ function Signup() {
           </FormField>
 
           <FormItem>
-            <FileInput maxFileSizeInMb={4} maxNoOfFiles={2} whatToUploadTitle='Drag and drop your profile picture(optional) here.'/>
+            <FileContextProvider>
+              <FileInput fileType='image/*' maxFileSizeInMb={3.5} maxNoOfFiles={2} whatToUploadTitle='Drag and drop your profile picture(optional) here.'/>
+            </FileContextProvider>
           </FormItem>
 
           <Button type='submit' className='w-full my-4 text-center'>Submit</Button>

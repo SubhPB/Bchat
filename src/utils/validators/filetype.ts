@@ -1,6 +1,14 @@
 // Byimaan
-
-import { _console } from "../console";
+/**
+GOALS of this code :-
+This code defines a set of classes to validate file types and sizes in a TypeScript application. 
+- **Type Class**: Compares the primary type of a file (e.g., 'image', 'video').
+- **Format Class**: Compares the file format or subtype (e.g., 'jpeg', 'mp4').
+- **FileTypeValidator Class**: Validates a file's type and format against expected values and throws errors if they don't match.
+- **FileSize Class**: Validates a file's size, comparing it to an expected maximum size.
+- **FileValidator Class**: Combines the functionality of the FileTypeValidator and FileSize classes to validate both the type and size of a file, throwing errors if validations fail.
+These classes provide a robust way to enforce file type and size constraints, ensuring that only valid files are processed further in the application.
+*/
 
 class Type {
     constructor(public type: string){
@@ -41,12 +49,10 @@ class FileTypeValidator {
     validateOrThrow(fileType: string){
     
         if (!this.type.compare(fileType)){
-            _console._log.doRed(`The file was expected to be of type ${this.type.type} and not of ${fileType.split('/')[0]}.`)
             throw new Error(`The file was expected to be of type ${this.type.type} and not of ${fileType.split('/')[0]}.`)
         };
 
         if (!this.format.compare(fileType)){
-            _console._log.doRed(`Invalid file format. The file is expected only to be in ${this.format.format} format.`)
             throw new Error(`Invalid file format. The file is expected only to be in ${this.format.format} format.`)
         }
         return true
@@ -68,7 +74,6 @@ class FileSize {
     compareSizeInMBOrThrow(bytesToCompare: number){
         
         if (!this.compareSizeInMB(bytesToCompare)){
-            _console._log.doRed(`The given file is bit large. File Size exceeds than ${this.mbSize}Mb`)
             throw new Error(`The given file is bit large. File Size exceeds than ${this.mbSize}Mb`)
         }
         return true;
