@@ -5,19 +5,69 @@ import { Input } from '@/components/ui/input';
 import { _console } from '@/utils/console';
 import Image from 'next/image';
 import { RxCross2 } from "react-icons/rx";
-import clsx from 'clsx';
+import toast from 'react-hot-toast';
+import { FileValidator } from '@/utils/validators/filetype';
 
 type Props = {
     whatToUploadTitle ?: string,
     fileType ?: string,
+    maxFileSizeInMb ?: number,
+    maxNoOfFiles ?: number
     multiple ?: boolean
 }
 
-function FileInput({whatToUploadTitle='Drag and drop your files here', fileType= 'image/*', multiple= true}: Props){
-
+function FileInput({
+    whatToUploadTitle='Drag and drop your files here',
+    fileType= 'image/*',
+    maxNoOfFiles= 1,
+    multiple= false,
+    maxFileSizeInMb=Infinity,
+}: Props)
+{
+    
+    
+    if (maxNoOfFiles > 1){
+        multiple = true
+    }
+    
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [dragActive, setDragActive] = useState(false);
     const [files, setFiles] = useState<File[]>([]);
+    
+    
+    const fileInspector = new FileValidator({
+        expectedSizeInBytes: maxFileSizeInMb * (1024**2),
+        expectedType: fileType
+    });
+    const setAndFilterFiles = (files: File[]) => {
+
+        if (files.length > maxNoOfFiles){
+            toast.error(`You can't select more than ${maxNoOfFiles} files.`, {
+                position: 'bottom-right',
+            });
+            return;
+        }
+
+        const _filteredFiles = files.filter(
+            file => {
+                try {
+                    fileInspector.compareOrThrow(file);
+                    return true
+                } catch (error) {
+                    if (error instanceof Error) {
+                        toast.error(error.message, {
+                            position: 'bottom-right'
+                    });
+                    return false
+                }
+            }
+        });
+
+        _console._log.doGreen(`_filtered files`, _filteredFiles)
+        if (_filteredFiles.length > 0){
+            setFiles(_filteredFiles)
+        }
+    }
  
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -26,15 +76,15 @@ function FileInput({whatToUploadTitle='Drag and drop your files here', fileType=
             
             _console._log.doGreen(allFiles);
 
-            setFiles(
-                () => Array.from(allFiles)
-            )
+            // setFiles(
+            //     () => Array.from(allFiles)
+            // )
+
+            setAndFilterFiles(Array.from(allFiles))
 
             
             // const formData = new FormData();
             // formData.append('file', e.target.files[0]);
-            // _console._log.doCyan('FormData = ', formData.get('file'))
-            // window.location.href = URL.createObjectURL(e.target.files[0])
         }
         dragActive && setDragActive(false);
     };
@@ -50,12 +100,12 @@ function FileInput({whatToUploadTitle='Drag and drop your files here', fileType=
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        e.stopPropagation()
-        _console._log.doGreen('Something has been dropped', e.dataTransfer.files[0]);
+        e.stopPropagation();
         if (e.dataTransfer.files){
-            setFiles(
-                () => Array.from(e.dataTransfer.files)
-            )
+            // setFiles(
+            //     () => Array.from(e.dataTransfer.files)
+            // )
+            setAndFilterFiles(Array.from(e.dataTransfer.files))
         };
         setDragActive(false)
     };
@@ -71,13 +121,21 @@ function FileInput({whatToUploadTitle='Drag and drop your files here', fileType=
                     _file => _file !== file
             )
         )
-    }
+    };
+
+    // if (files.length > 0){
+    //     const formData = new FormData();
+    //     files.forEach(
+    //         (file, index) => formData.append(`file-${index}`, file)
+    //     );
+    //     formData.forEach(file => console.log('TTT ', file))
+    // }
 
     return (
-        <div className='w-full my-2 text-center relative'>
+        <div className='w-full my-2 text-center relative '>
             <Input ref={inputRef} className='hidden' multiple={multiple} type={'file'} accept={fileType}  onChange={handleFileChange}/>
             <label htmlFor="input-file-upload" className={'relatve w-full flex flex-col items-center justify-center border-2 rounded-2xl border-dashed border-black bg-gray-100 '}>
-                <div className='relative w-full my-4 aspect-w-1 aspect-h-[0.7]' onDragEnter={() => !dragActive && setDragActive(true)} >
+                <div className='relative w-full my-4 aspect-w-1 aspect-h-[0.7] ' onDragEnter={() => !dragActive && setDragActive(true)} >
 
                     <div className='size-full grid place-content-center'>
 
@@ -87,7 +145,6 @@ function FileInput({whatToUploadTitle='Drag and drop your files here', fileType=
                     {
                         dragActive && (
                             <div className="absolute size-full top-0 right-0 bottom-0 left-0 bg-slate-200 opacity-55" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}>
-
                             </div>
                         )
                     }

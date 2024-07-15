@@ -177,7 +177,7 @@ function Signup() {
           </FormField>
 
           <FormItem>
-            <FileInput/>
+            <FileInput maxFileSizeInMb={4} maxNoOfFiles={2} whatToUploadTitle='Drag and drop your profile picture(optional) here.'/>
           </FormItem>
 
           <Button type='submit' className='w-full my-4 text-center'>Submit</Button>
