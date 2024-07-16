@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import SignIn from './_components/SignIn';
 import Signup from './_components/Signup';
+import { FileContextProvider } from '@/contexts/FileContext';
 
 function AuthPage() {
 
@@ -24,7 +25,9 @@ function AuthPage() {
                 <SignIn />
             </TabsContent>
             <TabsContent value="signup">
-                <Signup/>
+                <FileContextProvider>
+                    <Signup/>
+                </FileContextProvider>
             </TabsContent>
         </Tabs>
 
