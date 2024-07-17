@@ -10,6 +10,11 @@ import { db } from './db'
 import { _console } from '@/utils/console'
 import { comparePassword } from '@/utils/bcrypt'
 
+import { User } from '@prisma/client';
+import { generatePreSignedUrlInstance } from '../../aws/S3/pre_signed_url/generate';
+import { MilliSeconds } from '@/utils/time';
+import { GeneratePreSignedUrlForProfileImageAndReturnSession } from '../../aws/S3/pre_signed_url/models/user'
+
 export const {handlers, signIn, signOut, auth} = NextAuth({
     providers: [
         Google({
@@ -91,8 +96,47 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
 
         async session({token, user, session}){
             _console._log.doBlue("Exec :- Callbacks/Session");
+            if (token?._user){
+                session._user = token._user as Omit<User, 'password'>
+            }
             return session
-        },
+        }
+
+        // async session({token, user, session}){
+        //     _console._log.doBlue("Exec :- Callbacks/Session");
+        //     _console._log.doRed(session.preSignedURL)
+        //     session._user = null;
+
+        //     let _sessionToReturn = session;
+
+        //     if (token?._user){
+        //         session._user = token._user as Omit<User, 'password'>
+        //     };
+
+
+        //     if (session?._user && session?._user?.image){
+
+        //         if (session?.preSignedURL){
+        //             const {healthStatus, expiresAt, imageUrl} = session.preSignedURL;
+        //             if (session.preSignedURL.healthStatus){
+        //                 // healthStatus -> if true means that signed-url is not corrupted & all okay else means it is corrupted. 
+        //                 const MS = new MilliSeconds(expiresAt);
+        //                 // check if has expired
+        //                 if (MS.isOlderThan(Date.now())){
+        //                     // now this is time to create a new pre-signed url
+        //                     //@ts-ignore
+        //                     _sessionToReturn = await GeneratePreSignedUrlForProfileImageAndReturnSession(session)
+        //                 }
+        //             }
+
+        //         } else {
+        //             // we have to generate a pre signed url.
+        //             //@ts-ignore
+        //             _sessionToReturn = await GeneratePreSignedUrlForProfileImageAndReturnSession(session)
+        //         }
+        //     };
+        //     return _sessionToReturn
+        // },
 
         
     },

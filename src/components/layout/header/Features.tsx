@@ -121,7 +121,8 @@ ListItem.displayName = "ListItem"
 
 const HeadBanner = ({data}: {data: Session | null}) => {
 
-  const imageUrl = data?.user?.image ? `url(${data.user.image})` : undefined;
+  let imageUrl = data?.user?.image ? `url(${data.user.image})` : undefined;
+
   return (
     <div
       style={{backgroundImage: imageUrl, backgroundSize:'cover', backgroundPosition:'center'}}
