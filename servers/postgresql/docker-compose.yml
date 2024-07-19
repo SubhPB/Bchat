@@ -1,0 +1,25 @@
+# BYIMAAN 
+
+version: '3.8'
+# Make sure run docker with CMD "docker compose up -d" before running the application.
+services:
+  db:
+    image: postgres
+    container_name: bChatContainer
+    restart: unless-stopped
+
+    environment:
+
+      - POSTGRES_DB=bChatDB
+      - POSTGRES_USER=adminByimaan
+      - POSTGRES_PASSWORD=bChat123
+
+    ports:
+      - "5432:5432"
+    
+    volumes:
+      - bChatVol:/var/lib/postgresql/data
+
+volumes:
+  bChatVol:
+    driver: local
