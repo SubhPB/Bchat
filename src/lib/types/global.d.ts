@@ -7,11 +7,6 @@ import 'next-auth';
 declare module 'next-auth' {
     interface Session {
         _user: null | Omit<User, 'password'>,
-        preSignedURL ?: {
-            expiresAt: number,
-            imageUrl: string,
-            healthStatus: boolean,
-        }
     };
 
     interface JWT {

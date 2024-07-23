@@ -31,8 +31,7 @@ export function NavigationMenuDemo() {
   const {data, status} = useSession();
   const authenticaed = status === 'authenticated';
 
-  _console._log.doMagenta('Header Log : Check session data ', data)
-  
+  _console._log.doMagenta('Header Log : Check session data ', data);
 
   return (
     <NavigationMenu>
@@ -121,12 +120,45 @@ ListItem.displayName = "ListItem"
 
 const HeadBanner = ({data}: {data: Session | null}) => {
 
-  let imageUrl = data?.user?.image ? `url(${data.user.image})` : undefined;
+  // const [imageUrl, setImageUrl] = React.useState(
+  //   data?.user?.image ? data.user.image : undefined
+  // );
+  // const fetchURL = React.useCallback(
+  //   async (key: string) => {
+  //     console.log('I was called!')
+  //     const response = await fetch(`/api/aws/pre-signed-url/${key}`);
+  //     if (response.ok){
+  //       const data = await response.json();
+  //       _console._log.doGreen("data = ", data)
+  //       if (data && typeof data === 'string'){
+  //         setImageUrl(data)
+  //       }
+  //     } else {
+  //       _console._log.doRed("Failed API")
+  //     }
+  //   }, [data?._user?.image]
+  // )
+  // React.useEffect(
+  //   () => {
+  //     let key = data?._user?.image;
+  //     if (key){
+  //       key = key.includes('/') ? encodeURIComponent(key) : key;
+
+  //       fetchURL(key);
+  //     }
+  //   }, []
+  // )
+
+  _console._log.doGreen('Rerendered');
+
+
+  let imageUrl = data?._user?.image || data?.user?.image;
+
 
   return (
     <div
-      style={{backgroundImage: imageUrl, backgroundSize:'cover', backgroundPosition:'center'}}
-      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md object-cover object-center "
+      style={{backgroundImage: imageUrl ? `url(${imageUrl})` : undefined, backgroundSize:'contain', backgroundPosition:'center', backgroundRepeat: 'no-repeat'}}
+      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md object-cover object-center"
       >
 
         <div className="h-full w-full flex flex-col-reverse min-h-400px">
@@ -141,4 +173,4 @@ const HeadBanner = ({data}: {data: Session | null}) => {
         </div>
     </div>
   )
-}
+};
