@@ -33,6 +33,16 @@ model User {
   
   accounts      Account[]
   sessions      Session[]
+  passwordTokens ResetPasswordToken[]
+}
+
+model ResetPasswordToken {
+  userId String
+  createdAt DateTime @default(now())
+  token String @id @default(uuid())
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 

@@ -26,71 +26,6 @@ import {
 } from "@/components/ui/navigation-menu"
 import { _console } from "@/utils/console";
 
-export function NavigationMenuDemo() {
-
-  const {data, status} = useSession();
-  const authenticaed = status === 'authenticated';
-
-  _console._log.doMagenta('Header Log : Check session data ', data);
-
-  return (
-    <NavigationMenu>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>
-                <div className="group flex font-semibold px-2 gap-2">
-                    <h2 className='text-3xl font-bold text-gray-500'><span className="text-gray-700">B</span><span className="group-hover:inline leading-[-1rem] text-sm transition text-gray-700 hidden">YIMAAN</span><span className="group-hover:hidden">Chat</span></h2>
-                    <PiChatTeardropDots size={20} className="font-bold text-sm size-6"/>
-                </div>
-          </NavigationMenuTrigger>
-          <NavigationMenuContent >
-            <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <li className="row-span-3">
-                <NavigationMenuLink asChild>
-                  <HeadBanner data={data}/>
-                </NavigationMenuLink>
-              </li>
-              {
-                !authenticaed ? (
-                  <>
-                    <ListItem href="/auth?type=signin" >
-                      <div className="flex font-semibold gap-2" >
-                          <PiSignInLight size={20} className="font-bold"/>
-                          log in
-                      </div>
-                    </ListItem>
-                    <ListItem href="/auth?type=signup">
-                      <div className="flex font-semibold gap-2">
-                          <FaUserPen size={16}/> 
-                          Sign Up
-                      </div>
-                    </ListItem>
-                  </>
-              ) : (
-                <>
-                  <ListItem href="#?action=profile">
-                      <div className="flex font-semibold gap-2">
-                          <AiOutlineUser size={16}/>
-                          {data.user?.name || data?.user?.email || 'N/A'}
-                      </div>
-                    </ListItem>
-                  <ListItem>
-                    <div className="flex font-semibold gap-2" onClick={ () => signOut({callbackUrl: '/?action=signOut'})}>
-                        <SlLogout size={16} className="cursor-pointer "/>
-                        Log out
-                    </div>
-                  </ListItem>
-                </>
-                )
-              }
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
-  )
-}
-
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
   React.ComponentPropsWithoutRef<"a">
@@ -172,5 +107,71 @@ const HeadBanner = ({data}: {data: Session | null}) => {
           }
         </div>
     </div>
+  )
+};
+
+export function NavigationMenuDemo() {
+
+  const {data, status} = useSession();
+  const authenticaed = status === 'authenticated';
+
+  _console._log.doMagenta('Header Log : Check session data ', data);
+
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>
+                <div className="group flex font-semibold px-2 gap-2">
+                    <h2 className='text-3xl font-bold text-gray-500'><span className="text-gray-700">B</span><span className="group-hover:inline leading-[-1rem] text-sm transition text-gray-700 hidden">YIMAAN</span><span className="group-hover:hidden">Chat</span></h2>
+                    <PiChatTeardropDots size={20} className="font-bold text-sm size-6"/>
+                </div>
+          </NavigationMenuTrigger>
+          <NavigationMenuContent >
+            <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+              <li className="row-span-3">
+                <NavigationMenuLink asChild>
+                  {/* Okay */}
+                  <HeadBanner data={data}/>
+                </NavigationMenuLink>
+              </li>
+              {
+                !authenticaed ? (
+                  <>
+                    <ListItem href="/auth?type=signin" >
+                      <span className="flex font-semibold gap-2" >
+                          <PiSignInLight size={20} className="font-bold"/>
+                          log in
+                      </span>
+                    </ListItem>
+                    <ListItem href="/auth?type=signup">
+                      <span className="flex font-semibold gap-2">
+                          <FaUserPen size={16}/> 
+                          Sign Up
+                      </span>
+                    </ListItem>
+                  </>
+              ) : (
+                <>
+                  <ListItem href="#?action=profile">
+                      <span className="flex font-semibold gap-2">
+                          <AiOutlineUser size={16}/>
+                          {data.user?.name || data?.user?.email || 'N/A'}
+                      </span>
+                    </ListItem>
+                  <ListItem>
+                    <span className="flex font-semibold gap-2" onClick={ () => signOut({callbackUrl: '/?action=signOut'})}>
+                        <SlLogout size={16} className="cursor-pointer "/>
+                        Log out
+                    </span>
+                  </ListItem>
+                </>
+                )
+              }
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   )
 };
