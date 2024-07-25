@@ -1,5 +1,6 @@
 // Byimaan
 
+import { ToastPosition } from "react-hot-toast";
 import { _console } from "../console";
 import { base64Decode, base64Encode } from "./base64En&Decode";
 
@@ -10,7 +11,7 @@ interface CodecTS {
 
 interface FeedbackDataTS {
     body: {textColorCode: string, text: string}[];
-    position: string;
+    position: ToastPosition;
     bgColorCode: string
 }
 
@@ -47,7 +48,7 @@ class Codec {
         return {
             bgColorCode,
             body,
-            position
+            position: position as ToastPosition
         }
         
     }
@@ -64,9 +65,9 @@ const toastPositions = [
 
 class URLFeedback {
     private colorCode='#FFFFFF';
-    private textColorCode='#330000'
+    private textColorCode='#000000'
     private body='';
-    protected position='top-center';
+    protected position: ToastPosition = 'top-center';
 
     addColorCode(colorCode: string){
         this.colorCode = colorCode;
@@ -77,7 +78,7 @@ class URLFeedback {
         if (this.body.at(-1) !== ':'){
             this.body += ':'
         }
-        this.body = textColor + "-" + text;
+        this.body += (textColor + "-" + text);
         return this;
     };
 
@@ -86,8 +87,8 @@ class URLFeedback {
         return this
     }
 
-    addPostion(position: string){
-        if (position in toastPositions){
+    addPostion(position: ToastPosition){
+        if (toastPositions.includes(position)){
             this.position = position;
         }
         return this;

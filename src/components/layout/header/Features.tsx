@@ -25,6 +25,9 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 import { _console } from "@/utils/console";
+import { useRouter } from "next/navigation";
+import { URLFeedback } from "@/utils/urlFeedback";
+import { useFeedbackToast } from "@/components/wrappers/URLFeedbackListenser";
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
@@ -85,8 +88,6 @@ const HeadBanner = ({data}: {data: Session | null}) => {
   // )
 
   _console._log.doGreen('Rerendered');
-
-
   let imageUrl = data?._user?.image || data?.user?.image;
 
 
@@ -114,6 +115,8 @@ export function NavigationMenuDemo() {
 
   const {data, status} = useSession();
   const authenticaed = status === 'authenticated';
+  const router = useRouter();
+  const toastFeedback = useFeedbackToast();
 
   _console._log.doMagenta('Header Log : Check session data ', data);
 
