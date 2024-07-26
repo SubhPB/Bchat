@@ -53,7 +53,7 @@ function SignIn() {
       const result = await signIn('credentials', {
         ...values,
         redirect: true,
-        callbackUrl: '/bChat?msg=login+success',
+        callbackUrl: '/bChat?msg=login+success', 
       });
       if (result?.error){
         _console._log.doMagenta(result.error)

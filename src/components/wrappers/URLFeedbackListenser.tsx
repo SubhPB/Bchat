@@ -29,7 +29,7 @@ function Feedback({feedback}: {feedback: FeedbackDataTS}){
     };
 
     return (
-        <div className={clsx(' px-4 py-2 space-y-1 text-center text-xl')} style={{backgroundColor: feedback.bgColorCode}}>
+        <div className={clsx(' px-4 py-2 space-y-1 text-center text-xl')}>
             {
                 feedback.body.map(
                     (bodyPart, index) => (
@@ -52,7 +52,10 @@ function URLFeedbackListenser({children}: PropsTS) {
     const toastEncodedFeedback = (encodedString: string) => {
         const feedback = URLFeedback.decode(encodedString);
         feedback && toast(<Feedback feedback={feedback}/>, {
-            position: feedback.position
+            position: feedback.position,
+            style: {
+                backgroundColor: feedback.bgColorCode
+            }
         })
     };
 

@@ -11,9 +11,10 @@ import { _console } from '@/utils/console'
 import { comparePassword } from '@/utils/bcrypt'
 
 import { User } from '@prisma/client';
-import { generatePreSignedUrlInstance } from '../../aws/S3/pre_signed_url/generate';
-import { MilliSeconds } from '@/utils/time';
-import { GeneratePreSignedUrlForProfileImageAndReturnSession } from '../../aws/S3/pre_signed_url/models/user'
+import { URLFeedback } from '@/utils/urlFeedback'
+// import { generatePreSignedUrlInstance } from '../../aws/S3/pre_signed_url/generate';
+// import { MilliSeconds } from '@/utils/time';
+// import { GeneratePreSignedUrlForProfileImageAndReturnSession } from '../../aws/S3/pre_signed_url/models/user'
 
 export const {handlers, signIn, signOut, auth} = NextAuth({
     providers: [
@@ -35,9 +36,8 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                     label: 'Password', type: 'password'
                 }
             },
-            async authorize(credentials){
+            async authorize(credentials, request){
                 const {email, password} = credentials;
-
 
                 try {
                     if (!email || !password){
@@ -60,7 +60,9 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                     });
     
                     if (!passwordMatch){
-                        throw new Error('Password is not correct')
+                        _console._log.doRed("Alert! check values ")
+                        return null
+                        // throw new Error('Password is not correct')
                     }
                     const {password : _password, ..._user} = user
                     return _user
@@ -79,7 +81,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
     },
     pages: {
         signIn: '/auth?type=signin&reference=next-auth',
-        error: '/auth?error=1&ref=next-auth/pages'
+        error: `/auth?feedback=${new URLFeedback().addText("Authentication Failed!", '#FF3300').addText("Please retry with correct credentials", '#000000').addColorCode("#eceff1").encode()}&type=signin` // Static Url,
     },
     adapter: PrismaAdapter(db),
     secret: process.env.AUTH_SECRET!,
@@ -100,7 +102,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                 session._user = token._user as Omit<User, 'password'>
             }
             return session
-        }
+        },
 
         // async session({token, user, session}){
         //     _console._log.doBlue("Exec :- Callbacks/Session");
