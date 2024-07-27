@@ -1,5 +1,4 @@
 // Byimaan
-'use client'
 
 import {
     Body,
@@ -9,7 +8,7 @@ import {
     Preview,
     Text,
   } from "@react-email/components";
-  import React, {useState, useEffect} from "react";
+  import * as  React from "react";
 
   interface SubscribeEmailProps {
     name?: string;
@@ -40,16 +39,6 @@ import {
   }
   
   export const PasswordReset = ({name, href, expiresInText}: SubscribeEmailProps) => {
-
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-      setIsClient(true);
-    }, []);
-
-    if (!isClient){
-        return <p>Loading template...</p>
-    }
 
     return (
       <Html>
