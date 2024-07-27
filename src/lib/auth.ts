@@ -12,6 +12,7 @@ import { comparePassword } from '@/utils/bcrypt'
 
 import { User } from '@prisma/client';
 import { URLFeedback } from '@/utils/urlFeedback'
+import { NextResponse } from 'next/server'
 // import { generatePreSignedUrlInstance } from '../../aws/S3/pre_signed_url/generate';
 // import { MilliSeconds } from '@/utils/time';
 // import { GeneratePreSignedUrlForProfileImageAndReturnSession } from '../../aws/S3/pre_signed_url/models/user'
@@ -61,8 +62,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
     
                     if (!passwordMatch){
                         _console._log.doRed("Alert! check values ")
-                        return null
-                        // throw new Error('Password is not correct')
+                        throw new Error('Password is not correct')
                     }
                     const {password : _password, ..._user} = user
                     return _user
@@ -81,7 +81,8 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
     },
     pages: {
         signIn: '/auth?type=signin&reference=next-auth',
-        error: `/auth?feedback=${new URLFeedback().addText("Authentication Failed!", '#FF3300').addText("Please retry with correct credentials", '#000000').addColorCode("#eceff1").encode()}&type=signin` // Static Url,
+        error: `/auth#byimaan`
+        // error: `/auth?feedback=${new URLFeedback().addText("Authentication Failed!", '#FF3300').addText("Please retry with correct credentials", '#000000').addColorCode("#eceff1").encode()}&type=signin` // Static Url,
     },
     adapter: PrismaAdapter(db),
     secret: process.env.AUTH_SECRET!,
@@ -102,45 +103,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                 session._user = token._user as Omit<User, 'password'>
             }
             return session
-        },
-
-        // async session({token, user, session}){
-        //     _console._log.doBlue("Exec :- Callbacks/Session");
-        //     _console._log.doRed(session.preSignedURL)
-        //     session._user = null;
-
-        //     let _sessionToReturn = session;
-
-        //     if (token?._user){
-        //         session._user = token._user as Omit<User, 'password'>
-        //     };
-
-
-        //     if (session?._user && session?._user?.image){
-
-        //         if (session?.preSignedURL){
-        //             const {healthStatus, expiresAt, imageUrl} = session.preSignedURL;
-        //             if (session.preSignedURL.healthStatus){
-        //                 // healthStatus -> if true means that signed-url is not corrupted & all okay else means it is corrupted. 
-        //                 const MS = new MilliSeconds(expiresAt);
-        //                 // check if has expired
-        //                 if (MS.isOlderThan(Date.now())){
-        //                     // now this is time to create a new pre-signed url
-        //                     //@ts-ignore
-        //                     _sessionToReturn = await GeneratePreSignedUrlForProfileImageAndReturnSession(session)
-        //                 }
-        //             }
-
-        //         } else {
-        //             // we have to generate a pre signed url.
-        //             //@ts-ignore
-        //             _sessionToReturn = await GeneratePreSignedUrlForProfileImageAndReturnSession(session)
-        //         }
-        //     };
-        //     return _sessionToReturn
-        // },
-
-        
+        }
     },
     debug: process.env.NODE_ENV === "development",
 })
