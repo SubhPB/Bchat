@@ -72,6 +72,20 @@ class MilliSeconds {
 
 };
 
+class TimeFeatures {
+
+    static async holdOn(ms: number){
+        return await new Promise(
+            (res, _rej) => {
+                setTimeout(
+                    () => res('Time is up!'), ms
+                )
+            }
+        )
+    };
+
+}
 
 
-export {MilliSeconds}
+
+export {MilliSeconds, TimeFeatures}
