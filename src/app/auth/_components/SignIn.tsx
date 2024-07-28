@@ -21,10 +21,12 @@ import {
 import { Input } from "@/components/ui/input"
 
 import PasswordField from './PasswordField';
+import AlertDialogComponent from './AlertDialog';
 
 import OAuth from './OAuth';
 import { signIn } from 'next-auth/react';
 import { _console } from '@/utils/console';
+
 
 const signInFormSchema= z.object({
   email: z.string().email('Invalid email'),
@@ -33,6 +35,7 @@ const signInFormSchema= z.object({
 
 export type signInFormValues = z.infer<typeof signInFormSchema>
 
+let consentDialogBox = false;
 
 function SignIn() {
   
@@ -44,6 +47,7 @@ function SignIn() {
     }
   });
   const [forgotPassword, setForgotPassword] = useState(false);
+
   
   const onSubmit = async (values: signInFormValues) => {
     forgotPassword && setForgotPassword(false)
@@ -83,13 +87,44 @@ function SignIn() {
   };
 
   const handleForgotPassword = () => {
-    alert("Are you sure to reset your password.")
+    // setConsetDialog(true);
+    setForgotPassword(false);
+    consentDialogBox = true
   };
 
-
+  const handlePasswordReset = () => {
+    setForgotPassword(true);
+    consentDialogBox = false;
+    alert("An email will sent to you very shortly")
+  }
 
   return (
     <div className="w-full grid place-content-center my-2 py-8  rounded-lg bg-gray-100">
+      <AlertDialogComponent 
+        dialog={{
+          open: consentDialogBox,
+          defaultOpen: false
+        }}
+        content={{
+          header: {
+            title: "Are you absolutely sure?",
+            description: `Are you really sure to reset your password of your account associated with ${form.getValues('email')}. Please confirm down below to send you an email to initialize the process of password change.`
+          },
+          footer: {
+            cancel: {
+              text: "Cancel",
+              onClick: () => {
+                setForgotPassword(true)
+                consentDialogBox = false
+              }
+            },
+            action: {
+              onClick: handlePasswordReset,
+              text: "Send an email"
+            }
+          }
+        }}
+      />
       <Form {...form}>
         <form className='w-[300px] md:w-[400px]' onSubmit={form.handleSubmit(onSubmit)}>
           {/* email */}
