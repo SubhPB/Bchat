@@ -41,7 +41,13 @@ function DialogDemo() {
             setInputErr("Please provide a valid token", 5 * 1000);
             return
         };
-        alert("Verifying Token...")
+        router.push(`/auth/reset_password?token=${tokenValue}`)
+    };
+
+    const listenEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter'){
+            handleSubmit()
+        }
     }
 
     return (
@@ -50,9 +56,11 @@ function DialogDemo() {
         <DialogHeader>
             <DialogTitle className='text-red-600'>Invalid Token</DialogTitle>
             {
-                inputError && <div className="error-box opacity-100 bg-red-300 py-3 px-2 text-xs text-zinc-800 font-semibold mb-2 ">
-                    {inputError}
-                </div>
+                inputError && (
+                    <div className="error-box opacity-100 bg-red-300 py-3 px-2 text-xs text-zinc-800 font-semibold mb-2 ">
+                        {inputError}
+                    </div>
+                )
             }
             <DialogDescription>
                 Oops! It looks like your given token to reset password is not valid. It either not exist or may have expired. If you do have a token please continue the remaining process from the sent email or paste your token down below.
@@ -63,7 +71,7 @@ function DialogDemo() {
             <Label htmlFor="name" className="text-right" >
                 Token
             </Label>
-            <Input id="name" value={tokenValue} onChange={e => setTokenValue(e.target.value)} className="col-span-3" />
+            <Input id="name" onKeyDown={listenEnterKey} value={tokenValue} onChange={e => setTokenValue(e.target.value.trim())} className="col-span-3" />
             </div>
         </div>
         <DialogFooter>
