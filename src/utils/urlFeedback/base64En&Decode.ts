@@ -1,6 +1,7 @@
 // Byimaan
 
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+import { v4 } from 'uuid';
 
 const base64Encode = (str: string): string => {
     return btoa(str);
@@ -23,8 +24,11 @@ const JWT = {
     } catch {
       return null
     }
-
   }
+};
+
+const UUID = {
+  generate: () => v4()
 }
 
-export {base64Encode, base64Decode, JWT}
+export {base64Encode, base64Decode, JWT, UUID}
