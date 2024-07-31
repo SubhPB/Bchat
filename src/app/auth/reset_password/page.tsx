@@ -22,18 +22,23 @@ import { User } from '@prisma/client';
 
 type Props = {
     searchParams : {
-        token ?: string
+        token ?: string,
+        email ?: string
     }
 }
 
 async function ResetPasswordWithToken({searchParams}: Props) {
 
-    let token = searchParams.token;
+    let token = searchParams?.token;
+    let email = searchParams?.email;
 
-    if (!token || token.length < 8){
+    if (!token || token.length < 8 || !email){
         // now pop up dialog box which asks for an token using <input/> 
         return <TokenForm />
     };
+
+    token = decodeURIComponent(token)
+    email = decodeURIComponent(email);
 
     // token verification
     let response = null;
@@ -41,17 +46,27 @@ async function ResetPasswordWithToken({searchParams}: Props) {
         response = await db.resetPasswordToken.findUnique({
             where: {
                 token,
-            },
+                user : {
+                    email: email
+                }
+            }, include: {
+                user: true
+            }
         });
+
+        if (response && response.user.password){
+            response.user.password = "******"
+        }
+        
     } catch {
         // just continue...
-    }
+    };
 
     if (!response || (response && response.expiresAt.getTime() < Date.now())){
         return <TokenForm />
     };
 
-    return <ResetForm tokenDetails={response}/>
+    return <ResetForm tokenDetails={response} userDetails={response.user}/>
 }
 
 export default ResetPasswordWithToken

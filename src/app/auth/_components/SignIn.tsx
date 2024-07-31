@@ -95,7 +95,49 @@ function SignIn() {
   const handlePasswordReset = () => {
     setForgotPassword(true);
     consentDialogBox = false;
-    alert("An email will sent to you very shortly")
+
+    const email = form.getValues('email');
+
+    if (form.getFieldState('email').invalid){
+      toast.error(`${email} is not a valid email`);
+      return
+    }
+    
+    const loadingToastRef = toast.loading("Processing request...");
+
+    const fetchApi = async () => {
+
+      const response = await fetch(`/api/user/${encodeURIComponent(email)}/reset_password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+
+      // stop the loading banner
+      toast.dismiss(loadingToastRef);
+
+      let customToast = toast.success;
+
+      if (response.status >= 400){
+        customToast = toast.error
+      };
+
+      if (!response.ok){
+        toast.error("Opps!");
+      }
+
+      const data = await response.json();
+      
+      _console._log.doRed("['/signin.ts' 122] Check out the response", data)
+
+      if (data?.feedback && typeof data.feedback === 'string'){
+        customToast(data.feedback)
+      };
+    };
+
+    fetchApi();
+    
   }
 
   return (

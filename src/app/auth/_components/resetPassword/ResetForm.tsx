@@ -3,7 +3,7 @@
 
 import React, { useRef } from 'react'
 import { useRouter } from 'next/navigation';
-import { ResetPasswordToken } from '@prisma/client';
+import { ResetPasswordToken, User } from '@prisma/client';
 import * as z from "zod";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,8 +21,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import PasswordField from '../PasswordField';
+import toast from 'react-hot-toast';
 
 type Props = {
+  userDetails: User,
   tokenDetails : ResetPasswordToken
 }
 
@@ -43,7 +45,7 @@ const formSchema = z.object({
 
 export type resetPasswordFormValues = z.infer<typeof formSchema>
 
-function ResetForm({tokenDetails}: Props) {
+function ResetForm({tokenDetails, userDetails}: Props) {
 
   const router = useRouter();
  
@@ -64,7 +66,41 @@ function ResetForm({tokenDetails}: Props) {
         message: "Password do not match"
       }, {shouldFocus: true})
     } else {
-      alert("Submitting the reset password request")
+      
+      // here we know password is okay
+
+      const loadingToastId = toast.loading("Processing request...")
+
+      const response = await fetch(`/api/user/${userDetails.email}/reset_password/${tokenDetails.token}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          newPassword: values.password
+        })
+      });
+
+      toast.dismiss(loadingToastId);
+
+
+      let customToast = toast.success;
+
+      if (response.status >= 400){
+        customToast = toast.error
+      }
+
+      const data = await response.json();
+
+      if (data?.feedback as string | undefined){
+        customToast(data.message)
+      }
+
+      if (response.ok){
+        customToast("Please signin with credentials.");
+        router.push("/auth?type=signin")
+      }
+
     }
   };
 
