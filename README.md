@@ -1,3 +1,8 @@
+
+![BChat arch image](https://github.com/user-attachments/assets/acce97a4-606a-402a-9c89-51266e89f742)
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
