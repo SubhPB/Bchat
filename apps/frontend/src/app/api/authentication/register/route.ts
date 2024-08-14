@@ -6,18 +6,14 @@ import { BcryptUtils } from "@/utils/features/security/bcrypt";
 import { db } from "@/lib/db";
 import { HTTPFeatures } from "@/utils/features/http";
 
-const WHERE_IAM = "src/app/api/authentication/register";
+import { SRC_APP_API_EXTERNAL_AFFAIRS, SRC_APP_API_AUTENTICATION_REGISTER } from "../../consts";
+
+const WHERE_IAM = SRC_APP_API_AUTENTICATION_REGISTER.address;
 
 const MINIMUM_ACCEPTABLE_LENGTH_OF_PASSWORD = 4;
 const MINIMUM_LENGTH_OF_USERNAME = 4;
 
-const SRC_LIB_AUTH = {
-    address: "src/lib/auth",
-    token : {
-        expiresInSeconds: 120, // 2 min
-        expiresIn: `${120}s` // JWT friendly format
-    }
-};
+const SRC_LIB_AUTH = SRC_APP_API_EXTERNAL_AFFAIRS.SRC_LIB_AUTH;
 
 export async function POST(request: Request){
     const reqFeatures = new HTTPFeatures.request(request);

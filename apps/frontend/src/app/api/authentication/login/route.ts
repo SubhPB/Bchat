@@ -21,28 +21,13 @@ import { NextResponse } from "next/server";
 import { BcryptUtils } from "@/utils/features/security/bcrypt";
 import { db } from "@/lib/db";
 
-// managing hard code values
-const SRC_LIB_AUTH = {
-    address: "src/lib/auth",
-    token : {
-        expiresInSeconds: 120, // 2 min
-        expiresIn: `${120}s` // JWT friendly format
-    }
-};
+import {SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD, SRC_APP_API_AUTENTICATION_LOGIN, SRC_APP_API_EXTERNAL_AFFAIRS } from "../../consts";
 
-const SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD = {
-    address: "src/app/api/authentication/forgot_password",
-    token: {
-        expiresInSeconds: 10 * 60, // 10 minutes
-        expiresIn: `${10*60}s` // JWT friendly format
-    }
-};
+const SRC_LIB_AUTH = SRC_APP_API_EXTERNAL_AFFAIRS.SRC_LIB_AUTH;
 
-const SRC_APP_AUTHENTICATION__FORMS_LOGIN = {
-    address: "src/app/authentication/_forms/login",
-}
+const SRC_APP_AUTHENTICATION__FORMS_LOGIN = SRC_APP_API_EXTERNAL_AFFAIRS.SRC_APP_AUTHENTICATION__FORMS_LOGIN;
 
-const WHERE_IAM = 'src/app/api/authentication/login'
+const WHERE_IAM = SRC_APP_API_AUTENTICATION_LOGIN.address;
 
 export async function POST(request:Request){
     const reqFeatures = new HTTPFeatures.request(request);
@@ -99,7 +84,8 @@ export async function POST(request:Request){
                         const payload = {
                             from: WHERE_IAM,
                             recipient: [
-                                SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD.address
+                                SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD.address,
+                                SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD.subRoutes.access_token.address,
                             ],
                             user: userWithoutPassword
                         }
@@ -108,6 +94,9 @@ export async function POST(request:Request){
                                 payload,
                                 expiresIn: SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD.token.expiresIn,
                             }),
+                            /**
+                             * This metadata will be useful for the _forms/login.tsx to response more effectivily with user without decryptying the token
+                             */
                             'metadata': {
                                 recipient: [
                                     SRC_APP_AUTHENTICATION__FORMS_LOGIN.address
