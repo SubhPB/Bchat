@@ -23,6 +23,9 @@ import { Label } from "@/components/ui/label"
 import FieldNotify from "./field-notify-box";
 import toast from "react-hot-toast";
 
+import { AppLoading } from "@/components/layout/loading-dialog.server";
+import { FaLock } from "react-icons/fa";
+
 const signupFormSchema = z.object({
     username: z.string().min(4, "* A valid username should be of atleast 4 letters"),
     email: z.string().email("* Incorrect email"),
@@ -109,8 +112,19 @@ export default function RegisterForm(){
         };
     }
 
+    const loading = form.formState.isSubmitting;
+
     return (
         <Card className="my-2">
+
+            {
+                loading && (
+                    <AppLoading>
+                        <p className="text-sm flex"><FaLock size={20} className="mr-2"></FaLock> BChat offfers secure authentication powered with next-auth</p>
+                    </AppLoading>
+                )
+            }
+
             <CardHeader>
                 <BChatText textSizeInTailwind="text-[2.6rem]"/>
                 <CardDescription>

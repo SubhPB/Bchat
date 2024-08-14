@@ -8,7 +8,6 @@
 
 import toast from "react-hot-toast";
 import { useState } from "react";
-import { JwtPayload } from "jsonwebtoken";
 
 import { signIn } from "next-auth/react";
 
