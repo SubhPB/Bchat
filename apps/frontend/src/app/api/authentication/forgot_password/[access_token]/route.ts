@@ -12,12 +12,7 @@
  *          [2.3]
  */
 
-type ArgsTS = {
-    params: {
-        access_token: string,
-    }
-};
-
+import {Resend} from "resend";
 import { NextResponse } from "next/server";
 import { JwtPayload } from "jsonwebtoken";
 import { User } from "@repo/db";
@@ -27,9 +22,44 @@ import { JWT } from "@/utils/features/security/jwt";
 import { SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD, SRC_APP_API_EXTERNAL_AFFAIRS } from "@/app/api/consts";
 import { db } from "@/lib/db";
 
+import ResetPasswordTemplate from "@/components/services/email/ResetPasswordTemplate";
+
+
+type ArgsTS = {
+    params: {
+        access_token: string,
+    }
+};
+
+type ResetPasswordTS = {recipient: string, recipientName ?: string, resetToken: string}
+
 const WHERE_IAM = SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD.subRoutes.access_token.address;
 const EMAIL_MAX_LIMIT = SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD.subRoutes.access_token.maxNumberoOfEmailsAllowedToSend;
-const PASSWORD_RESET_TOKEN = SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD.subRoutes.access_token.resetToken
+const PASSWORD_RESET_TOKEN = SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD.subRoutes.access_token.resetToken;
+
+const resetPassword = {
+    send: async ({recipient, recipientName, resetToken}: ResetPasswordTS) => {
+
+        const resendKey = process.env.RESEND_API_KEY!, resend = new Resend(resendKey);
+        const webPathHref = SRC_APP_API_EXTERNAL_AFFAIRS.SRC_APP_AUTHENTICATION_FORGOT_PASSWORD.webPath + `?reset_token=${resetToken}`;
+        recipientName = recipientName ?? recipient.split('@')[0] ?? 'BChat user';
+
+        const {data, error} = await resend.emails.send({
+            from: "BChat <NoReply.bchat@byimaan.ca>",
+            to: [
+                recipient
+            ],
+            subject: `[${recipientName}] Change the password of your BChat account`,
+            react: ResetPasswordTemplate({
+                name: recipientName,
+                href: webPathHref,
+                preview: "Please go through the following instruction to change your account's password.",
+                expiresInText: PASSWORD_RESET_TOKEN.expiresInUserFriendlyText
+            })
+        });
+        return {data, error}
+    }
+}
 
 export async function GET(request: Request, args: ArgsTS){
 
@@ -131,6 +161,30 @@ export async function GET(request: Request, args: ArgsTS){
                  *  SEND EMAIL with resetToken
                  */
 
+                const {data: _resendData, error: resendError} = await resetPassword.send({
+                    recipient: userWhoForgotPassword.email,
+                    resetToken: reset_token,
+                    recipientName: userWhoForgotPassword.name
+                });
+
+                if (resendError){
+                    statusCode = 502, errorMessage = "Oops! Due to some reason we are not able to send you an email. Please try again later.";
+                    throw new Error(errorMessage)
+                };
+
+                /**
+                 * At this point the email has been sent to the user and the remaining logic will be continued from the sent email.
+                 */
+
+                return NextResponse.json({
+                    'userFriendlyData': userFriendlyObject.addToastObject({
+                        message: `An email has been sent to the ${userWhoForgotPassword.email}. You can follow the instructions given in the email to change your password.`,
+                        type: 'SUCCESS',
+                    }).create()
+                }, {
+                    status: 202
+                });
+
 
             } else {
                 statusCode = 406, errorMessage = 'Your request about forgot password has been discarded due to invalid or expired authorization information.';
@@ -154,4 +208,4 @@ export async function GET(request: Request, args: ArgsTS){
             }
         )
     };
-}
+};

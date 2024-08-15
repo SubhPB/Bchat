@@ -2,6 +2,7 @@
  * BYIMAAN
  */
 const WHERE_IAM = "src/app/api";
+const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL!;
 
 const SRC_APP_API = {
     address: WHERE_IAM,
@@ -59,6 +60,7 @@ const SRC_APP_API_EXTERNAL_AFFAIRS = {
     },
     SRC_APP_AUTHENTICATION_FORGOT_PASSWORD: {
         address: "src/app/authentication/forgot_password",
+        webPath: NEXT_PUBLIC_URL + "/authentication/forgot_password"
     }
 } as const;
 
