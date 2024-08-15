@@ -28,7 +28,16 @@ const SRC_APP_API = {
                     },
                     subRoutes: {
                         access_token: {
-                            address:  WHERE_IAM + "/authentication" + "/forgot_password" + "/access_token"
+                            address:  WHERE_IAM + "/authentication" + "/forgot_password" + "/access_token",
+                            maxNumberoOfEmailsAllowedToSend: 2,
+                            resetToken: {
+                                /**
+                                 * If need to create to reset_token then use the following info set the expiry of that reset_token
+                                 */
+                                expiresInSeconds : 3 * 60 * 60, // 3 hour
+                                expiresIn: `${3 * 60 * 60}s`, //JWT format
+                                expiresInUserFriendlyText: `${3} hours`
+                            }
                         }
                     }
                 } as const
@@ -47,6 +56,9 @@ const SRC_APP_API_EXTERNAL_AFFAIRS = {
     },
     SRC_APP_AUTHENTICATION__FORMS_LOGIN: {
         address: "src/app/authentication/_forms/login",
+    },
+    SRC_APP_AUTHENTICATION_FORGOT_PASSWORD: {
+        address: "src/app/authentication/forgot_password",
     }
 } as const;
 
