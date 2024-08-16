@@ -9,7 +9,6 @@
  *      2. User must pass the background checkup
  *          [2.1] user have not requested too many times to change password
  *          [2.2] user have not recently changed his/her password using this endpoint and now again trying change password 
- *          [2.3]
  */
 
 import {Resend} from "resend";
