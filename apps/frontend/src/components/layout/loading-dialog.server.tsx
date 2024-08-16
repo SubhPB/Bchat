@@ -12,7 +12,7 @@ type Props = {
 
 const AppLoading = ({className='', children, overWriteDefaultClassName=false}: Props) => {
 
-    let defaultClassName = 'fixed z-[9999] inset-0 bg-transparent grid place-items-center backdrop-blur-[3px] px-8';
+    let defaultClassName = 'fixed z-[999] inset-0 bg-transparent grid place-items-center backdrop-blur-[3px] px-8';
 
     className = overWriteDefaultClassName ? className : defaultClassName + " " + className
 

@@ -55,9 +55,9 @@ import {
                 <div style={{backgroundColor: "#f6f7f7", padding: ".6vmax", borderRadius:"6px",}}>
                     <Text style={{fontSize: "large", fontWeight: "semibold", textAlign: "center"}}>BChat password reset</Text>
                     {
-                       name && <Text> HI {name}</Text>
+                       name && <Text> Hi {name}</Text>
                     }
-                    <Text> We heard that you lost your BChat password. Sorry about that <br /> But don't worry! You can use the following button to reset your password</Text>
+                    <Text> We heard that you lost your BChat password. <br /> But don't worry! You can click the following button to reset your password.</Text>
                     
                     <a href={href} target="_blank" rel="noopener noreferrer" style={{padding: "8px 16px", borderRadius: "10px", color: "white", backgroundColor: "#008a20", fontWeight: "semibold", display:"inline", width:"fit-content", alignSelf:"center", textAlign: "center"}}>Reset your password</a>
                     {
@@ -65,7 +65,7 @@ import {
                             <Text>If you don't use this link within {expiresInText}, it will expire.</Text>
                         )
                     }
-                    <Text>Thanks <br />BChat team</Text>
+                    <Text>Thanks. <br />BChat team</Text>
                 </div>
                 
                 <div style={{opacity:".7"}}>
