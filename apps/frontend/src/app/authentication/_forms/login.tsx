@@ -177,9 +177,10 @@ export function LoginForm(){
                     renderForgotPassword && (
                         <ForgotPassword
                         className="text-xs text-cyan-600 font-semibold text-center cursor-pointer hover:text-primary-bchat"
-                        access_token={forgotPasswordPayload.access_token}>
-                            Forgot password?
-                        </ForgotPassword>
+                        access_token={forgotPasswordPayload.access_token}
+                        allowLoading={!loading}
+                        email={forgotPasswordPayload.metadata.token.email}
+                        />
                     )
                 }
 
