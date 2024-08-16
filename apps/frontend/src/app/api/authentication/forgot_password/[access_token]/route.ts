@@ -202,7 +202,7 @@ export async function GET(request: Request, args: ArgsTS){
                 'userFriendlyData': userFriendlyObject.addToastObject({
                     message: errorMessage,
                     type: 'ERROR'
-                }).create
+                }).create()
             }, {
                 status: statusCode
             }

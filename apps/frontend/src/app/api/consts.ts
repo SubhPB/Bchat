@@ -17,6 +17,8 @@ const SRC_APP_API = {
                 },
                 register: {
                     address: WHERE_IAM + "/authentication" + "/register",
+                    minLengthOfPassword: 6,
+                    minLenghOfUsername: 4
                 },
                 forgot_password: {
                     address: WHERE_IAM + "/authentication" + "/forgot_password",
