@@ -3,7 +3,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-
+import toast from 'react-hot-toast';
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { AppLoading } from '@/components/layout/loading-dialog.server';
@@ -19,8 +19,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog";
-import toast from 'react-hot-toast';
 import { Duration } from '@/utils/features/time/duration';
+import { Client as ClientResFeatures } from '@/utils/features/http/feature_type/response/client';
 /**
  * JOBS of this component
  *  - take jwt_token holding the value of user info. as Prop then handle 
@@ -46,11 +46,9 @@ function ForgotPassword({className, access_token, allowLoading, email}: Props) {
                 toast: jsonToast
             }} = jsonData;
 
-            if (jsonToast) {
-                const cstmToast = jsonToast.type === 'ERROR' ? toast.error : toast.success;
-                cstmToast(jsonToast.message, {
-                    position: jsonToast.position ?? 'top-center'
-                });
+            if (jsonToast?.message && jsonToast?.type) {
+                const customToast = ClientResFeatures.useToast(jsonToast);
+                customToast();
             }
             
             if (res.ok){

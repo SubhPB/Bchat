@@ -3,7 +3,7 @@
 // Server means these features will be used by the server side (nextjs backend)
 
 
-import { toastType, toastPositions } from "../types";
+import { toastType, toastPositions, UserFriendlyData } from "../types";
 
 class Server {
     
@@ -28,7 +28,7 @@ type AddToastObjectTS = {
 class UserFriendlyObject {
     private object : {
         [key: string] : {}
-    } = {}
+    } = {} as Partial<UserFriendlyData>;
 
     addToastObject({message, type='ERROR', position='top-center'} : AddToastObjectTS){
         this.object['toast'] = {
@@ -40,7 +40,7 @@ class UserFriendlyObject {
     };
 
     create(){
-        return this.object
+        return this.object as Partial<UserFriendlyData>
     }
 }
 

@@ -13,6 +13,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from 'zod';
 import toast from "react-hot-toast";
 
+import { Client as ClientResFeatures } from "@/utils/features/http/feature_type/response/client";
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -83,10 +85,8 @@ export function ResetPasswordForm({email, resetToken, className}: Props){
             const {userFriendlyData: {toast: jsonToast}} = jsonData;
 
             if (jsonToast){
-                const cstmToast = jsonToast.type === "SUCCESS" ? toast.success : toast.error;
-                cstmToast(jsonToast.message, {
-                    position: jsonToast.position
-                });
+                const customToast = ClientResFeatures.useToast(jsonToast);
+                customToast()
             }
 
             if (res.ok && typeof jsonData?.access_token === 'string'){

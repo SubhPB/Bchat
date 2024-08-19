@@ -16,6 +16,8 @@ import z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod"
 import { FaLock } from "react-icons/fa";
 
+import { Client as ClientResFeatures } from "@/utils/features/http/feature_type/response/client";
+
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -81,11 +83,8 @@ export function LoginForm(){
 
             const renderUserFriendlyToastData = () => {
                 if (payload?.userFriendlyData && payload.userFriendlyData?.toast){
-                    const {message, type, position} = payload.userFriendlyData.toast;''
-                    if (message && type && position){
-                        const cstmToast = type === 'ERROR' ? toast.error: toast.success;
-                        cstmToast(message);
-                    }
+                    const customToast = ClientResFeatures.useToast(payload.userFriendlyData.toast);
+                    customToast();
                 }
             }
     

@@ -23,6 +23,8 @@ import { Label } from "@/components/ui/label"
 import FieldNotify from "./field-notify-box";
 import toast from "react-hot-toast";
 
+import { Client as ClientResFeatures } from "@/utils/features/http/feature_type/response/client";
+
 import { AppLoading } from "@/components/layout/loading-dialog.server";
 import { FaLock } from "react-icons/fa";
 
@@ -78,11 +80,8 @@ export default function RegisterForm(){
 
             const renderUserFriendlyToastData = () => {
                 if (payload?.userFriendlyData && payload.userFriendlyData?.toast){
-                    const {message, type, position} = payload.userFriendlyData.toast;''
-                    if (message && type && position){
-                        const cstmToast = type === 'ERROR' ? toast.error: toast.success;
-                        cstmToast(message);
-                    }
+                    const customToast = ClientResFeatures.useToast(payload.userFriendlyData.toast);
+                    customToast();
                 }
             }
     
