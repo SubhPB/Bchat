@@ -19,10 +19,9 @@ const WHERE_IAM = "src/app/authentication/forgot_password"
 type Props = {
   params: {},
   searchParams: { [key: string]: string | string[] | undefined }
-}
-const GENERAL_SECRET_KEY = process.env.GENERAL_SECRET_KEY!
+};
 
-async function forgotPassword({params, searchParams}: Props) {
+async function forgotPassword({searchParams}: Props) {
 
   const reset_token = searchParams?.reset_token;
 
