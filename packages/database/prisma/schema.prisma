@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Byimaan
 
 generator client {
   provider = "prisma-client-js"
@@ -29,8 +25,111 @@ model User {
   
   accounts      Account[]
   passwordTokens ResetPasswordToken[]
+
+  contacts Contact[]
+
+  // It is one-to-one relation because one user can only be represented as one participant.
+  participantId String? @unique
+  particitpant Participant? @relation
 }
 
+model Contact {
+  id String @id @default(uuid())
+  userId String
+  // User can set a custom name to his/her friend by default it will be User['name']
+  name String
+  // We could also add firstname or lastname but just 'name' field is good enough
+  // In the future we may switch to enums such as status : BLOCKED | ACCEPTED if multiple functionalities will be needed to implement
+  isBlocked Boolean @default(false)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Conversation {
+  id String @id @default(uuid())
+
+  // we will treat name as group_name in the case of group_chat else htis field does not matter in the case of one-to-one chat
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // one participant can join many conversations and one conversation can have multiple participants
+  participants Participant[] @relation("ManyParticipantsToManyConversations")
+  messages Message[]
+}
+
+enum ParticipantStatus {
+  ADMIN
+  MEMBER
+  BLOCKED
+  LEFT
+  KICKED_OUT
+  // in the case of deleting the chat after leaving the chat we will just delete the Participant entry.
+}
+
+model Participant {
+  id String @id @default(uuid())
+  userId String @unique
+  
+  // This status field will help for authorizaion in group chats
+  status ParticipantStatus @default(MEMBER)
+
+  // this represents when this participant joined the conversation
+  createdAt DateTime @default(now())
+
+  // will helpful in the case like promoting user from MEMBER to ADMIN
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [participantId])
+
+  // one participant can join many conversations and one conversation can have multiple participants
+  conversations Conversation[] @relation("ManyParticipantsToManyConversations")
+
+  // In order to get messages sent by this participant --> Conversation --> Messages
+  
+}
+
+model Message {
+  id String @unique @default(uuid())
+  participantId String @unique 
+  conversationId String @unique
+
+  contentType String // For this we will restrictly follow the values of Content-Type such as text/plain or image/png
+
+  // it is possible for an message to have both url and text.
+  url String?
+  text String?
+
+  createdAt DateTime @default(now())
+
+  // So  A message can be deleted by multiple participants of the chat
+  deletedBy DeletedMessage[]
+
+  // & we will not allow user to update sent message
+ 
+  // userId is accessable from both Participant and Conversation model
+  senderUserId String
+
+  // Basically instead to using 'to' attribute we will use conversation attr to know the recipients of this message.
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+
+  @@index([senderUserId])
+}
+
+model DeletedMessage {
+  messageId String @unique
+
+  // My idea is to not a make connection b/w deleted_msgs and partipants or User model for this minor funtionality.
+  // this userId will also accessable from participant model So in the case if any participant delete msg from his side we will 
+  // create deletedMessage entry 
+  userId String
+  deletedAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id])
+}
+
+
+// <---- Specific to Authentication ---!>
 model ResetPasswordToken {
   userId String
   createdAt DateTime @default(now())
@@ -40,8 +139,7 @@ model ResetPasswordToken {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
-
+// <---- Specific to Authentication ---!>
 model Account {
   userId            String
   type              String
