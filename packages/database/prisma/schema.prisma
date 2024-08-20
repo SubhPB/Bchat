@@ -30,7 +30,7 @@ model User {
 
   // It is one-to-one relation because one user can only be represented as one participant.
   participantId String? @unique
-  particitpant Participant? @relation
+  particitpant Participant? @relation("OneUseIsOneParticipant")
 }
 
 model Contact {
@@ -44,11 +44,21 @@ model Contact {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+enum ConversationType {
+  GROUP
+  ONE_TO_ONE
+}
+
 model Conversation {
   id String @id @default(uuid())
 
   // we will treat name as group_name in the case of group_chat else htis field does not matter in the case of one-to-one chat
   name String
+  
+  // will work as a group_imag in a group chat
+  image String?
+
+  type ConversationType @default(ONE_TO_ONE)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -80,7 +90,7 @@ model Participant {
   // will helpful in the case like promoting user from MEMBER to ADMIN
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [participantId])
+  user User @relation("OneUseIsOneParticipant", fields: [userId], references: [participantId])
 
   // one participant can join many conversations and one conversation can have multiple participants
   conversations Conversation[] @relation("ManyParticipantsToManyConversations")
@@ -123,6 +133,8 @@ model DeletedMessage {
   // this userId will also accessable from participant model So in the case if any participant delete msg from his side we will 
   // create deletedMessage entry 
   userId String
+
+  // A message was deleeted by a user when this entry of this model was created so default = now().
   deletedAt DateTime @default(now())
 
   message Message @relation(fields: [messageId], references: [id])
