@@ -3,7 +3,7 @@
  * 
  */
 
-import BChatHeader from "./_components/chatbar/header";
+import BChatHeader from "./_components/header";
 
 export default function BchatLayout({
     children,
