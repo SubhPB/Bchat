@@ -2,10 +2,8 @@
  * Byimaan
  * 
  */
-import BChatHeader from "./_components/header";
 
-
-
+import BChatHeader from "./_components/chatbar/header";
 
 export default function BchatLayout({
     children,
