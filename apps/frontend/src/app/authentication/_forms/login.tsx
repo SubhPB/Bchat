@@ -29,7 +29,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import FieldNotify from "./field-notify-box";
+import FieldNotify from "../../../components/common/field-notify-box";
 import BChatText from "@/components/common/AppText.server";
 import { AppLoading } from "@/components/layout/loading-dialog.server";
 import ForgotPassword from "./forgot-password-btn";

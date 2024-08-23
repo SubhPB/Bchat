@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <SessionProvider>
-        <body className={`relative min-h-dvh max-h-fit text-secondary-bchat min-w-[410px] ${inter.className} ${oswald.variable}`}>
+        <body className={`relative min-h-dvh max-h-fit text-secondary-bchat min-w-[320px] ${inter.className} ${oswald.variable}`}>
           <LayoutBackground />
           <Toaster 
             containerStyle={{

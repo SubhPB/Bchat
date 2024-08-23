@@ -15,7 +15,15 @@ export const bChatMiddlewareFn: NextAuthFunction = (req) => {
     if (!isAuthenticated){
         const {origin} = req.nextUrl;
         return NextResponse.redirect(`${origin}/?error=bchat_access_denied`)
-    }
+    };
 
-    return NextResponse.next()
+    /** Modifying header so that we can access pathname in server side components for adding functionality */
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set('x-pathname', req.nextUrl.pathname);
+
+    return NextResponse.next({
+        request: {
+            headers: requestHeaders,
+        }
+    })
 }

@@ -24,7 +24,7 @@ function AuthenticatePage({params, searchParams, formType="login"}: Props) {
 
     return (
         <main className="flex min-h-dvh flex-col items-center pt-10 px-2">
-                <Tabs defaultValue={formType} className='w-[400px]'>
+                <Tabs defaultValue={formType} className='w-full xs:w-[400px]'>
                     <TabsList className='grid w-full grid-cols-2'>
                         <TabsTrigger value='login' className='data-[state=active]:bg-primary-bchat data-[state=active]:text-white'>
                             Login

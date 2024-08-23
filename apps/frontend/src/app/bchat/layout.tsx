@@ -3,11 +3,8 @@
  * 
  */
 
-import ChatbarContainer from "./_components/_chatbar";
-import BChatHeader from "./_components/_header";
-import { WorkArea } from "./_components/_workarea";
-// import ChatbarContainer from "./_components/chatbar";
-// import { WorkArea } from "./_components/workarea";
+import ChatbarContainer from "@/components/routes/bchat/layout/ChatbarConainter";
+import BChatHeader from "../../components/routes/bchat/layout/header";
 
 export default function BchatLayout({
     children,
@@ -16,14 +13,16 @@ export default function BchatLayout({
   }>){
     return (
         <main className="w-full h-[100dvh] sm:py-[3dvh] overflow-hidden bg-transparent flex items-center justify-center">
-            <div className="w-full h-full sm:rounded-lg sm:w-[620px] md:w-[710px] lg:w-[940px] xl:w-[1080px] 2xl:w-[1260px] bg-gray-100 overflow-hidden">
+            <div className="w-full h-full flex flex-col sm:rounded-lg sm:w-[620px] md:w-[710px] lg:w-[940px] xl:w-[1080px] 2xl:w-[1260px] bg-gray-100 overflow-hidden">
               <BChatHeader />
 
-              <div className="h-full flex">
-                <ChatbarContainer className="h-full w-1/2"/>
-                <WorkArea className="h-full w-1/2">
-                  {children}
-                </WorkArea>
+              <div className="flex flex-grow overflow-hidden">
+                <ChatbarContainer className="h-full flex-grow"/>
+
+                {/* User work area */}
+                {
+                  children
+                }
               </div>
             </div>
         </main>

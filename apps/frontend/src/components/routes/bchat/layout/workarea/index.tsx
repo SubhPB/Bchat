@@ -7,16 +7,21 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { headers } from "next/headers";
 
 type Props = {
     children : React.ReactNode;
-    className: string
+    className ?: string
 };
 
-export function WorkArea({children, className}: Props){
-    return (
-        <section className={cn("user-workbench", className)}>
+type WorkAreaTS = {
+    main: React.FC<Props>
+}
+
+export const Workarea: WorkAreaTS = {
+    main: ({children, className}) => (
+        <main className={cn("h-full w-full lg:w-[72%]", className)}>
             {children}
-        </section>
-    );
+        </main>
+    )
 }

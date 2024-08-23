@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 
 import BChatText from "@/components/common/AppText.server"
 import { Card, CardHeader, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import FieldNotify from "./field-notify-box";
+import FieldNotify from "../../../components/common/field-notify-box";
 import { Duration } from "@/utils/features/time/duration";
 import { cn } from "@/lib/utils";
 

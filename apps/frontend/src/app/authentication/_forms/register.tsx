@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import FieldNotify from "./field-notify-box";
+import FieldNotify from "../../../components/common/field-notify-box";
 import toast from "react-hot-toast";
 
 import { Client as ClientResFeatures } from "@/utils/features/http/feature_type/response/client";
