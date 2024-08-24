@@ -12,9 +12,8 @@ export default auth(
          * All Middleware logic down here
          */
         const givenPath = request.nextUrl.pathname;
-
+        
         const appMiddleware = new Middleware('/*', appMiddlewareFn);
-
         if (appMiddleware.pathMatches(givenPath)){
             /**
              * Be Aware :- Always return the trigger function 
