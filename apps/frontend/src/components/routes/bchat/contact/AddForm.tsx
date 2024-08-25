@@ -8,6 +8,7 @@ import React from 'react';
 import z from "zod";
 import {useForm} from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/lib/utils';
 
@@ -26,7 +27,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Duration } from '@/utils/features/time/duration';
+import { Session } from 'next-auth';
 
 const formSchema = z.object({
     email: z.string().min(1, "* This field is required").email("* Incorrect email")
@@ -36,7 +37,7 @@ type formValues = z.infer<typeof formSchema>
   
 type Props = {
     className ?: string,
-}
+};
 
 function AddForm({className='w-full xs:w-[310px]'}: Props) {
 
@@ -47,10 +48,42 @@ function AddForm({className='w-full xs:w-[310px]'}: Props) {
         }
     });
 
+    const {data: session} = useSession();
+
     const handleForm = async (values: formValues) => {
-        const toastRef = toast.loading("Submiting...");
-        await Duration.holdOn(6000);
-        toast.dismiss(toastRef)
+        const userSOwnEmail = session?.user?.email ?? session?.adapterUser?.email;
+        if (typeof userSOwnEmail !== 'string'){
+            toast.error("Oops! Something went wrong!")
+            return
+        }
+        if (values.email.trim() === userSOwnEmail){
+            toast.error("You can't put your own email")
+            return
+        }
+        
+        const toastRef = toast.loading("Processing request...");
+
+        const response = await fetch('/api/bchat/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(values)
+        });
+
+        const payload = await response.json();
+        toast.dismiss(toastRef);
+
+        if (response.ok){
+            toast.success("Successfully added a new contact");
+        } else {
+            /** If it is not successful then there must be a toast message from server-api */
+            const toastObj = payload?.userFriendlyData?.toast;
+            if (toastObj){
+                const buildInToast = ClientComponentFeature.useToast(toastObj);
+                buildInToast()
+            }
+        }
     };
 
     const loading = form.formState.isSubmitting;
