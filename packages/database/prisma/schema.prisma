@@ -26,11 +26,16 @@ model User {
   accounts      Account[]
   passwordTokens ResetPasswordToken[]
 
-  contacts Contact[]
+  // This field represents the contacts where the user is the contact.
+  contacts Contact[] @relation("UserContact")
+
+  // Represents who are other users who saved this user as contact
+  contactedBy Contact[] @relation("UserContactedBy")
+
 
   // It is one-to-one relation because one user can only be represented as one participant.
   participantId String? @unique
-  particitpant Participant? @relation("OneUseIsOneParticipant")
+  particitpant Participant? @relation("OneUserIsOneParticipant")
 }
 
 model Contact {
@@ -41,7 +46,18 @@ model Contact {
   // We could also add firstname or lastname but just 'name' field is good enough
   // In the future we may switch to enums such as status : BLOCKED | ACCEPTED if multiple functionalities will be needed to implement
   isBlocked Boolean @default(false)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  contactId String
+
+  // This is the user who is the contact.
+  contact User @relation("UserContactedBy", fields: [contactId], references: [id], onDelete: Cascade)
+
+  // This is the user who owns the contact.
+  owner User @relation("UserContact" ,fields: [userId], references: [id], onDelete: Cascade)
+
+  // ensures that one user can't save the other user as contact more than once
+  @@unique([userId, contactId])
 }
 
 enum ConversationType {
@@ -90,7 +106,7 @@ model Participant {
   // will helpful in the case like promoting user from MEMBER to ADMIN
   updatedAt DateTime @updatedAt
 
-  user User @relation("OneUseIsOneParticipant", fields: [userId], references: [participantId])
+  user User @relation("OneUserIsOneParticipant", fields: [userId], references: [participantId])
 
   // one participant can join many conversations and one conversation can have multiple participants
   conversations Conversation[] @relation("ManyParticipantsToManyConversations")
