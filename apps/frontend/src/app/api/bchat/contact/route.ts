@@ -191,4 +191,4 @@ export async function POST(request: Request){
 export type ContactSucceesReturnType = {
     GET: Prisma.PromiseReturnType<typeof findManyContactsOfUserAndIncludeContact>,
     POST: Prisma.PromiseReturnType<typeof contactCreateAndIncludeContact>
-}
+};

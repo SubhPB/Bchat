@@ -39,6 +39,9 @@ type Props = {
     className ?: string,
 };
 
+/** api address where to submit form */
+const ADD_CONTACT_API_ENDPOINT = '/api/bchat/contact';
+
 function AddForm({className='w-full xs:w-[310px]'}: Props) {
 
     const form = useForm<formValues>({
@@ -63,7 +66,7 @@ function AddForm({className='w-full xs:w-[310px]'}: Props) {
         
         const toastRef = toast.loading("Processing request...");
 
-        const response = await fetch('/api/bchat/contact', {
+        const response = await fetch(ADD_CONTACT_API_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -83,7 +86,9 @@ function AddForm({className='w-full xs:w-[310px]'}: Props) {
                 const buildInToast = ClientComponentFeature.useToast(toastObj);
                 buildInToast()
             }
-        }
+        };
+
+        form.reset()
     };
 
     const loading = form.formState.isSubmitting;
