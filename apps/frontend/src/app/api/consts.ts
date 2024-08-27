@@ -43,7 +43,16 @@ const SRC_APP_API = {
                             }
                         }
                     }
-                } as const
+                } as const,
+            }
+        },
+        bchat: {
+            address: WHERE_IAM + "/bchat",
+            subRoutes: {
+                contact: {
+                    address: WHERE_IAM + "/bchat" + "/contact",
+                    minLengthOfContactName: 4
+                }
             }
         }
     },
@@ -69,11 +78,13 @@ const SRC_APP_API_EXTERNAL_AFFAIRS = {
 const SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD = SRC_APP_API.subRoutes.authentication.subRoutes.forgot_password;
 const SRC_APP_API_AUTENTICATION_LOGIN = SRC_APP_API.subRoutes.authentication.subRoutes.login;
 const SRC_APP_API_AUTENTICATION_REGISTER = SRC_APP_API.subRoutes.authentication.subRoutes.register
+const SRC_APP_API_BCHAT = SRC_APP_API.subRoutes.bchat;
 
 export {
     SRC_APP_API,
     SRC_APP_API_EXTERNAL_AFFAIRS,
     SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD,
     SRC_APP_API_AUTENTICATION_LOGIN,
-    SRC_APP_API_AUTENTICATION_REGISTER
+    SRC_APP_API_AUTENTICATION_REGISTER,
+    SRC_APP_API_BCHAT 
 };

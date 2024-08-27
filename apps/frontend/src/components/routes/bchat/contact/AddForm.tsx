@@ -27,10 +27,10 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Session } from 'next-auth';
 
 const formSchema = z.object({
-    email: z.string().min(1, "* This field is required").email("* Incorrect email")
+    email: z.string().min(1, "* This field is required").email("* Incorrect email"),
+    name: z.string().min(1, '* This field is required').min(4, "* Name is too short").optional()
 });
 
 type formValues = z.infer<typeof formSchema>
@@ -42,7 +42,7 @@ type Props = {
 /** api address where to submit form */
 const ADD_CONTACT_API_ENDPOINT = '/api/bchat/contact';
 
-function AddForm({className='w-full xs:w-[310px]'}: Props) {
+function AddForm({className=''}: Props) {
 
     const form = useForm<formValues>({
         resolver: zodResolver(formSchema),
@@ -102,14 +102,27 @@ function AddForm({className='w-full xs:w-[310px]'}: Props) {
             <form onSubmit={form.handleSubmit(handleForm)} >
                 <CardContent>
                         <div className="grid w-full items-center gap-4">
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="add-contact">Email</Label>
-                            <FieldNotify 
-                                allowToRender={!!form.formState.errors.email}
-                                children={form.formState.errors.email?.message}
-                            />
-                            <Input placeholder="User Email"  id="add-contact" {...form.register('email')}/>
+                        <div className="flex flex-col md:flex-row gap-3">
+                            <div className='space-y-2'>
+                                <Label htmlFor="add-contact">Email</Label>
+                                <FieldNotify 
+                                    allowToRender={!!form.formState.errors.email}
+                                    children={form.formState.errors.email?.message}
+                                />
+                                <Input placeholder="User Email"  id="add-contact" {...form.register('email')}/>
+                            </div>
+
+                            <div className='space-y-2'>
+                                <Label htmlFor="name">Name (optional)</Label>
+                                <FieldNotify 
+                                    allowToRender={!!form.formState.errors.email}
+                                    children={form.formState.errors.email?.message}
+                                />
+                                <Input placeholder="Contact name"  id="name" {...form.register('name')}/>
+                            </div>
+
                         </div>
+
                         </div>
                 </CardContent>
                 <CardFooter className="flex-row-reverse">

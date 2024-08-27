@@ -10,6 +10,10 @@ import { NextResponse } from "next/server"
 import { HTTPFeatures } from "@/utils/features/http"
 import { db } from "@/lib/db";
 
+import { SRC_APP_API_BCHAT } from "../../consts";
+
+
+const MINIMUM_ACCEPTABLE_CONTACT_NAME = SRC_APP_API_BCHAT.subRoutes.contact.minLengthOfContactName;
 
 type FindManyContactsOfUserAndIncludeContactProps = {
     userId: string,
@@ -95,6 +99,9 @@ export async function GET(request: Request){
         const contacts = await findManyContactsOfUserAndIncludeContact({userId, sortingStrategy})
 
         return NextResponse.json({
+            /**
+            * Redux thunk fn depends on 'data' attribute from returned response. So do not change the key name
+            */
             data: contacts
         }, {
             status: 200
@@ -131,7 +138,7 @@ export async function POST(request: Request){
 
         let {name, email, block=false} = await request.json();
 
-        if (typeof name === 'string' && name.length < 4){
+        if (typeof name === 'string' && name.length < MINIMUM_ACCEPTABLE_CONTACT_NAME){
             errorMessage = "Invalid name, name should be of atleast four characters", statusCode = 400;
             throw new Error(errorMessage)
         };
@@ -168,6 +175,9 @@ export async function POST(request: Request){
             const newlyCreatedContact = await contactCreateAndIncludeContact({userId, name, isBlocked: block, contactId: contactUser.id})
 
             return NextResponse.json({
+                /**
+                 * Redux thunk fn depends on 'data' attribute from returned response. So do not change the key name
+                 */
                 'data': newlyCreatedContact
             }, {status: 200});
         } catch {
