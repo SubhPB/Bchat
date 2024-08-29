@@ -84,6 +84,12 @@ export function EditContactField({contactId, value}:Props){
         };
     };
     
+    const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter'){
+            setEditMode(false)
+            commitChange()
+        }
+    }
     const ReadMode = () => (
         <>
             <p className='font-medium text-[.8em] w-[90%] truncate'>{value}</p>
@@ -97,6 +103,7 @@ export function EditContactField({contactId, value}:Props){
         <>
             <input
              value={inputValue}
+             onKeyDown={handleEnterKey}
              onChange={e => setInputValue(e.target.value)}
              type="text"
              className={"outline-none w-[90%] border-b-[1px] pb-1 text-xs border-primary-bchat font-normal"} autoFocus/>
@@ -126,7 +133,7 @@ export function EditContactField({contactId, value}:Props){
     )
    
     return (
-        <div className=" flex gap-2 transition-all" ref={ref}>
+        <div className=" flex flex-row-reverse gap-2 transition-all" ref={ref}>
             {
                 editMode ? (
                     <EditMode/>

@@ -33,7 +33,7 @@ function ViewCard({contact, className=''}: Props) {
   const imgFallback = String(contact?.name ?? contactUser.name).toUpperCase().slice(0, 2)
 
   return (
-    <Card className={cn('w-full sm:w-[330px] lg:w-[390px] flex-shrink-0 p-4 shadow-slate-400 shadow-sm', className)}>
+    <Card className={cn('w-full sm:w-[49.5%] flex-shrink-0 p-4 shadow-slate-400 shadow-sm mb-2', className)}>
 
       <CardContent className='flex gap-2 p-0'>
         <Avatar className='relative block size-[90px] sm:size-[120px] bg-teal-200 rounded-2xl overflow-hidden flex-shrink-0'>
@@ -41,15 +41,15 @@ function ViewCard({contact, className=''}: Props) {
           <AvatarFallback className='absolute bg-zinc-300 text-gray-100  inset-0 grid place-content-center text-2xl'>{imgFallback}</AvatarFallback>
         </Avatar>
 
-        <div className="card-crud w-[180px] lg:w-[220px] flex-shrink-0 font-semibold space-y-3 text-[1rem] px-1">
+        <div className="card-crud w-[46%] flex-shrink-0 font-semibold space-y-3 text-[1rem] px-1">
           <div className="contact-info">
-            <p className='font-bold text-primary-bchat w-[80%] truncate'>{captializeText(contact?.name ?? contactUser.name)}</p>
-            <p className='font-semibold text-secondary-bchat w-[80%] truncate text-xs pb-3'>{contactUser.email}</p>
+            <p className='font-bold text-primary-bchat w-[90%] truncate'>{captializeText(contact?.name ?? contactUser.name)}</p>
+            <p className='font-semibold text-secondary-bchat w-[90%] truncate text-xs pb-3'>{contactUser.email}</p>
 
             <EditContactField contactId={contact.id} key={'name'} value={contact.name}/>
           </div>
 
-          <ViewCardFooter className='flex gap-3 text-[1.2em]'>
+          <ViewCardFooter className='flex w-fit bg-gray-300 rounded-lg p-2 space-x-3 text-sm lg:text-lg'>
             <DeleteOption contactId={contact.id}/>
             <BlockOption contactId={contact.id} isBlocked={contact.isBlocked}/>
             <TextOption/>

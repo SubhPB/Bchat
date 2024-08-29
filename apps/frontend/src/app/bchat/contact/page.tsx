@@ -36,9 +36,9 @@ const contact: ContactSucceesReturnType['GET'][number] = {
 function page() {
 
   return (
-    <Workarea.main className='px-2 pt-2 app-scrollbar overflow-y-scroll space-y-2 flex flex-col'>
-      <ContactAddForm className='w-full max-w-[790px] self-center' />
-      <ContactBook className="flex gap-2 flex-wrap justify-center" />
+    <Workarea.main className='px-2 pt-2 app-scrollbar overflow-y-scroll space-y-2 flex flex-col items-center'>
+      <ContactAddForm className='w-full max-w-[790px]' />
+      <ContactBook className="flex max-w-[790px] flex-wrap justify-between" />
     </Workarea.main>
   )
 }
