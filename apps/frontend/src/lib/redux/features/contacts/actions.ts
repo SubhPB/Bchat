@@ -5,9 +5,10 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { SliceState } from "../../shared/custom-slice";
 import { sharedSlice } from "./slice";
-import { ExpectedContactsDataTypeFromAPI, ContactsSlice } from "./slice";
+import { ExpectedContactsDataTypeFromAPI } from "./slice";
 
-const apiEndpoint = '/api/bchat/contact'
+const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL!;
+const apiEndpoint = NEXT_PUBLIC_URL + '/api/bchat/contact'
 
 export function fetchContacts (endpoint=apiEndpoint){return sharedSlice.fetchSliceDataFromAPI(endpoint)};
 
