@@ -54,9 +54,37 @@ const updateContactThenIncludeContactField = async ({contactId, name, isBlocked}
     })
 );
 
-type ContactIDSuccessReturnType = {
-    PATCH: Prisma.PromiseReturnType<typeof updateContactThenIncludeContactField>
-}
+const deleteContact = async (contactId: string) => (
+    await db.contact.delete({
+        where: {
+            id: contactId
+        }
+    })
+);
+
+const getContactThenIncludeContactField = async (contactId: string) => (
+    await db.contact.findUnique({
+        where: {
+            id: contactId
+        },
+        include: {
+            contact: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    emailVerified: true,
+                    image: true,
+                    firstName: true,
+                    lastName: true,
+                    isActive: true,
+                    createdAt: true,
+                    updatedAt: true,
+                }
+            }
+        }
+    })
+)
 
 export async function PATCH(request: Request, args: ArgsTS){
 
@@ -119,4 +147,88 @@ export async function PATCH(request: Request, args: ArgsTS){
         })
     }
 
+};
+
+export async function DELETE(request: Request, args: ArgsTS) {
+    const reqFeatures = new HTTPFeatures.request(request);
+    const userFriendlyObject = reqFeatures.serverSideFeatures.getUserFriendlyObject();
+
+    const userId = headers().get('x-userId'), contactId = args.params.contactId;
+
+    let statusCode = 500, errorMessage = "Something went wrong at the server side";
+
+    try {
+
+        if (!contactId || contactId.length < 5){
+            /** contactId is uuid and not possible to be too short */
+            statusCode = 404, errorMessage = "Contact not found";
+            throw new Error(errorMessage)
+        };
+
+        if (!userId){
+            /**Althougl this condition was checkd in the middleware but still repeated in the case if some one accidently rewrite the middleware logic */
+            statusCode = 401, errorMessage = "You are not authorized to perform this operation";
+            throw new Error(errorMessage)
+        };
+
+        const deletedContact = await deleteContact(contactId);
+
+        return NextResponse.json({
+            'data': deletedContact            
+        }, {
+            status: 200 
+        })
+
+
+    } catch {
+        return NextResponse.json({
+            'userFriendlyData': userFriendlyObject.addToastObject({
+                message: errorMessage,
+                type: "ERROR"
+            }).create()
+        }, {
+            status: statusCode
+        })
+    }
+};
+
+export async function GET(request: Request, args: ArgsTS){
+    const reqFeatures = new HTTPFeatures.request(request);
+    const userFriendlyObject = reqFeatures.serverSideFeatures.getUserFriendlyObject();
+
+    const contactId = args.params.contactId;
+
+    let statusCode = 500, errorMessage = "Something went wrong at the server side";
+
+    try {
+        const contact = await getContactThenIncludeContactField(contactId);
+
+        if (!contact){
+            statusCode = 404, errorMessage = "Contact not found.";
+            throw new Error(errorMessage)
+        };
+
+        return NextResponse.json({
+            'data': contact
+        }, {
+            status: 200
+        });
+        
+    } catch {
+        return NextResponse.json({
+            'userFriendlyData': userFriendlyObject.addToastObject({
+                message: errorMessage,
+                type: "ERROR"
+            }).create()
+        }, {
+            status: statusCode
+        }) 
+    }
+}
+
+/** In the components and redux the following types will be useful */
+export type ContactIDSuccessReturnType = {
+    PATCH: Prisma.PromiseReturnType<typeof updateContactThenIncludeContactField>,
+    DELETE: Prisma.PromiseReturnType<typeof deleteContact>,
+    GET: NonNullable<Prisma.PromiseReturnType< typeof getContactThenIncludeContactField >>
 }

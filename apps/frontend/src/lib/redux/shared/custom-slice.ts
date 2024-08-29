@@ -8,6 +8,8 @@
 import { CaseReducerActions, createSlice, PayloadAction, Reducer, Slice, SliceCaseReducers } from "@reduxjs/toolkit";
 import { AppThunk } from "../app/store";
 
+import { SlicePlugin } from "./plugin";
+
 interface SliceState<T> {
     data: T | null;
     gotError: boolean;
@@ -27,33 +29,32 @@ class SharedSlice <DT> {
     private actions : CaseReducerActions< SliceCaseReducers< SliceState<DT | null> >, string >;
     private reducer : Reducer< SliceState<DT | null> >;
 
-    private static createSlice<T>(sliceName: string){
+    private static createSlice<T>(sliceName: string, plugIn :SlicePlugin){
 
         const ourSharedSlice: Slice = createSlice({
             name: sliceName,
             initialState: initialSliceState,
             reducers: {
                 fetchingAPI(state){
-                    let {data, gotError, isLoading} = state;
-                    data = null; gotError = false; isLoading = true
+                    state.data = null; state.gotError = false; state.isLoading = true
                 },
                 gotErrorResponseFromAPI(state){
-                    let {data, gotError, isLoading} = state;
-                    data = null; gotError = true, isLoading = false;
+                    state.data = null; state.gotError = true, state.isLoading = false;
                 },
                 gotSuccessResponseFromAPI(state: SliceState<T>, action: PayloadAction<T>){
-                    let {data, gotError, isLoading} = state;
-                    data = action.payload; gotError = false; isLoading = false;
-                }
+                    state.data = action.payload; state.gotError = false; state.isLoading = false;
+                },
+                /** register custom actions if exist */
+                ...plugIn.actionsRecord.actions
             }
         });
 
         return ourSharedSlice;
     };
     
-    constructor (sliceName: string){
+    constructor (sliceName: string, plugIn = new SlicePlugin()){
         this.sliceName = sliceName;
-        this.slice = SharedSlice.createSlice<DT>(this.sliceName);
+        this.slice = SharedSlice.createSlice<DT>(this.sliceName, plugIn);
         this.actions = this.slice.actions;
         this.reducer = this.slice.reducer;
     };
@@ -63,15 +64,18 @@ class SharedSlice <DT> {
     };
 
     fetchSliceDataFromAPI(apiEndpoint: string): AppThunk {
+
         const {fetchingAPI, gotErrorResponseFromAPI, gotSuccessResponseFromAPI } = this.actions;
 
-        return async function thunkCallbackFn(dispatch, getState) {
+        return async function thunkCallbackFn(dispatch) {
+
             dispatch(  fetchingAPI( /**No arg value needed */ undefined ) );
 
             const response = await fetch(apiEndpoint);
+            const {data} = await response.json();
+
             
             if (response.ok){
-                const {data} = await response.json();
                 if (data === undefined){
                     console.log(`[Dev-Error] | Redux-Thunk-Callback. Need to fix Api endpoint ${apiEndpoint}. this endpoint was expected to return data object but got undefined.`)
                     dispatch(gotErrorResponseFromAPI(undefined))
@@ -87,3 +91,4 @@ class SharedSlice <DT> {
 };
 
 export {SharedSlice};
+export type {SliceState};

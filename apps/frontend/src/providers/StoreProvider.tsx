@@ -16,8 +16,9 @@ function ReduxStoreProvider({children}:Props) {
 
     const storeRef = useRef<AppStore | null>(null);
     if (!storeRef.current){
-        storeRef.current = makeStore()
-    }
+        storeRef.current = makeStore();
+    };
+
 
     return (
         <Provider store={storeRef.current}>

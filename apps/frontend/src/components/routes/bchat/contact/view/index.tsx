@@ -20,6 +20,8 @@ import { ViewCardFooter } from './footer-options';
 import { DeleteOption, BlockOption, TextOption } from './footer-options';
 import { EditContactField } from './edit-field';
 
+import { captializeText } from '@/utils/features/typing/text';
+
 type Props = {
   contact: ContactSucceesReturnType['GET'][0],
   className ?: string
@@ -28,7 +30,6 @@ type Props = {
 function ViewCard({contact, className=''}: Props) {
 
   const contactUser = contact['contact'] /** contact.contact refers to User model */
-
   const imgFallback = String(contact?.name ?? contactUser.name).toUpperCase().slice(0, 2)
 
   return (
@@ -42,13 +43,15 @@ function ViewCard({contact, className=''}: Props) {
 
         <div className="card-crud w-[180px] lg:w-[220px] flex-shrink-0 font-semibold space-y-3 text-[1rem] px-1">
           <div className="contact-info">
-            <p className='font-bold text-primary-bchat w-[80%] truncate'>{contact?.name ?? contactUser.name}</p>
-            <EditContactField contactId={contact.id} key={'name'} value={contact.name + "ksdjvbslbvnshibecnnejhhehusiglchushwui"}/>
+            <p className='font-bold text-primary-bchat w-[80%] truncate'>{captializeText(contact?.name ?? contactUser.name)}</p>
+            <p className='font-semibold text-secondary-bchat w-[80%] truncate text-xs pb-3'>{contactUser.email}</p>
+
+            <EditContactField contactId={contact.id} key={'name'} value={contact.name}/>
           </div>
 
           <ViewCardFooter className='flex gap-3 text-[1.2em]'>
-            <DeleteOption/>
-            <BlockOption/>
+            <DeleteOption contactId={contact.id}/>
+            <BlockOption contactId={contact.id} isBlocked={contact.isBlocked}/>
             <TextOption/>
           </ViewCardFooter>
         </div>

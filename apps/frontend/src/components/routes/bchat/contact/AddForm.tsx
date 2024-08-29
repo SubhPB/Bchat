@@ -27,6 +27,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useAppDispatch } from '@/lib/redux/hooks';
+import { upsertContact } from '@/lib/redux/features/contacts/slice';
 
 const formSchema = z.object({
     email: z.string().min(1, "* This field is required").email("* Incorrect email"),
@@ -52,6 +54,7 @@ function AddForm({className=''}: Props) {
     });
 
     const {data: session} = useSession();
+    const appDispatch = useAppDispatch()
 
     const handleForm = async (values: formValues) => {
         const userSOwnEmail = session?.user?.email ?? session?.adapterUser?.email;
@@ -79,6 +82,9 @@ function AddForm({className=''}: Props) {
 
         if (response.ok){
             toast.success("Successfully added a new contact");
+            const actionPayload = payload.data;
+            appDispatch(upsertContact(actionPayload))
+            
         } else {
             /** If it is not successful then there must be a toast message from server-api */
             const toastObj = payload?.userFriendlyData?.toast;
@@ -116,7 +122,7 @@ function AddForm({className=''}: Props) {
                                 <Label htmlFor="name">Name (optional)</Label>
                                 <FieldNotify 
                                     allowToRender={!!form.formState.errors.email}
-                                    children={form.formState.errors.email?.message}
+                                    children={form.formState.errors.name?.message}
                                 />
                                 <Input placeholder="Contact name"  id="name" {...form.register('name')}/>
                             </div>
