@@ -5,7 +5,7 @@
 'use client';
 
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { useAppDispatch } from "@/lib/redux/hooks";
 import { deleteContact, upsertContact } from "@/lib/redux/features/contacts/slice";
 
 import { TooltipProvider, TooltipContent, TooltipTrigger, Tooltip } from '@/components/ui/tooltip';
@@ -19,7 +19,6 @@ import { ContactIDSuccessReturnType } from "@/app/api/bchat/contact/[contactId]/
 import { MdDeleteOutline, MdBlock, MdTextsms } from "react-icons/md";
 import { CgUnblock } from "react-icons/cg";
 import { Duration } from "@/utils/features/time/duration";
-import { selectContactById } from "@/lib/redux/features/contacts/selectors";
 
 type OptionsProps = {
     className ?: string;

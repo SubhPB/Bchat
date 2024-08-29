@@ -6,7 +6,6 @@
 import React from 'react';
 import { Workarea } from '../../../components/routes/bchat/layout/workarea';
 import ContactAddForm from '@/components/routes/bchat/contact/AddForm';
-import ViewCard from '@/components/routes/bchat/contact/view';
 import { ContactSucceesReturnType } from '@/app/api/bchat/contact/route';
 
 import { ContactBook } from '@/components/routes/bchat/contact';

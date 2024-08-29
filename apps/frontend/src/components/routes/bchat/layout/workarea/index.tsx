@@ -7,7 +7,6 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { headers } from "next/headers";
 
 type Props = {
     children : React.ReactNode;
