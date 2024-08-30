@@ -16,6 +16,7 @@ import { selectContactsSlice } from "@/lib/redux/features/contacts/selectors";
 
 import ContactCardSkeleton from "./view/skeleton";
 import ViewCard from "./view";
+import { ContactsHandler } from "./cards-handler";
 
 type Props = {
     className ?: string;
@@ -30,7 +31,6 @@ export function ContactBook ({className=''}: Props){
 
     if (!initialized.current) {
         if (!data && !gotError){
-            // store.dispatch(fetchContacts())
             appDispatch(fetchContacts())
 
         };
@@ -48,6 +48,7 @@ export function ContactBook ({className=''}: Props){
     };
 
     if (gotError){
+        console.log("Check state ", {data, gotError, isLoading})
         return (
             <div className={cn("bg-[#f19888] text-sm text-white font-seimbold px-2 py-4 flex gap-2", className)}>
                 <MdErrorOutline className="text-xl"/>
@@ -58,16 +59,18 @@ export function ContactBook ({className=''}: Props){
         )
     }
 
-
     if (data) {
         return (
-            <div className={cn(className)}>
+            /** Used the render prop pattern for readablity */
+            <ContactsHandler className={cn(className)} contacts={data} renderSearchbar>
                 {
-                    data.map(
-                        contact => <ViewCard key={contact.id} contact={contact}/>
+                    (contacts) => (
+                        contacts.map(
+                            contact => <ViewCard key={contact.id} contact={contact}/>
+                        )
                     )
                 }
-            </div>
+            </ContactsHandler>
         )
     };
 

@@ -33,7 +33,7 @@ function ViewCard({contact, className=''}: Props) {
   const imgFallback = String(contact?.name ?? contactUser.name).toUpperCase().slice(0, 2)
 
   return (
-    <Card className={cn('w-full sm:w-[49.5%] flex-shrink-0 p-4 shadow-slate-400 shadow-sm mb-2', className)}>
+    <Card className={cn('w-full sm:!w-[49.5%] flex-shrink-0 p-4 shadow-slate-400 shadow-sm mb-2', className)}>
 
       <CardContent className='flex gap-2 p-0'>
         <Avatar className='relative block size-[90px] sm:size-[120px] bg-teal-200 rounded-2xl overflow-hidden flex-shrink-0'>
