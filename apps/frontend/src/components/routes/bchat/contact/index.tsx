@@ -17,6 +17,7 @@ import { selectContactsSlice } from "@/lib/redux/features/contacts/selectors";
 import ContactCardSkeleton from "./view/skeleton";
 import ViewCard from "./view";
 import { ContactsHandler } from "./cards-handler";
+import Infobar from "@/components/common/Infobar";
 
 type Props = {
     className ?: string;
@@ -32,7 +33,6 @@ export function ContactBook ({className=''}: Props){
     if (!initialized.current) {
         if (!data && !gotError){
             appDispatch(fetchContacts())
-
         };
         initialized.current = true
     };
@@ -48,18 +48,23 @@ export function ContactBook ({className=''}: Props){
     };
 
     if (gotError){
-        console.log("Check state ", {data, gotError, isLoading})
         return (
-            <div className={cn("bg-[#f19888] text-sm text-white font-seimbold px-2 py-4 flex gap-2", className)}>
-                <MdErrorOutline className="text-xl"/>
-                <span>
-                    Oops! Something went wrong while fetching your contact details. You could try again later
-                </span>
-            </div>
+            <Infobar error allowDefaultIcons>
+                Oops! Something went wrong while fetching your contact details. You could try again later
+            </Infobar>
         )
-    }
+    };
 
     if (data) {
+
+        if (!data.length){
+            return (
+                <Infobar success renderCloseButton>
+                    It look like you have not saved any contacts yet. We recommend you to add contacts from the above given form.
+                </Infobar>
+            )
+        }
+
         return (
             /** Used the render prop pattern for readablity */
             <ContactsHandler className={cn(className)} contacts={data} renderSearchbar>
@@ -74,6 +79,10 @@ export function ContactBook ({className=''}: Props){
         )
     };
 
-    return <></>
+    return (
+        <Infobar error allowDefaultIcons>
+            Oops! Something went wrong due to an unexpected event. You may try again later.
+        </Infobar> 
+    )
 }
 

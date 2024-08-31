@@ -13,6 +13,8 @@ import ContactCardSkeleton from "../view/skeleton";
 import { ContactsSearchbar } from "./search-bar";
 import { Duration } from "@/utils/features/time/duration";
 
+import Infobar from "@/components/common/Infobar";
+
 type Props = {
     className: string;
     children: (cards: ExpectedContactsDataTypeFromAPI) => React.ReactNode;
@@ -104,6 +106,7 @@ export function  ContactsHandler({className, children, contacts, renderSearchbar
 
     return (
         <div className={cn('w-full', className)}>
+            
             {renderSearchbar && <ContactsSearchbar {...{audience, attribute, searchQuery, isTransitioning, updateFilterAttribute, updateSearchQuery, updateFilterAudience}}/>}
             {
                 isTransitioning ? (

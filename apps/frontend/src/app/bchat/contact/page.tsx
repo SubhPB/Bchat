@@ -36,8 +36,11 @@ function page() {
 
   return (
     <Workarea.main className='px-2 pt-2 app-scrollbar overflow-y-scroll space-y-2 flex flex-col items-center'>
-      <ContactAddForm className='w-full max-w-[790px]' />
-      <ContactBook className="flex max-w-[790px] flex-wrap justify-between" />
+
+      <div className='w-full max-w-[790px]'>
+        <ContactAddForm/>
+        <ContactBook className="flex flex-wrap justify-between" />
+      </div>
     </Workarea.main>
   )
 }
