@@ -2,10 +2,9 @@
  * Byimaan
  */
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { 
-    RocketIcon,
     StarIcon,
     BanIcon,
     SignatureIcon,
@@ -26,6 +25,7 @@ CommandShortcut,
 } from "@/components/ui/command";
 
 import { FilterStrategy } from ".";
+import { useClickScopeEffect } from "@/utils/react-hooks/use-click-scope";
 
 type Props = {
     searchQuery: string;
@@ -41,6 +41,7 @@ type Props = {
 export function ContactsSearchbar({audience, searchQuery, attribute, updateFilterAttribute, updateSearchQuery, updateFilterAudience, isTransitioning}:Props){
 
     const [renderOptions, setRenderOptions] = useState(false);
+    const elemRef = useRef<HTMLDivElement>(null)
 
     const matchAudience = (str: Props['audience']) => audience === str;
     const matchAttribute = (str: Props['attribute']) => attribute === str;
@@ -48,10 +49,13 @@ export function ContactsSearchbar({audience, searchQuery, attribute, updateFilte
     const getPlaceHolder = () => {
         let attr = attribute.toLowerCase(), contactType = audience === "*" ? 'any' : 'any blocked'
         return `Type the ${attr} of ${contactType} contact`
-    }
+    };
+
+    /** if filtering options are rendered and user clicked somewhere outside of the this component then this hook will set the renderOptions to false and our component will be shrinked in its size*/
+    useClickScopeEffect<React.RefObject<HTMLDivElement>>({rootRef: elemRef, state: renderOptions, setState: setRenderOptions, dependencies: [renderOptions]})
 
     return (
-        <Command className="rounded-lg border shadow-md h-fit w-full mb-2" shouldFilter={false}>
+        <Command ref={elemRef} className="rounded-lg border shadow-md h-fit w-full my-2 sticky top-1 z-[100]" shouldFilter={false}>
         <CommandInput
             onFocus={() => setRenderOptions(true)}
             value={searchQuery}

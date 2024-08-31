@@ -41,7 +41,7 @@ function Infobar({success, warning, error, className='', children, shutdownInMS,
     useEffect(
         () => {
             let fn : undefined | ReturnType<typeof setTimeout>;
-            if (shutdownInMS && shutdownInMS > 0){
+            if (shutdownInMS && render && shutdownInMS > 0){
                 fn = setTimeout(closeInfobar, shutdownInMS)
             };
             return () => fn && clearTimeout(fn)
@@ -77,7 +77,7 @@ function Infobar({success, warning, error, className='', children, shutdownInMS,
                 className
             )}>
                 {renderCloseButton && <MdClose className='absolute text-lg font-semibold cursor-pointer right-2 top-1' onClick={closeInfobar}/>}
-                { allowDefaultIcons && <Icon /> }
+                {allowDefaultIcons && <Icon />}
                 {children}
         </div>
     )

@@ -19,6 +19,8 @@ import { cn } from "@/lib/utils";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { upsertContact } from "@/lib/redux/features/contacts/slice";
 
+import { useClickScopeEffect } from "@/utils/react-hooks/use-click-scope";
+
 type UpdatedContact = ContactIDSuccessReturnType['PATCH']
 
 type Props = {
@@ -112,24 +114,8 @@ export function EditContactField({contactId, value}:Props){
         </>
     );
 
-    useEffect(
-        () => {
-            /** User interactive feature so that if user click outside the scope of component then turn off the edit mode */
-            const listenFn = (e: MouseEvent) => {
-                if (editMode && ref.current &&  !ref.current.contains(e.target as Node)){
-                    setEditMode(false);
-                };
-            };
-
-            if (editMode){
-                document.addEventListener('click', listenFn);
-            }
-
-            const cleanUpFn = () => document.removeEventListener('click', listenFn)
-
-            return cleanUpFn
-        }, [editMode]
-    )
+    /** If edit mode is on and user clicked outside the scope of card then this will set the editState to be false */
+    useClickScopeEffect<React.RefObject<HTMLDivElement>>({rootRef: ref, state: editMode, setState: setEditMode,dependencies: [editMode]})
    
     return (
         <div className=" flex flex-row-reverse gap-2 transition-all" ref={ref}>

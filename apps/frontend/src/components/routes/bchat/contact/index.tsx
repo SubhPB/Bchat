@@ -9,7 +9,6 @@ import React, { useRef } from "react";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import { cn } from "@/lib/utils";
 
-import { MdErrorOutline } from "react-icons/md";
 
 import { fetchContacts } from "@/lib/redux/features/contacts/actions";
 import { selectContactsSlice } from "@/lib/redux/features/contacts/selectors";
