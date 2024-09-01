@@ -3,13 +3,16 @@
  */
 
 import { NextResponse } from "next/server";
-import { NextAuthFunction } from "@/utils/features/security/middleware";
+import { Middleware, NextAuthFunction } from "@/utils/features/security/middleware";
 
-export const apiBchatMiddlewareFn :NextAuthFunction = (req) => {
+import { bchatUserMiddlewareFn } from "./user/_middleware";
 
-    const isAuhtenticated = !! req.auth;
+export const apiBchatMiddlewareFn :NextAuthFunction = (req, ctx) => {
 
-    if (!isAuhtenticated){
+    const isAuthenticated = !! req.auth;
+    const givenPath = req.nextUrl.pathname;
+
+    if (!isAuthenticated){
         return NextResponse.json('You are not authorized to access this endpoint', {
             status: 401
         })
@@ -25,8 +28,15 @@ export const apiBchatMiddlewareFn :NextAuthFunction = (req) => {
     };
     
     const requestHeaders = new Headers(req.headers);
-    /** This header will be helpful for child api subroutes to identify user and to make DB calls */
-    requestHeaders.set('x-userId', userId)
+    /** This header will be helpful for child api subroutes nd the server side components to identify user and to make DB calls */
+    requestHeaders.set('x-userId', userId);
+
+    const bchatUserMiddleware = new Middleware('/api/bchat/user/*', bchatUserMiddlewareFn);
+    if(bchatUserMiddleware.pathMatches(givenPath)){
+        /** remember it is very important to set the x-userId header for the proper working of this middleware */
+        req.headers.set('x-userId', userId)
+        return bchatUserMiddleware.trigger(req, ctx)
+    };
 
     return NextResponse.next({
         request: {
