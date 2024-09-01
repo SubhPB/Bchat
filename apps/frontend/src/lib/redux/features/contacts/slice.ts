@@ -21,9 +21,6 @@ slicePlugin.actionsRecord.register<typeof ContactActions>(ContactActions);
 /**now init the sharedSlice with the plugged in actions */
 export const sharedSlice = new SharedSlice< ExpectedContactsDataTypeFromAPI >(sliceName, slicePlugin);
 
-/** This will be used by ./actions.ts */
-export const fetchContactsAction  = sharedSlice.fetchSliceDataFromAPI;
-
 export const ContactsSlice = sharedSlice.getSharedSlice();
 
 export const ContactsReducer = ContactsSlice.reducer;
