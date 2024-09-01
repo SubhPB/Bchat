@@ -43,7 +43,7 @@ export async function UserAvatar() {
         <DropdownMenu >
             <DropdownMenuTrigger asChild className='text-gray-100'>
                 <Button className=' p-0 text-sm !bg-transparent outline-none hover:text-secondary-bchat rounded-lg focus-visible:ring-0 ring-offset-transparent ring-offset-0 focus-visible:ring-offset-0' type='button'> 
-                    <p className='w-[40vw] max-w-[40vw] sm:w-fit truncate'> {currUser?.email ?? currUser?.name} </p>
+                    <p className='w-[40vw] max-w-[40vw] xs:w-fit truncate'> {currUser?.email ?? currUser?.name} </p>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='font-light'>
