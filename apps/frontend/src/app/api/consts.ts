@@ -1,8 +1,9 @@
 /**
  * BYIMAAN
- */
+*/
 const WHERE_IAM = "src/app/api";
 const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL!;
+const MINIMUM_LENGTH_OF_PASSWORD = 6;
 
 const SRC_APP_API = {
     address: WHERE_IAM,
@@ -17,7 +18,7 @@ const SRC_APP_API = {
                 },
                 register: {
                     address: WHERE_IAM + "/authentication" + "/register",
-                    minLengthOfPassword: 6,
+                    minLengthOfPassword: MINIMUM_LENGTH_OF_PASSWORD,
                     minLenghOfUsername: 4
                 },
                 forgot_password: {
@@ -86,5 +87,6 @@ export {
     SRC_APP_API_AUTENTICATION_FORGOT_PASSWORD,
     SRC_APP_API_AUTENTICATION_LOGIN,
     SRC_APP_API_AUTENTICATION_REGISTER,
-    SRC_APP_API_BCHAT 
+    SRC_APP_API_BCHAT,
+    MINIMUM_LENGTH_OF_PASSWORD
 };
