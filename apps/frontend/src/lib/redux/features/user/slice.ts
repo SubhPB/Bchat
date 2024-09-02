@@ -28,4 +28,4 @@ export const UserSlice = sharedSlice.getSharedSlice();
 
 export const UserReducer = UserSlice.reducer;
 
-/** in future we will also export some actions form here */
+export const {updateUserField, setUserData} = UserSlice.actions;

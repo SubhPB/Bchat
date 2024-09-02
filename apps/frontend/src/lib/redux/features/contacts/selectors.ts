@@ -4,7 +4,7 @@
 
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { ContactsSlice, ContactsSliceState } from "./slice";
+import { ContactsSliceState } from "./slice";
 
 
 export const selectContactsSlice = (state: RootState) => state.contacts as ContactsSliceState;
