@@ -24,6 +24,10 @@ const panels = [
     {
         name: 'Contact',
         href: '/bchat/contact',
+    },
+    {
+        name: 'Account',
+        href: '/bchat/account'
     }
 ] as Panel[];
 

@@ -13,8 +13,6 @@ import ContactCardSkeleton from "../view/skeleton";
 import { ContactsSearchbar } from "./search-bar";
 import { Duration } from "@/utils/features/time/duration";
 
-import Infobar from "@/components/common/Infobar";
-
 type Props = {
     className: string;
     children: (cards: ExpectedContactsDataTypeFromAPI) => React.ReactNode;
