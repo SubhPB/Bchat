@@ -1,3 +1,6 @@
+![BChat arch image](https://github.com/user-attachments/assets/a3a7d7f8-fec8-46fd-8ded-ccecf87b0185)
+
+
 # Turborepo starter
 
 This is an official starter Turborepo.
