@@ -16,6 +16,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar';
 import { cn } from '@/lib/utils';
 
+import { CustomImgAvatar } from '@/components/common/custom-img-avatar';
+
 import { ViewCardFooter } from './footer-options';
 import { DeleteOption, BlockOption, TextOption } from './footer-options';
 import { EditContactField } from './edit-field';
@@ -36,10 +38,7 @@ function ViewCard({contact, className=''}: Props) {
     <Card className={cn('w-full sm:!w-[49.5%] flex-shrink-0 p-4 shadow-slate-400 shadow-sm mb-2', className)}>
 
       <CardContent className='flex gap-2 p-0'>
-        <Avatar className='relative block size-[90px] sm:size-[120px] bg-teal-200 rounded-2xl overflow-hidden flex-shrink-0'>
-          <AvatarImage className=' absolute inset-0 size-full' src={contactUser.image ?? undefined} alt={`@${contact.name}-contact-img`}/>
-          <AvatarFallback className='absolute bg-zinc-300 text-gray-100  inset-0 grid place-content-center text-2xl'>{imgFallback}</AvatarFallback>
-        </Avatar>
+        <CustomImgAvatar imgSrc={contactUser.image ?? undefined} fallback={imgFallback} className=' block size-[90px] sm:size-[120px] bg-teal-200 rounded-2xl overflow-hidden flex-shrink-0' isAwsObject/>
 
         <div className="card-crud w-[46%] flex-shrink-0 font-semibold space-y-3 text-[1rem] px-1">
           <div className="contact-info">

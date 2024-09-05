@@ -36,7 +36,8 @@ export async function UserAvatar() {
     return (
     <div className='flex gap-1'>
         <Avatar>
-            <AvatarImage src={currUser?.image ?? undefined} alt="@user-profile-img" />
+            {/* We do not want to render image on avatar */}
+            {/* <AvatarImage src={undefined} alt="@user-profile-img" /> */}
             <AvatarFallback className='bg-zinc-400 text-gray-100'>{imgFallback}</AvatarFallback>
         </Avatar>
 

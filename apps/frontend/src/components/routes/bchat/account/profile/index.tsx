@@ -25,7 +25,6 @@ import StateMode from './edit/state-mode';
 import { CustomImgAvatar as ProfileImgAvatar } from '@/components/common/custom-img-avatar';
 import { ProfileButtons } from './button';
 
-import { Input } from '@/components/ui/input';
 import { FileContextProvider } from '@/providers/file';
 import FileInput from '@/components/common/file-input';
 
@@ -59,13 +58,17 @@ function Profile({className}:Props) {
     )
   };
 
+  /**
+   * All the logic to upload Image will be written in [ ProfileButtons.UploadImage ]
+   */
+
   return (
     <div className={cn(className)}>
       <ProfileNavbar className='flex justify-between items-center border-b-[.8px] py-2 border-zinc-600' username={captializeText(data.name)}/>
       {/* <ProfileImage className='my-2 space-y-2' imgSrc={data.image || undefined}/> */}
       <StateMode>
         {
-          ({editMode, setEditMode, uploadImage}) => (
+          ({editMode, setEditMode}) => (
             <div className='my-2 space-y-2'>
               {
                 !editMode ? (
@@ -73,7 +76,7 @@ function Profile({className}:Props) {
                    * When editmode is not activate
                    */
                   <>
-                    <ProfileImgAvatar className='w-full h-[340px] rounded-none' fallback={(data.name.toUpperCase()).slice(0,2)} imgSrc={data.image || undefined}/>
+                    <ProfileImgAvatar className='w-full h-[340px] rounded-none' fallback={(data.name.toUpperCase()).slice(0,2)} imgSrc={data.image || undefined} isAwsObject/>
                     <ProfileButtons.Edit onClick={() => setEditMode(true)}>
                       Edit image
                     </ProfileButtons.Edit>  
@@ -93,7 +96,6 @@ function Profile({className}:Props) {
                             onChange={(files) => files[0] && setFiles([files[0]])}
                             maxNoOfFiles={1} maxFileSizeInMB={6}
                             autoFocus={!files[0]}
-                            onBlur={() => alert("Closing...")}
                             handleError={(error)=>{
                               toast.error(error, {position: 'bottom-right'});
                               setEditMode(false)
@@ -102,7 +104,7 @@ function Profile({className}:Props) {
                           <ProfileButtons.DiscardChanges onClick={() => setEditMode(false)}>
                             Discard changes
                           </ProfileButtons.DiscardChanges>
-                          <ProfileButtons.UploadImage onClick={uploadImage}>
+                          <ProfileButtons.UploadImage file={files[0]} userId={data.id} afterUploadSuccessOrError={() => setEditMode(false)}>
                             Save Changes
                           </ProfileButtons.UploadImage>
                         </>
