@@ -5,6 +5,25 @@ import { router } from '@/api/router';
 
 const port = process.env.PORT || 4001;
 
+/**
+ * Folder Structure Strategy for backend
+ * backend/
+    src/
+    app/
+    controllers/
+    <-- models/ 'May not be used' -->
+    routes/
+    services/
+    utils/
+    server.ts
+    config/
+    env.ts
+    database.ts
+    server.ts
+    package.json
+    tsconfig.json
+ */
+
 const app = express();
 
 app.use(cors());
