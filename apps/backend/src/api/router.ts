@@ -1,7 +1,7 @@
 /** Byimaan */
 
 import express from 'express';
-import { getAnotherTest, getTest } from '@/controller';
+import { getAnotherTest, getTest } from '@/controllers/index';
 
 
 export const router = express.Router();
