@@ -1,12 +1,15 @@
 /** Byimaan */
 
 
-import cors from 'cors';
 import 'dotenv/config';
+import cors from 'cors';
+import {Server as HttpServer} from 'http';
+import bodyParser from 'body-parser';
+import morgan from 'morgan'
 import express from 'express';
+
 import { router } from '@/api/router';
 
-import {Server as HttpServer} from 'http';
 import SocketService from './services/socket';
 
 const port = process.env.PORT || 4001;
@@ -41,7 +44,9 @@ function initializeBackend() {
    
    
    /** Express  Middlewares */
+   app.use(bodyParser.json())
    app.use(cors());
+   app.use(morgan('combined'))
    app.use('/api', router);
    
    
@@ -51,7 +56,7 @@ function initializeBackend() {
     console.log(`App listening on port: ${port}`);
    });
    
-   /** We can't start listening without httpServer running */
+   /** After we have httpServer running, only then we can start listening for socket.io connections*/
    socketService.initListeners();
    
 };
