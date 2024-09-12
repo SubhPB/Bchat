@@ -11,7 +11,9 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate",
     "db:push:force-reset": "prisma db push --skip-generate --force-reset",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:migrate:deploy" : "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev --name init"
   },
 
   "exports": {
