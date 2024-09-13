@@ -16,6 +16,8 @@ import { headers } from "next/headers";
 
 import { HTTPFeatures } from "@/utils/features/http";
 
+const REDIS_CACHE_TIME_IN_MS = 9000;
+
 type GetEveryConversationIncludingMessagesAndParticipantsProps = {
     /** need userId,
      * need how many old messages are needed e.g a week, a month, what's the value of cursor from current time 
@@ -67,11 +69,22 @@ const getEveryConversationIncludingMessagesAndParticipants = async (
     return data ? data.conversations : null; 
 };
 
+const cursorMessageDateIsCorrect = (timeStr:string) => {
+    return (
+        timeStr && timeStr.length === 13
+         && !isNaN(parseInt(timeStr)) 
+         && new Date(parseInt(timeStr)).toString() !== 'Invalid Date'
+         /** this date should be older than current time and should not be in future */
+         && new Date(parseInt(timeStr)) < new Date(Date.now())
+    )
+}
+
 export async function GET(request: Request){
 
     const reqFeatures = new HTTPFeatures.request(request);
     const userFriendlyObject = reqFeatures.serverSideFeatures.getUserFriendlyObject();
 
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     let statusCode = 500, errorMessage = "Something went wrong at the server side";
 
     try {
@@ -80,11 +93,43 @@ export async function GET(request: Request){
         if (!userId) { throw new Error("Something went wrong at the server side while getting userId") };
 
         const thisURL = new URL(request.url);
-        const cursorMessageId = thisURL.searchParams.get('cursorMessageId') || undefined,
-        cursorMessageDate = thisURL.searchParams.get('cursorMessageDate') || undefined;
-        const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        let cursorMessageId = thisURL.searchParams.get('cursorMessageId') || undefined,
 
+        /* Default value of cursorMessageDate is a week ago */
+        cursorMessageDate : (Date | string | null) = thisURL.searchParams.get('cursorMessageDate');
+
+        if ( cursorMessageDate && cursorMessageDateIsCorrect(cursorMessageDate)) {
+            cursorMessageDate = new Date(cursorMessageDate)
+        } else {
+            cursorMessageDate = oneWeekAgo;
+        }
+    
         /** Should need redis before computing the expensive this db query */
+        /** 
+         * Endpoint as key for redis : --> app/api/bchat/conversation/[conversationId]?userId=<userId>&cursorMessageId=<cursorMessageId>&cursorMessageDate=<cursorMessageDate.getTime()>
+         */
+
+        let data: ConversationSuccessReturnType['GET'] = null;
+
+        const cached : ConversationSuccessReturnType['GET'] = null /** check cached value from redis */
+
+        if (!cached){
+            data = await getEveryConversationIncludingMessagesAndParticipants({
+                userId,
+                cursorMessageId,
+                tillDate: cursorMessageDate
+            });
+            if (data){
+                /** Update redis cache */
+            }
+        } else {
+            data = cached
+        };
+        
+        return NextResponse.json({
+            /** Be aware before changing the keyName 'data' of the payload because frontend is expecting it to be 'data' */
+            'data': data
+        }, {status: 200})
 
     } catch {
         return NextResponse.json({
@@ -95,8 +140,7 @@ export async function GET(request: Request){
         }, {
             status: statusCode
         })
-    }
-    return NextResponse.json({})
+    };
 };
 
 export type ConversationSuccessReturnType = {

@@ -140,7 +140,7 @@ model Message {
   // Basically instead to using 'to' attribute we will use conversation attr to know the recipients of this message.
   conversation Conversation @relation(fields: [conversationId], references: [id])
 
-  @@index([senderUserId])
+  @@index([senderUserId, createdAt])
 }
 
 model DeletedMessage {
