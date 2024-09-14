@@ -15,9 +15,9 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 
 import { HTTPFeatures } from "@/utils/features/http";
-import IoRedis from "@repo/io-redis"
-
-const REDIS_CACHE_TIME_IN_MS = 9000;
+import { getRedisClientOrThrow } from "@/lib/io-redis/client";
+// import {createRedisInstanceOrThrow} from "@repo/io-redis"
+const REDIS_CACHE_TIME_IN_SECS = 9;
 
 type GetEveryConversationIncludingMessagesAndParticipantsProps = {
     /** need userId,
@@ -111,10 +111,10 @@ export async function GET(request: Request){
          */
 
         let cached: ConversationSuccessReturnType['GET'] = null;
-        let redisClient: null | ReturnType<typeof IoRedis.createRedisInstanceOrThrow> = null;  
+        let redisClient: null | ReturnType<typeof getRedisClientOrThrow> = null;  
         const cacheKey = `app/api/bchat/conversation?userId=${userId}&cursorMessageId=${cursorMessageId}&cursorMessageDate=${cursorMessageDate.getTime()}`
         try {
-            redisClient = IoRedis.createRedisInstanceOrThrow({consumerName: "Frontend/GetEveryConversationIncludingMessagesAndParticipants"});
+            redisClient = getRedisClientOrThrow({consumerName: "Frontend/GetEveryConversationIncludingMessagesAndParticipants"});
             redisClient.get(cacheKey, async (err, result) => {
                 if (result){
                     cached = JSON.parse(result);
@@ -134,7 +134,7 @@ export async function GET(request: Request){
             })
 
             if (redisClient) {
-                redisClient.set(cacheKey, JSON.stringify(cached), "EX", REDIS_CACHE_TIME_IN_MS);
+                await redisClient.set(cacheKey, JSON.stringify(cached), "EX", REDIS_CACHE_TIME_IN_SECS);
             }
         };
 

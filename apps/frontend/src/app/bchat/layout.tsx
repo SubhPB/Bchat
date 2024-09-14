@@ -3,7 +3,7 @@
  * 
  */
 
-import ChatbarContainer from "@/components/routes/bchat/layout/ChatbarConainter";
+import ChatbarContainer from "@/components/routes/bchat/layout/sidebar/chatbar-container";
 import BChatHeader from "../../components/routes/bchat/layout/header";
 
 import ReduxStoreProvider from "@/providers/StoreProvider";
@@ -20,7 +20,9 @@ export default function BchatLayout({
               <BChatHeader />
 
               <div className="flex flex-grow overflow-hidden">
-                <ChatbarContainer className="h-full flex-grow"/>
+                
+                 {/* max-w-[28%] because children takes 72% for large-screens  */}
+                <ChatbarContainer className="h-full flex-grow lg:max-w-[28%]"/>
 
                 {/* User work area */}
                 {
