@@ -9,7 +9,11 @@
   "exports": {
     ".": {
       "types": "./src/index.ts",
-      "default": "./src/index.js"
+      "default": "./dist/index.js"
+    },
+    "./redis-client": {
+      "types": "./src/redis-client/index.ts",
+      "default": "./dist/redis-client/index.js"
     }
   },
   "devDependencies": {

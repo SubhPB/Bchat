@@ -4,26 +4,14 @@
 
 import {RedisOptions, Redis} from "ioredis"
 
-const REDIS_HOST=process.env.REDIS_HOST,
-REDIS_PASSWORD=process.env.REDIS_PASSWORD,
-REDIS_USERNAME=process.env.REDIS_USERNAME,
-REDIS_PORT=process.env.REDIS_PORT || 6379;
-
-const configuration = {
-   port: Number(REDIS_PORT),
-   host: REDIS_HOST,
-   username: REDIS_USERNAME,
-   password: REDIS_PASSWORD
-};
-
 const MAX_RETRIES_TO_ESTABLISH_CONNECTION = 3;
 
-type CreateRedisInstanceOrThrow = {
-    config?: RedisOptions,
+export type CreateRedisInstanceOrThrow = {
+    config: RedisOptions,
     consumerName: string
 }
 
-export default function createRedisInstanceOrThrow({config = configuration, consumerName}: CreateRedisInstanceOrThrow) {
+export function createRedisInstanceOrThrow({config, consumerName}: CreateRedisInstanceOrThrow) {
     try {
 
         const redisOptions : RedisOptions = {
