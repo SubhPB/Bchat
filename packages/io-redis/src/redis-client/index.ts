@@ -18,7 +18,12 @@ const configuration = {
 
 const MAX_RETRIES_TO_ESTABLISH_CONNECTION = 3;
 
-export default function createRedisInstanceOrThrow(config = configuration) {
+type CreateRedisInstanceOrThrow = {
+    config?: RedisOptions,
+    consumerName: string
+}
+
+export default function createRedisInstanceOrThrow({config = configuration, consumerName}: CreateRedisInstanceOrThrow) {
     try {
 
         const redisOptions : RedisOptions = {
@@ -31,7 +36,7 @@ export default function createRedisInstanceOrThrow(config = configuration) {
             maxRetriesPerRequest: 0,
             retryStrategy: (times: number) => {
                 if (times > MAX_RETRIES_TO_ESTABLISH_CONNECTION){
-                    throw new Error(`Redis connection error. Could not connect after ${times}`);
+                    throw new Error(`Redis-${consumerName} connection error. Could not connect after ${times}`);
                 };
                 return Math.min(times*200, 1000)
             },
@@ -39,12 +44,12 @@ export default function createRedisInstanceOrThrow(config = configuration) {
 
         const redis = new Redis(redisOptions);
         redis.on('error', (error:unknown) => {
-            console.warn('[Redis] Error connecting ', error);
+            console.warn(`[Redis-${consumerName}] Error connecting `, error);
         });
 
         return redis
 
     } catch (error) {
-        throw new Error("[Redis] Could not connect a Redis instance");
+        throw new Error(`[Redis-${consumerName}] Could not connect a Redis instance`);
     };
 };
