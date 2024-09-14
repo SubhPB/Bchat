@@ -15,6 +15,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 
 import { HTTPFeatures } from "@/utils/features/http";
+import IoRedis from "@repo/io-redis"
 
 const REDIS_CACHE_TIME_IN_MS = 9000;
 
@@ -109,26 +110,38 @@ export async function GET(request: Request){
          * Endpoint as key for redis : --> app/api/bchat/conversation/[conversationId]?userId=<userId>&cursorMessageId=<cursorMessageId>&cursorMessageDate=<cursorMessageDate.getTime()>
          */
 
-        let data: ConversationSuccessReturnType['GET'] = null;
-
-        const cached : ConversationSuccessReturnType['GET'] = null /** check cached value from redis */
-
-        if (!cached){
-            data = await getEveryConversationIncludingMessagesAndParticipants({
+        let cached: ConversationSuccessReturnType['GET'] = null;
+        let redisClient: null | ReturnType<typeof IoRedis.createRedisInstanceOrThrow> = null;  
+        const cacheKey = `app/api/bchat/conversation?userId=${userId}&cursorMessageId=${cursorMessageId}&cursorMessageDate=${cursorMessageDate.getTime()}`
+        try {
+            redisClient = IoRedis.createRedisInstanceOrThrow({consumerName: "Frontend/GetEveryConversationIncludingMessagesAndParticipants"});
+            redisClient.get(cacheKey, async (err, result) => {
+                if (result){
+                    cached = JSON.parse(result);
+                };
+            })
+        } catch {
+            /** This will be thrown if redis is not available */
+            redisClient = null;
+        };
+        
+        if (!cached) {
+            
+            cached = await getEveryConversationIncludingMessagesAndParticipants({
                 userId,
                 cursorMessageId,
                 tillDate: cursorMessageDate
-            });
-            if (data){
-                /** Update redis cache */
+            })
+
+            if (redisClient) {
+                redisClient.set(cacheKey, JSON.stringify(cached), "EX", REDIS_CACHE_TIME_IN_MS);
             }
-        } else {
-            data = cached
         };
-        
+
         return NextResponse.json({
             /** Be aware before changing the keyName 'data' of the payload because frontend is expecting it to be 'data' */
-            'data': data
+            'data': cached,
+            'provider': redisClient ? "Redis" : "Database" 
         }, {status: 200})
 
     } catch {
