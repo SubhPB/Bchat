@@ -25,8 +25,11 @@
     "@react-email/components": "^0.0.22",
     "@react-email/html": "^0.0.9",
     "@reduxjs/toolkit": "^2.2.7",
+    
     "@repo/db": "*",
     "@repo/ui": "*",
+    "@repo/io-redis": "*",
+
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
