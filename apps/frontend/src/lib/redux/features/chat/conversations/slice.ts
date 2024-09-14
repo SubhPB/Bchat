@@ -19,7 +19,7 @@ export type ConversationSliceState = SliceState<ExpectedConversationDataTypeFrom
 const sliceName = "redux/features/chat/conversations";
 
 const slicePlugin = new SlicePlugin();
-slicePlugin.actionsRecord.register<typeof ConversationActions>(ConversationActions);
+// slicePlugin.actionsRecord.register<typeof ConversationActions>(ConversationActions);
 
 export const sharedSlice = new SharedSlice<ExpectedConversationDataTypeFromAPI>(sliceName, slicePlugin);
 
