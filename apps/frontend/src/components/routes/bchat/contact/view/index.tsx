@@ -13,7 +13,6 @@
 import React from 'react';
 import { ContactSucceesReturnType } from '@/app/api/bchat/contact/route';
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar';
 import { cn } from '@/lib/utils';
 
 import { CustomImgAvatar } from '@/components/common/custom-img-avatar';
