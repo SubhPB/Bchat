@@ -59,7 +59,7 @@ function ChatbarContainer({className}: Props) {
       </section>
     )
   };
-
+  
   if (gotError){
     return (
       <section className={cn(xClassName, className)}>
@@ -69,13 +69,14 @@ function ChatbarContainer({className}: Props) {
       </section>
     )
   };
-
+  
   if (!data || !data.length){
     return (
       <section className={cn(xClassName, className)}>
-        <Infobar success allowDefaultIcons>
+        <Infobar success allowDefaultIcons shutdownInMS={10 * 1000}>
           It looks like you have not started any conversation yet. Please start a new one by adding a new contact.
         </Infobar>
+        <p className='text-center font-semibold text-lg text-gray-400 my-2'> No chat found</p>
       </section>
     )
   }
@@ -87,6 +88,7 @@ function ChatbarContainer({className}: Props) {
             (data as NonNullable<ConversationSuccessReturnType['GET']>).map(
               (conversation) => (
                 <ChatCard key={conversation.id}
+                  chatId={conversation.id}
                   chatImgSrc={conversation.image}
                   chatName={conversation.name}
                   recentMessage={conversation.messages[0].text ?? '...'}
@@ -106,6 +108,6 @@ function ChatbarContainer({className}: Props) {
         </Infobar> 
     </section>
   )
-}
+};
 
 export default ChatbarContainer;
