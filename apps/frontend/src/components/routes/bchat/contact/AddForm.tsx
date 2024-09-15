@@ -29,6 +29,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { upsertContact } from '@/lib/redux/features/contacts/slice';
+import { addConversation } from '@/lib/redux/features/chat/conversations/slice';
+
+import { createConversationAmongTwoUsers } from '@/actions/conversation';
 
 const formSchema = z.object({
     email: z.string().min(1, "* This field is required").email("* Incorrect email"),
@@ -54,7 +57,23 @@ function AddForm({className=''}: Props) {
     });
 
     const {data: session} = useSession();
-    const appDispatch = useAppDispatch()
+    const appDispatch = useAppDispatch();
+
+    const createConversationAndUpdateRedux = async (userId: string, contactId: string, contactName: string) => {
+        try {
+            const conversation = await createConversationAmongTwoUsers({user1Id: userId, user2Id: contactId});
+            /** If conversation is created, add it to redux store */
+            if (conversation){
+
+                /** Bug which needds to be fixed */
+                appDispatch(addConversation(conversation))
+            } else {
+                throw new Error("Failed to create conversation");
+            }
+        } catch {
+            toast.error(`Oops! Failed to create your conversation with ${contactName}`);
+        }
+    }
 
     const handleForm = async (values: formValues) => {
         const userSOwnEmail = session?.user?.email ?? session?.adapterUser?.email;
@@ -84,6 +103,11 @@ function AddForm({className=''}: Props) {
             toast.success("Successfully added a new contact");
             const actionPayload = payload.data;
             appDispatch(upsertContact(actionPayload))
+
+            /** After contact is created, create a conversation between the two */
+            const toastRef2 = toast.loading("Initializing conversation...");
+            await createConversationAndUpdateRedux(session?.user?.id ?? session?.adapterUser?.id, actionPayload.contact.id, actionPayload.contact.name);
+            toast.dismiss(toastRef2)
             
         } else {
             /** If it is not successful then there must be a toast message from server-api */

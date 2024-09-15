@@ -17,7 +17,7 @@ import { headers } from "next/headers";
 import { HTTPFeatures } from "@/utils/features/http";
 import { getRedisClientOrThrow } from "@/lib/io-redis/client";
 // import {createRedisInstanceOrThrow} from "@repo/io-redis"
-const REDIS_CACHE_TIME_IN_SECS = 9;
+const REDIS_CACHE_TIME_IN_SECS = 15;
 
 type GetEveryConversationIncludingMessagesAndParticipantsProps = {
     /** need userId,
@@ -26,49 +26,59 @@ type GetEveryConversationIncludingMessagesAndParticipantsProps = {
    userId: string;
    cursorMessageId ?: string;
    tillDate: Date;
-}
+};
 
-const getEveryConversationIncludingMessagesAndParticipants = async (
-    {userId, cursorMessageId, tillDate}: GetEveryConversationIncludingMessagesAndParticipantsProps
-) => {
-    const data = await db.participant.findUnique({
+const getEveryConversationIncludingMessagesAndParticipants = async({userId, cursorMessageId, tillDate}: GetEveryConversationIncludingMessagesAndParticipantsProps) => {
+
+    const data = await db.conversation.findMany({
         where: {
-            userId: userId
-        },
-        include: {
-            conversations: {
-                include: {
-                    messages: {
-                        include: {
-                            deletedBy: true
-                        },
-                        cursor: cursorMessageId ? {
-                            id: cursorMessageId
-                        } : undefined,
-                        orderBy: {
-                           createdAt: 'desc' 
-                        },
-                        where: {
-                            createdAt: {
-                                /** Keep an eye on this if you want to change it to 'lt' if our query logic behaves opposite */
-                                gt: tillDate
-                            }
-                        }
-                    },
-                    participants: true
+            participants: {
+                some: {
+                    userId: userId
                 },
+            },
+        }, include: {
+            messages: {
+                include: {
+                    deletedBy: true
+                },
+                cursor: cursorMessageId ? {
+                    id: cursorMessageId
+                } : undefined,
                 orderBy: {
-                    /** SO we need new ones first and old oness last 
-                     *  desc : because Date.now() > oldDate --> descreasing order
-                    */
-                    updatedAt: 'desc'
+                   createdAt: 'desc' 
+                },
+                where: {
+                    createdAt: {
+                        /** Keep an eye on this if you want to change it to 'lt' if our query logic behaves opposite */
+                        gt: tillDate
+                    }
+                }
+            },
+            participants: {
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            emailVerified: true,
+                            image: true,
+                            firstName: true,
+                            lastName: true,
+                            isActive: true,
+                            createdAt: true,
+                            updatedAt: true,
+                        }
+                    }
                 }
             }
+        },orderBy : {
+            updatedAt: 'desc'
         }
     });
-
-    return data ? data.conversations : null; 
-};
+    return data
+}
 
 const cursorMessageDateIsCorrect = (timeStr:string) => {
     return (
@@ -110,7 +120,7 @@ export async function GET(request: Request){
          * Endpoint as key for redis : --> app/api/bchat/conversation/[conversationId]?userId=<userId>&cursorMessageId=<cursorMessageId>&cursorMessageDate=<cursorMessageDate.getTime()>
          */
 
-        let cached: ConversationSuccessReturnType['GET'] = null;
+        let cached: ConversationSuccessReturnType['GET'] = [];
         let redisClient: null | ReturnType<typeof getRedisClientOrThrow> = null;  
         const cacheKey = `app/api/bchat/conversation?userId=${userId}&cursorMessageId=${cursorMessageId}&cursorMessageDate=${cursorMessageDate.getTime()}`
         try {

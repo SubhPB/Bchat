@@ -91,7 +91,7 @@ function ChatbarContainer({className}: Props) {
                   chatId={conversation.id}
                   chatImgSrc={conversation.image}
                   chatName={conversation.name}
-                  recentMessage={conversation.messages[0].text ?? '...'}
+                  recentMessage={conversation.messages[0].text ?? ''}
                   unReadCount={0}
                 />
               )
