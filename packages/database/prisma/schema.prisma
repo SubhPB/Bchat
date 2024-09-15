@@ -35,8 +35,7 @@ model User {
 
 
   // It is one-to-one relation because one user can only be represented as one participant.
-  participantId String? @unique
-  particitpant Participant? @relation("OneUserIsOneParticipant")
+  particitpant Participant[] @relation("OneUserCanParticipateInManyConversations")
 }
 
 model Contact {
@@ -70,7 +69,7 @@ model Conversation {
   id String @id @default(uuid())
 
   // we will treat name as group_name in the case of group_chat else htis field does not matter in the case of one-to-one chat
-  name String
+  name String?
   
   // will work as a group_imag in a group chat
   image String?
@@ -96,7 +95,7 @@ enum ParticipantStatus {
 
 model Participant {
   id String @id @default(uuid())
-  userId String @unique
+  userId String
   
   // This status field will help for authorizaion in group chats
   status ParticipantStatus @default(MEMBER)
@@ -107,7 +106,7 @@ model Participant {
   // will helpful in the case like promoting user from MEMBER to ADMIN
   updatedAt DateTime @updatedAt
 
-  user User @relation("OneUserIsOneParticipant", fields: [userId], references: [participantId])
+  user User @relation("OneUserCanParticipateInManyConversations", fields: [userId], references: [id], onDelete: Cascade)
 
   // one participant can join many conversations and one conversation can have multiple participants
   conversations Conversation[] @relation("ManyParticipantsToManyConversations")
