@@ -1,33 +1,45 @@
 /** Byimaan */
 
 import { PayloadAction } from "@reduxjs/toolkit";
-import { sharedSlice } from "./slice";
-import { SliceState } from "@/lib/redux/shared/custom-slice";
 import { ExpectedConversationDataTypeFromAPI } from "./slice";
-/*
-    import { PayloadAction } from "@reduxjs/toolkit";
-    import { SliceState } from "@/lib/redux/shared/custom-slice";
-    import { ExpectedConversationDataTypeFromAPI } from "./slice";
-*/
+import { ConversationsSliceState } from "./slice";
 
-const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL!;
-const apiEndpoint = NEXT_PUBLIC_URL + '/api/bchat/conversation';
+type AnConversationAction<Payload=any> = (state: ConversationsSliceState, action: PayloadAction<Payload>) => void
 
-export function fetchConversations (endpoint=apiEndpoint){return sharedSlice.fetchSliceDataFromAPI(endpoint)};
-
-/** More Conversation Actions will be added if needed */
-
-type Payload = ExpectedConversationDataTypeFromAPI[number];
-type ConversationActions<P> = (state: SliceState<ExpectedConversationDataTypeFromAPI>, action: PayloadAction<P>) => void
-
-export const addConversation : ConversationActions<Payload> = (state, action) => {
-    if (state.data){
-        state.data = [...state.data, action.payload]
-    } else {
-        state.data = [action.payload]
-    }
-}
-
-export const ConversationActions = { 
-    addConversation
+type ConversationActions = {
+    [actionName : string] : AnConversationAction
 };
+
+
+export const ConversationsActions: ConversationActions = {
+    /** First three are specfic to thunk calback */
+    fetchingAPI(state){
+        state.data = null; state.gotError = false; state.isLoading = true
+    },
+    gotErrorResponseFromAPI(state){
+        state.data = null; state.gotError = true, state.isLoading = false;
+    },
+    gotSuccessResponseFromAPI(state : ConversationsSliceState, action: PayloadAction<ExpectedConversationDataTypeFromAPI>){
+        state.data = action.payload; state.gotError = false; state.isLoading = false;
+    },
+
+    /**
+     * Actions to be used if we have valid data state
+    */
+
+    upsertConversation(state: ConversationsSliceState, action: PayloadAction<ExpectedConversationDataTypeFromAPI[number]>){
+        if (state.data && state.data.length){ 
+            /** let 's see if it already exists */
+            const filteredConversations = state.data.filter((conversation) => conversation.id !== action.payload.id);
+            state.data = [
+                action.payload,
+                ...filteredConversations,
+            ]
+        } else [
+            state.data = [
+                action.payload
+            ]
+        ]
+    }
+};
+

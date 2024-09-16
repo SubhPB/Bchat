@@ -3,8 +3,8 @@
  */
 
 import { combineReducers } from "@reduxjs/toolkit";
-import { ConversationReducer } from "./conversations/slice";
+import { conversationsReducer } from "./conversations/slice";
 
 export const ChatReducer = combineReducers({
-    conversations: ConversationReducer
+    conversations: conversationsReducer
 });

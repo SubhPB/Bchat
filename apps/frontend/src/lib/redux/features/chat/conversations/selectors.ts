@@ -1,12 +1,18 @@
-/**
- * Byimaan
+/** Byimaan */
+
+/** 
+ * make seperate selectors for :-
+ *  1. conversation
+ *  2. participants
+ *  3. messages 
+ *  4. ...
  */
 
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "@/lib/redux/app/store";
-import { ConversationSliceState } from "./slice";
+import { ConversationsSliceState } from "./slice";
 
-export const selectConversationsSlice = (state: RootState) => state.chat.conversations as ConversationSliceState;
+export const selectConversationsSlice = (state: RootState) => state.chat.conversations as ConversationsSliceState
 
 export const selectConversations = () => createSelector(selectConversationsSlice, (state) => state.data)
 

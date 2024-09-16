@@ -1,39 +1,33 @@
-/**
+/** 
  * Byimaan
- * 
- * Converstaions slice as holding conversation[] will also includes the sub slices of messages and paryicipents per conversation
  */
 
+import { createSlice } from "@reduxjs/toolkit";
+import { ConversationsActions } from "./actions";
 import { ConversationSuccessReturnType } from "@/app/api/bchat/conversation/route";
-import { SharedSlice, SliceState } from "@/lib/redux/shared/custom-slice";
 
-import { ConversationActions } from "./actions";
-import { SlicePlugin } from "@/lib/redux/shared/plugin";
-/**
- * Might need in future
- * import { SlicePlugin } from "@/lib/redux/shared/plugin";
- */
 
-export type ExpectedConversationDataTypeFromAPI = ConversationSuccessReturnType['GET'];
-export type ConversationSliceState = SliceState<ExpectedConversationDataTypeFromAPI>;
+export type ExpectedConversationDataTypeFromAPI = ConversationSuccessReturnType['GET']
+
+export type ConversationsSliceState = {
+    data: ExpectedConversationDataTypeFromAPI | null
+    gotError: boolean
+    isLoading: boolean
+}
 
 const sliceName = "redux/features/chat/conversations";
 
-let _sharedSlice;
+const initialConversationsState : ConversationsSliceState = {
+    data: null,
+    gotError: false,
+    isLoading: true
+}
 
-try {
-    const slicePlugin = new SlicePlugin();
-    slicePlugin.actionsRecord.register<typeof ConversationActions>(ConversationActions);
-    _sharedSlice = new SharedSlice<ExpectedConversationDataTypeFromAPI>(sliceName, new SlicePlugin());
-} catch {{
-    _sharedSlice = new SharedSlice<ExpectedConversationDataTypeFromAPI>(sliceName);
-}}
+const conversationsSlice = createSlice({
+    name: sliceName,
+    initialState: initialConversationsState,
+    reducers: ConversationsActions
+});
 
-
-export const sharedSlice = _sharedSlice;
-
-export const ConversationSlice = sharedSlice.getSharedSlice();
-
-export const ConversationReducer = ConversationSlice.reducer;   
-
-export const {addConversation} = ConversationSlice.actions
+export const conversationsReducer = conversationsSlice.reducer;
+export const {fetchingAPI, gotErrorResponseFromAPI, gotSuccessResponseFromAPI, upsertConversation} = conversationsSlice.actions
