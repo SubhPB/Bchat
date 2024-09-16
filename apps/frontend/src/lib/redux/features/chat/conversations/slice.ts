@@ -7,7 +7,11 @@ import { ConversationsActions } from "./actions";
 import { ConversationSuccessReturnType } from "@/app/api/bchat/conversation/route";
 
 
-export type ExpectedConversationDataTypeFromAPI = ConversationSuccessReturnType['GET']
+export type ExpectedConversationDataTypeFromAPI = ({
+    unreadMessages ?: number 
+} & 
+    ConversationSuccessReturnType['GET'][number]
+)[];
 
 export type ConversationsSliceState = {
     data: ExpectedConversationDataTypeFromAPI | null
