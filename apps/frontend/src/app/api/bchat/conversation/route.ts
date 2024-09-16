@@ -120,7 +120,7 @@ export async function GET(request: Request){
          * Endpoint as key for redis : --> app/api/bchat/conversation/[conversationId]?userId=<userId>&cursorMessageId=<cursorMessageId>&cursorMessageDate=<cursorMessageDate.getTime()>
          */
 
-        let cached: ConversationSuccessReturnType['GET'] = [];
+        let cached: ConversationSuccessReturnType['GET'] | null = null;
         let redisClient: null | ReturnType<typeof getRedisClientOrThrow> = null;  
         const cacheKey = `app/api/bchat/conversation?userId=${userId}&cursorMessageId=${cursorMessageId}&cursorMessageDate=${cursorMessageDate.getTime()}`
         try {
@@ -151,7 +151,7 @@ export async function GET(request: Request){
         return NextResponse.json({
             /** Be aware before changing the keyName 'data' of the payload because frontend is expecting it to be 'data' */
             'data': cached,
-            'provider': redisClient ? "Redis" : "Database" 
+            "redisHealth": redisClient ? "GOOD" : "BAD"
         }, {status: 200})
 
     } catch {

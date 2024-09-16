@@ -9,17 +9,28 @@ import { db } from "@/lib/db";
 type CreateConversationAmongTwoUsers = {
     user1Id : string;
     user2Id : string;
-}
+};
+
+const getOneToOneConversationID = (userIds: string[]) => userIds.sort().join("_")
 
 /** Bug that need to be fixed in the following code */
 export const createConversationAmongTwoUsers = async (users: CreateConversationAmongTwoUsers) => {
+
+    /** For One to One Conversation ID will be the combination of user1Id and user2Id
+     * This will help to simplfy the code at frontend and backend
+     * we would be able to identify conversation type just by Id.
+     * so more ... 
+     */
+
+    const conversationId = getOneToOneConversationID([users.user1Id, users.user2Id]);
+
     const conversation = await db.conversation.upsert({
         where: {
             type: "ONE_TO_ONE",
-            id: `${users.user1Id}-${users.user2Id}`
+            id: conversationId 
         },
         create: {
-            id: `${users.user1Id}-${users.user2Id}`,
+            id: conversationId,
             participants: {
                 create: [
                     {
@@ -32,7 +43,9 @@ export const createConversationAmongTwoUsers = async (users: CreateConversationA
             }, name: `${users.user1Id}-${users.user2Id}`
         },
         update: {
-           /* Nothing to update */ 
+           /* Nothing to update 
+            * Although, this condition indicates that both users are now mutual friends
+           */ 
         },
          include: {
             participants: {
