@@ -31,6 +31,7 @@ export const createConversationAmongTwoUsers = async (users: CreateConversationA
         },
         create: {
             id: conversationId,
+            name: conversationId,
             participants: {
                 create: [
                     {
@@ -40,7 +41,7 @@ export const createConversationAmongTwoUsers = async (users: CreateConversationA
                         userId: users.user2Id
                     }
                 ]
-            }, name: `${users.user1Id}-${users.user2Id}`
+            }
         },
         update: {
            /* Nothing to update 
