@@ -17,23 +17,38 @@ import Infobar from '@/components/common/Infobar';
 
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { fetchConversations } from '@/lib/redux/features/chat/conversations/thunk';
-
-import { ConversationSuccessReturnType } from '@/app/api/bchat/conversation/route';
-
+import { ChatCardProps } from './chat-card';
+import { ExpectedConversationDataTypeFromAPI } from '@/lib/redux/features/chat/conversations/slice';
+import { useSession } from 'next-auth/react';
 
 
 type Props = {
   className: string
 }
 
-function ChatbarContainer({className}: Props) {
+const getChatCardPropsOutOfData = (data: ExpectedConversationDataTypeFromAPI[number], myUserId: string): ChatCardProps => {
+  
+  return {
+    chatId: data.id,
+    chatName: data.type === "GROUP" ? data.name : data.participants.find(p => p.user.id !== myUserId)?.user.name ?? '',
+    unReadCount: data?.unreadMessages ?? 0,
+    chatImgSrc: data.image,
+    recentMessage: data.messages[0]?.text ?? '',
+  }
+}
 
+function ChatbarContainer({className}: Props) {
+  
   const pathname = usePathname();
   let xClassName = 'app-scrollbar overflow-y-scroll pt-3 px-2 space-y-3 ';
-
+  
   if (pathname !== '/bchat'){
+    /** This will ensure that sidebar is always available on large screens */
     xClassName += 'hidden lg:block'
   };
+
+  const session = useSession();
+  const myUserId = session.data?.user?.id ?? session.data?.adapterUser?.id ?? '';
 
   /** Redux<conversations> Init */
   const appDispatch = useAppDispatch();
@@ -41,7 +56,7 @@ function ChatbarContainer({className}: Props) {
   const initialized = useRef(false);
 
   const {data, gotError, isLoading} = useAppSelector(state => state.chat.conversations);
-
+  
   if (!initialized.current){
     if (!data && !gotError){
       appDispatch(fetchConversations())
@@ -49,7 +64,7 @@ function ChatbarContainer({className}: Props) {
     initialized.current = true
   };
 
-
+  
   if (isLoading){
     return (
       <section className={cn(xClassName, className)}>
@@ -85,14 +100,11 @@ function ChatbarContainer({className}: Props) {
     return (
       <section className={cn(xClassName, className)}>
         {
-            (data as NonNullable<ConversationSuccessReturnType['GET']>).map(
+            (data as NonNullable<ExpectedConversationDataTypeFromAPI>).map(
               (conversation) => (
                 <ChatCard key={conversation.id}
-                  chatId={conversation.id}
-                  chatImgSrc={conversation.image}
-                  chatName={conversation.name}
-                  recentMessage={conversation.messages[0]?.text ?? ''}
-                  unReadCount={0}
+                  // myUserId will be helpful to identify the name of chat card in the case of ONE_TO_ONE conversation
+                  {...getChatCardPropsOutOfData(conversation, myUserId)}
                 />
               )
             )

@@ -63,9 +63,6 @@ function AddForm({className=''}: Props) {
     const createConversationAndUpdateRedux = async (userId: string, contactId: string, contactName: string) => {
         try {
             const conversation = await createConversationAmongTwoUsers({user1Id: userId, user2Id: contactId});
-
-            console.log(" DEBUG<ResponseFromServerAction>: conversation", conversation);
-
             /** If conversation is created, add it to redux store */
             if (conversation){
 

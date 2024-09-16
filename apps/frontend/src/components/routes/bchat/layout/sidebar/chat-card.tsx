@@ -9,6 +9,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { CustomImgAvatar } from '@/components/common/custom-img-avatar';
 import { useRouter, useParams } from 'next/navigation';
+import { captializeText } from '@/utils/features/typing/text';
 type Props = {
   chatId : string;
   className ?: string;
@@ -16,11 +17,15 @@ type Props = {
   unReadCount: number;
   recentMessage: string;
   chatImgSrc: string | null;
-}
+};
+
+export type ChatCardProps = Props;
 
 function ChatCard({className, chatImgSrc, chatName, unReadCount, recentMessage, chatId}: Props) {
 
   const router = useRouter(), params = useParams();
+
+  chatName = captializeText(chatName);
 
   const {conversationId} = params;
   const isActive = conversationId === chatId;
