@@ -16,7 +16,7 @@ import ChatCard from './chat-card';
 import Infobar from '@/components/common/Infobar';
 
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { fetchConversations } from '@/lib/redux/features/chat/conversations/actions';
+import { fetchConversations } from '@/lib/redux/features/chat/conversations/thunk';
 
 import { ConversationSuccessReturnType } from '@/app/api/bchat/conversation/route';
 
@@ -91,7 +91,7 @@ function ChatbarContainer({className}: Props) {
                   chatId={conversation.id}
                   chatImgSrc={conversation.image}
                   chatName={conversation.name}
-                  recentMessage={conversation.messages[0].text ?? ''}
+                  recentMessage={conversation.messages[0]?.text ?? ''}
                   unReadCount={0}
                 />
               )

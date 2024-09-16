@@ -29,7 +29,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { upsertContact } from '@/lib/redux/features/contacts/slice';
-import { addConversation } from '@/lib/redux/features/chat/conversations/slice';
+
+import { upsertConversation } from '@/lib/redux/features/chat/conversations/slice';
 
 import { createConversationAmongTwoUsers } from '@/actions/conversation';
 
@@ -62,11 +63,13 @@ function AddForm({className=''}: Props) {
     const createConversationAndUpdateRedux = async (userId: string, contactId: string, contactName: string) => {
         try {
             const conversation = await createConversationAmongTwoUsers({user1Id: userId, user2Id: contactId});
+
+            console.log(" DEBUG<ResponseFromServerAction>: conversation", conversation);
+
             /** If conversation is created, add it to redux store */
             if (conversation){
 
-                /** Bug which needds to be fixed */
-                appDispatch(addConversation(conversation))
+                appDispatch(upsertConversation(conversation));
             } else {
                 throw new Error("Failed to create conversation");
             }
