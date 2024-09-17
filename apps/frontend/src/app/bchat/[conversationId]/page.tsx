@@ -25,6 +25,19 @@ import { useSession } from "next-auth/react";
 
 type Conversation = ExpectedConversationDataTypeFromAPI[number];
 
+const messsageJson = (id: string, conId: string) : Conversation['messages'][number] =>({
+    id,
+    text: 'hello',
+    conversationId: conId,
+    createdAt: new Date(Date.now() - 10000),
+    deletedBy: [],
+    url:null,
+    contentType: 'text',
+    senderUserId: 'user-id',
+    participantId: 'user-id',
+})
+    
+
 export default function page(){
 
     const {conversationId} = useParams();
@@ -60,17 +73,19 @@ export default function page(){
     return (
         <Workarea.main className="relative overflow-hidden">
 
-            <Conversation.header className="p-2 flex justify-between items-center w-full">
+            <Conversation.header className="absolute top-0 left-0 p-2 flex justify-between bg-slate-100 items-center w-full">
                 <ChatProflile {...getChatProfileProps()}/>
                 <ChatOptions />
             </Conversation.header>
 
-            <Conversation.body>
+            <Conversation.body className="size-full overflow-y-scroll app-scrollbar pb-12 pt-14 px-2 space-y-2 md:px-14">
                 {/* Multiple messages to be shown here */}
-                <Message />
+                {
+                    Array.from('abcdefghijklmnopqrstuvwxyz').map((c, i) => (<Message key={i} message={messsageJson(c, conversation.id)} alignRight={i % 2 === 0}/>))
+                }
             </Conversation.body>
 
-            <Conversation.footer>
+            <Conversation.footer className="absolute w-full bottom-0 left-0 pb-2 flex justify-center items-center">
                 <ChatInput />
             </Conversation.footer>
 

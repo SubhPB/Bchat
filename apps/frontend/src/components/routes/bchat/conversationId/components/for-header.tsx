@@ -40,7 +40,6 @@ type ChatProfileProps = Props & {
     chatImgSrc : string | null;
 };
 
-const DEFAULT_FONT_SIZE = "text-xl";
 
 export function ChatProflile({className, chatName, activityText, chatImgSrc} : ChatProfileProps){
     
@@ -51,12 +50,12 @@ export function ChatProflile({className, chatName, activityText, chatImgSrc} : C
     };
 
     return (
-        <aside className={cn("w-fit text-primary-bchat flex items-center", DEFAULT_FONT_SIZE, className)}>
+        <aside className={cn("w-fit text-primary-bchat flex items-center text-base md:text-xl", className)}>
             <FaArrowLeft className="cursor-pointer" onClick={goBack}/>     
             <CustomImgAvatar className="w-10 h-10 ml-3 mr-2" isAwsObject imgSrc={chatImgSrc ?? undefined} fallback={String(chatName).toUpperCase().slice(0, 2)}/>
             <div className="self-start">
                 <p className="font-bold text-[0.8em] truncate w-[14ch] md:w-[24ch]">{captializeText(chatName)}</p>
-                <p className="text-[0.4em] text-secondary-foreground leading-[0] ">{activityText}</p>
+                <p className="text-[0.5em] text-secondary-foreground leading-[0] ">{activityText}</p>
             </div>
         </aside>
     );
@@ -64,7 +63,7 @@ export function ChatProflile({className, chatName, activityText, chatImgSrc} : C
 
 export function ChatOptions({className} : Props){
     return (
-        <aside className={cn("w-fit text-primary-bchat flex text-lg", className)}>
+        <aside className={cn("w-fit text-primary-bchat flex text-base", className)}>
             <SlOptionsVertical  cursor={'pointer'}/>
         </aside>
     );
