@@ -7,6 +7,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Thumbnail } from "@/components/routes/bchat/layout/workarea/thumbnail";
 
 type Props = {
     children : React.ReactNode;
@@ -14,13 +15,17 @@ type Props = {
 };
 
 type WorkAreaTS = {
-    main: React.FC<Props>
+    main: React.FC<Props>,
+    thumbnail: React.FC<Pick<Props, 'className'>>
 }
 
 export const Workarea: WorkAreaTS = {
     main: ({children, className}) => (
-        <main className={cn("h-full w-full lg:w-[72%]", className)}>
+        <main className={cn("h-full w-full lg:w-[72%] ", className)}>
             {children}
         </main>
+    ),
+    thumbnail: ({className}) => (
+        <Thumbnail className={cn(className)}/>
     )
 }
