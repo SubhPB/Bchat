@@ -19,7 +19,7 @@ function RenderTechStack(size: number, className: string, techArray: IconType[])
         <div className={cn(className)}>
             {
                 techArray.map(
-                    (Tech, index) => <Tech key={randomUUID()} size={size}/>
+                    (Tech, index) => <Tech key={index} size={size}/>
                 )
             }
         </div>

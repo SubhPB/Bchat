@@ -16,4 +16,4 @@ export const selectConversationsSlice = (state: RootState) => state.chat.convers
 
 export const selectConversations = () => createSelector(selectConversationsSlice, (state) => state.data)
 
-export const selectConversationById = (id:string) => createSelector(selectConversationsSlice, (state) => state.data?.filter(conversation => conversation.id === id))
+export const selectConversationById = (id:string) => createSelector(selectConversationsSlice, (state) => state.data?.find(conversation => conversation.id === id))

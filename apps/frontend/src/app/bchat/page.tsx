@@ -4,8 +4,7 @@ import React from 'react';
 import { headers } from 'next/headers';
 
 import { Workarea } from '../../components/routes/bchat/layout/workarea';
-import BChatText from '@/components/common/AppText.server';
-import { TechStack } from '@/components/common/TechStack.server';
+import { cn } from '@/lib/utils';
 
 async function BChat() {
     const pathname = headers().get('x-pathname');
@@ -17,25 +16,12 @@ async function BChat() {
     if (pathnameMatches) xClassName += " w-[0px] hidden lg:flex";
 
     return (
-        <Workarea.main className={xClassName}>
+        <Workarea.main className={cn(xClassName)}>
 
-            <div>
-                <BChatText textSizeInTailwind="text-[8rem]" className='text-gray-300'
-                    spanChildOf_B_letter={
-                    <span className='absolute left-full top-5 text-[0.3em] tracking-wider'>YIਮਾਨ</span>
-                    }
-                />
-                {
-                TechStack.render["*"]({
-                    size: 24,
-                    className:"w-full flex justify-center items-center gap-3 sm:gap-5",
-                    iconClassName: "flex gap-3 sm:gap-5 text-bold text-gray-400"
-                })
-                }
-            </div>
+            <Workarea.thumbnail />
 
         </Workarea.main>
     )
-}
+};
 
 export default BChat
