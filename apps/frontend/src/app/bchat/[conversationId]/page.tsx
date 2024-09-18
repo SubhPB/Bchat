@@ -64,7 +64,7 @@ export default function page(){
 
     const getChatProfileProps = () => {
         return {
-            chatName : conversation.type === 'GROUP' ? conversation.name :  conversation.participants.find(p => p.user.id !== myUserId)?.user.name ?? '',
+            chatName : (conversation.type === 'GROUP' ? conversation.name :  conversation.participants.find(p => p.user.id !== myUserId)?.user.name) ?? '',
             activityText : 'online',
             chatImgSrc : conversation.image,
         }
