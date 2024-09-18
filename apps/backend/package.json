@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@repo/io-redis": "*",
+    "@repo/db": "*",
 
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
