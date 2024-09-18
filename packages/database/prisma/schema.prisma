@@ -117,8 +117,8 @@ model Participant {
 
 model Message {
   id String @unique @default(uuid())
-  participantId String @unique 
-  conversationId String @unique
+  participantId String
+  conversationId String 
 
   contentType String // For this we will restrictly follow the values of Content-Type such as text/plain or image/png
 
