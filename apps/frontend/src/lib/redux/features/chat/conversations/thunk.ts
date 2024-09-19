@@ -9,7 +9,6 @@ import { fetchingAPI, gotErrorResponseFromAPI, gotSuccessResponseFromAPI } from 
 const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL!;
 const API_ENDPOINT_TO_FETCH_CONVERSATIONS = NEXT_PUBLIC_URL + '/api/bchat/conversation';
 
-
 export const fetchConversations = (endpoint=API_ENDPOINT_TO_FETCH_CONVERSATIONS):AppThunk => {
 
     return async (dispatch) => {
