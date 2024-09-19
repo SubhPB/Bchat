@@ -169,7 +169,24 @@ const onDisconnect = (socket: Socket, _io : IoServer) => {
     };
 };
 
+const userIdMiddleware = (socket: Socket, next: Function) => {
+    const userId = socket?.handshake?.query?.userId;
+
+    if (typeof userId === 'string') {
+        //@ts-ignore
+        socket.userId = userId;
+        next();
+    } else {
+        socket.emit(CLIENT_EVENTS.YOU_NOT_GAVE_USER_ID_FOR_CONNECTION);
+        return next(
+            new Error(CLIENT_EVENTS.YOU_NOT_GAVE_USER_ID_FOR_CONNECTION
+            )
+        )
+    }
+}
+
 export {
     onConnection,
-    onDisconnect
+    onDisconnect,
+    userIdMiddleware
 };
