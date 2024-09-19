@@ -12,7 +12,7 @@ import { router } from '@/api/router';
 
 import SocketService from './services/socket';
 
-const port = process.env.PORT || 4001;
+const port = process.env.PORT || 8000;
 
 /**
  * Folder Structure Strategy for backend

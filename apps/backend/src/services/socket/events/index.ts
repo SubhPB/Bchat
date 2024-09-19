@@ -22,7 +22,8 @@ const {
     handleJoinConversation,
     handleJoinUserRoom,
     handleIsUserOnline,
-    handleLeaveUserRoom
+    handleLeaveUserRoom,
+    handleOnDisconnect
 } = socketEventhandlers;
 
 /** The events that will be received from client */
@@ -41,6 +42,8 @@ export const EVENTS = {
 
     /* Client can make special request to check if someone is online */
     IS_USER_ONLINE : "is_user_online",
+
+    DISCONNECT: "disconnect",
 
 } as const;
 
@@ -125,6 +128,8 @@ const onConnection = (socket: Socket, io : IoServer) => {
         (props: Omit<ConversationUserBaseProps, 'conversationId'>) => handleLeaveUserRoom(socket, props)
     );
 
+    socket.on(EVENTS.DISCONNECT, () => handleOnDisconnect(socket));
+
     /** ------------ Events to broadcast ------------ */
 
 
@@ -147,28 +152,6 @@ const onConnection = (socket: Socket, io : IoServer) => {
     )
 
 };
-const onDisconnect = (socket: Socket, _io : IoServer) => {
-
-    //@ts-ignore
-    if (socket?.userId && typeof socket?.userId === 'string') {
-        //@ts-ignore
-        const userRoomId = socket?.userId as string;
-
-        /** Let the other user know that the user is going to offline */
-        socket.broadcast.to(userRoomId).emit(CLIENT_EVENTS.SOMEONE_IS_OFFLINE, {userId : userRoomId});
-        socket.leave(userRoomId);
-
-        /** Since the if main user has left his room, So at the client side we will implement a event of `LEAVE_USER_ROOM` so that room can get empty */
-
-        /** Just for consistency we still dispatch YOU_HAVE_TO_LEAVE_USER_ROOM */
-
-        socket.broadcast.to(userRoomId).emit(
-            CLIENT_EVENTS.YOU_HAVE_TO_LEAVE_USER_ROOM,
-            {userId : userRoomId}
-        )
-    };
-};
-
 const userIdMiddleware = (socket: Socket, next: Function) => {
     const userId = socket?.handshake?.query?.userId;
 
@@ -187,6 +170,5 @@ const userIdMiddleware = (socket: Socket, next: Function) => {
 
 export {
     onConnection,
-    onDisconnect,
     userIdMiddleware
 };

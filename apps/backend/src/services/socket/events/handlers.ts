@@ -127,7 +127,21 @@ const handleLeaveUserRoom = (socket: Socket, {userId}: Omit<ConversationUserBase
         socket.leave(roomIdAsUserId);
         socket.emit(CLIENT_EVENTS.YOU_HAVE_LEFT_USER_ROOM, {userId} );
     }
-}
+};
+
+const handleOnDisconnect = (socket: Socket) => {
+    //@ts-ignore
+    if (socket?.userId && typeof socket?.userId === 'string') {
+        //@ts-ignore
+        const userRoomId = socket?.userId as string;
+        /** Let the other user know that the user is going to offline */
+        socket.broadcast.to(userRoomId).emit(CLIENT_EVENTS.SOMEONE_IS_OFFLINE, {userId : userRoomId});
+        socket.leave(userRoomId);
+        /** Since the if main user has left his room, So at the client side we will implement a event of `LEAVE_USER_ROOM` so that room can get empty*/
+        /** Just for consistency we  will still dispatch YOU_HAVE_TO_LEAVE_USER_ROOM*/
+        socket.broadcast.to(userRoomId).emit(CLIENT_EVENTS.YOU_HAVE_TO_LEAVE_USER_ROOM, {userId : userRoomId});
+    };
+};
 
 export const socketEventhandlers = {
     handleSendMessageToConversation,
@@ -137,6 +151,7 @@ export const socketEventhandlers = {
     handleJoinConversation,
     handleJoinUserRoom,
     handleIsUserOnline,
-    handleLeaveUserRoom
+    handleLeaveUserRoom,
+    handleOnDisconnect
 };
 

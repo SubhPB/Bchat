@@ -6,7 +6,7 @@
 
 
 import { Server as IoServer } from "socket.io";
-import { onConnection, onDisconnect, userIdMiddleware } from "./events";
+import { onConnection, userIdMiddleware } from "./events";
 
 class SocketService {
     private io: IoServer
@@ -29,8 +29,6 @@ class SocketService {
         this.io.use(userIdMiddleware)
         /**All socket listeners here */
         this.io.on('connection', (socket) => onConnection(socket, this.io));
-
-        this.io.on('disconnect', (socket) => onDisconnect(socket, this.io));
 
     };
 
