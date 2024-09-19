@@ -6,6 +6,7 @@
 
 
 import { Server as IoServer } from "socket.io";
+import { onConnection, onDisconnect } from "./events";
 
 class SocketService {
     private io: IoServer
@@ -23,11 +24,11 @@ class SocketService {
     };
 
     public initListeners = () => {
-
+        console.log(" Initializing Socket.io listeners...");
         /**All socket listeners here */
-        this.io.on('connection', (socket) => {
-            console.log('a user connected', socket.id);
-        });
+        this.io.on('connection', (socket) => onConnection(socket, this.io));
+
+        this.io.on('disconnect', (socket) => onDisconnect(socket, this.io));
 
     };
 
