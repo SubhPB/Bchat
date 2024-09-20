@@ -2,7 +2,7 @@
 
 /** What are the socket features and events do our components want to use and dispatch  */
 
-import { Socket } from "socket.io";
+import { Socket } from "socket.io-client";
 import { EVENTS } from "./events";
 import { 
     ConversationBaseProps,
@@ -12,19 +12,30 @@ import {
     UserTypingProps
 } from "./types";
 
-const useEventDispatcher = (socket : Socket) => {
-    
+export const useEventDispatcher = (socket : Socket | null) => {
+
     const dispatchEvents =  {
         dispatchJoinConversation: ({conversationId}: ConversationBaseProps) => {
+
+
+            if (!socket){
+                return
+            }
+
             /**
              * Responsibilities:
              *  [1] Dispatch the JOIN_CONVERSATION event to the server
              */
 
+
             socket.emit(EVENTS.JOIN_CONVERSATION, {conversationId})
         },
 
         dispatchJoinUserRoom: ({userId}: Omit<ConversationUserBaseProps, 'conversationId'>) => {
+            if (!socket){
+                return
+            }
+
             /**
              * Responsibilities:
              *  [1] Dispatch the JOIN_USER_ROOM event to the server so that i can get the update about the user who own the room
@@ -33,6 +44,10 @@ const useEventDispatcher = (socket : Socket) => {
         },
 
         dispatchLeaveUserRoom: ({userId}: Omit<ConversationUserBaseProps, 'conversationId'>) => {
+            if (!socket){
+                return
+            }
+
             /**
              * Responsibilities:
              *  [1] Dispatch the LEAVE_USER_ROOM event to the server because the user who owns the room has gone offline or we are no longer interested in this room
@@ -41,6 +56,10 @@ const useEventDispatcher = (socket : Socket) => {
         },
 
         dispatchIsUserOnline: ({userId}: IsUserOnlineProps) => {
+            if (!socket){
+                return
+            }
+
             /**
              * Responsibilities:
              *  [1] Dispatch the IS_USER_ONLINE event to the server because we are curious if someone is online
@@ -49,6 +68,10 @@ const useEventDispatcher = (socket : Socket) => {
         },
 
         dispatchSendMessageToConversation: ({conversationId, message}: HandleMessageProps) => {
+            if (!socket){
+                return
+            }
+
             /**
              * Responsibilities:
              *  [1] Dispatch the SEND_MESSAGE_TO_CONVERSATION event to the server
@@ -58,6 +81,10 @@ const useEventDispatcher = (socket : Socket) => {
         },
 
         dispatchDeleteMessageFromConversation: ({conversationId, message}: HandleMessageProps) => {
+            if (!socket){
+                return
+            }
+
             /**
              * Responsibilities:
              *  [1] Dispatch the DELETE_MESSAGE_FROM_CONVERSATION event to the server
@@ -67,6 +94,10 @@ const useEventDispatcher = (socket : Socket) => {
         },
 
         dispatchIamTypingInConversation: ({conversationId}: UserTypingProps) => {
+            if (!socket){
+                return
+            }
+
             /**
              * Responsibilities:
              *  [1] Dispatch the USER_IS_TYPING_IN_CONVERSATION event to the server so that other users can see that iam typing
@@ -75,11 +106,17 @@ const useEventDispatcher = (socket : Socket) => {
         },
 
         dispatchIHaveStoppedTypingInConversation: ({conversationId}: UserTypingProps) => { 
+            if (!socket){
+                return
+            }
+
             /**
              * Responsibilities: 
              *  [1] Dispatch USER_STOPPED_TYPING_IN_CONVERSATION event to the server so that other user can know that i no longer typing in a conversation
              */
             socket.emit(EVENTS.USER_STOPPED_TYPING_IN_CONVERSATION,{conversationId})
         }
-    }
+    } as const;
+
+    return dispatchEvents ;
 };

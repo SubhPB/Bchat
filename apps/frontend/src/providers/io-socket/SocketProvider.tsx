@@ -3,11 +3,11 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import React, { useEffect, createContext, useState, useCallback } from 'react';
-import toast from 'react-hot-toast';
+import React, { useEffect, createContext, useState, useMemo } from 'react';
 import IoSocket, {Socket} from "socket.io-client";
 
-import { clientEventHandlers } from './handlers';
+import { useEventHandlers } from './handlers';
+import { useEventDispatcher } from './dispatchers';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
@@ -16,9 +16,7 @@ type Props = {
     backendUrl ?: string;
 };
 
-type SocketContextType = {
-    args: any
-} | null;
+type SocketContextType = ReturnType<typeof useEventDispatcher> | null;
 
 const SocketContext = createContext<SocketContextType>(null);
 
@@ -29,6 +27,10 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
 
     /** useSocket will have all the methods to interact with the socket which will be used in different components */
 
+    const eventDispatchers = useMemo(() => (
+        useEventDispatcher(ioSocket)
+    ), [ioSocket]);
+
     useEffect(
         () => {
 
@@ -38,8 +40,14 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
                 }
             });
 
+            /**
+             * Event handlers are the ones who handles events which are sent by server to us.
+             * and the reason we passed eventDispatchers as a parameter is because we might need to dispatch some events back to the server
+             */
+            const eventHandlers = useEventHandlers(eventDispatchers);
+
             /** Handle events here */
-            Object.entries(clientEventHandlers).forEach(([eventName, eventHandler]) => {
+            Object.entries(eventHandlers).forEach(([eventName, eventHandler]) => {
                 socket.on(eventName, eventHandler);
             });
 
@@ -52,7 +60,7 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
                  * e.g:-  * socket.off(<event_name>)
                  */
 
-                Object.entries(clientEventHandlers).forEach(([eventName, eventHandler]) => {
+                Object.entries(eventHandlers).forEach(([eventName, eventHandler]) => {
                     socket.off(eventName, eventHandler);
                 })
 
@@ -68,7 +76,7 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
     );
 
     return (
-        <SocketContext.Provider value={null}>
+        <SocketContext.Provider value={eventDispatchers}>
             {children}    
         </SocketContext.Provider>  
     )
@@ -77,7 +85,7 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
 export const useSocket = () => {
     const context = React.useContext(SocketContext);
     if (!context) {
-        throw new Error("useScocket must be used within a SocketProvider");
+        throw new Error("useSocket must be used within a SocketProvider");
     }
     return context
 }
