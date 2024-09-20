@@ -8,7 +8,8 @@ import { ConversationSuccessReturnType } from "@/app/api/bchat/conversation/rout
 
 
 export type ExpectedConversationDataTypeFromAPI = ({
-    unreadMessages ?: number 
+    unreadMessages ?: number,
+    usersWhoAreTyping ?: string[], 
 } & 
     ConversationSuccessReturnType['GET'][number]
 )[];

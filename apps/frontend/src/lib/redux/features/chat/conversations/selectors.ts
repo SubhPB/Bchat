@@ -1,7 +1,7 @@
 /** Byimaan */
 
 /** 
- * make seperate selectors for :-
+ * make separate selectors for :-
  *  1. conversation
  *  2. participants
  *  3. messages 

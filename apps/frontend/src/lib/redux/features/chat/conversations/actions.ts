@@ -12,7 +12,7 @@ type ConversationActions = {
 
 
 export const ConversationsActions: ConversationActions = {
-    /** First three are specfic to thunk calback */
+    /** First three are specific to thunk callback */
     fetchingAPI(state){
         state.data = null; state.gotError = false; state.isLoading = true
     },
