@@ -30,7 +30,7 @@ const getChatCardPropsOutOfData = (data: ExpectedConversationDataTypeFromAPI[num
   
   return {
     chatId: data.id,
-    chatName: data.type === "GROUP" ? data.name : data.participants.find(p => p.user.id !== myUserId)?.user.name ?? '',
+    chatName: (data.type === "GROUP" ? data.name : data.participants.find(p => p.user.id !== myUserId)?.user.name) ?? '',
     unReadCount: data?.unreadMessages ?? 0,
     chatImgSrc: data.image,
     recentMessage: data.messages[0]?.text ?? '',

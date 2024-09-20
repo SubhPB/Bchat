@@ -87,7 +87,7 @@ const handleJoinUserRoom = (socket: Socket, io: IoServer, {userId}: Omit<Convers
     const roomExists = io.sockets.adapter.rooms.has(roomName);
 
     /** This user himself can't intentionally join his own room. Upon socket connection this is backend's responsibilty to automatically join him in his own room */
-    /** Outsiders can only join this room if this rrom exists */
+    /** Outsiders can only join this room if this room exists */
     if (typeof userId === 'string' && !isItUserItself && !socket.rooms.has(roomName) && roomExists ) {
         socket.join(userId);
         socket.emit(CLIENT_EVENTS.YOU_HAVE_JOINED_USER_ROOM, {userId} );
@@ -136,10 +136,11 @@ const handleOnDisconnect = (socket: Socket) => {
         const userRoomId = socket?.userId as string;
         /** Let the other user know that the user is going to offline */
         socket.broadcast.to(userRoomId).emit(CLIENT_EVENTS.SOMEONE_IS_OFFLINE, {userId : userRoomId});
-        socket.leave(userRoomId);
         /** Since the if main user has left his room, So at the client side we will implement a event of `LEAVE_USER_ROOM` so that room can get empty*/
         /** Just for consistency we  will still dispatch YOU_HAVE_TO_LEAVE_USER_ROOM*/
         socket.broadcast.to(userRoomId).emit(CLIENT_EVENTS.YOU_HAVE_TO_LEAVE_USER_ROOM, {userId : userRoomId});
+        
+        socket.leave(userRoomId);
     };
 };
 
