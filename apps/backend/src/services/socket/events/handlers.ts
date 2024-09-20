@@ -143,7 +143,7 @@ const handleOnDisconnect = (socket: Socket) => {
     };
 };
 
-export const socketEventhandlers = {
+export const socketEventHandlers = {
     handleSendMessageToConversation,
     handleUserIsTypingInConversation,
     handleUserStoppedTypingInConversation,

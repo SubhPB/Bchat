@@ -5,7 +5,7 @@
  */
 
 import { Socket, Server as IoServer } from "socket.io";
-import { socketEventhandlers } from "./handlers";
+import { socketEventHandlers } from "./handlers";
 import { 
     ConversationBaseProps,
     ConversationUserBaseProps,
@@ -24,7 +24,7 @@ const {
     handleIsUserOnline,
     handleLeaveUserRoom,
     handleOnDisconnect
-} = socketEventhandlers;
+} = socketEventHandlers;
 
 /** The events that will be received from client */
 export const EVENTS = {
@@ -71,7 +71,7 @@ export const CLIENT_EVENTS = {
     /** ERROR */
     YOU_NOT_GAVE_USER_ID_FOR_CONNECTION : "you_not_gave_user_id_for_connection",
 
-    /** Clue : Any client events satrts with SOMEONE will be broadcasted means user itself will not receive the event */
+    /** Clue : Any client events starts with SOMEONE will be broadcasted means user itself will not receive the event */
     SOMEONE_IS_TYPING_IN_CONVERSATION : "someone_is_typing_in_conversation",
     SOMEONE_HAS_STOPPED_TYPING_IN_CONVERSATION : "someone_has_stopped_typing_in_conversation",
     SOMEONE_IS_ONLINE : "someone_is_online",

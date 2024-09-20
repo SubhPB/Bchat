@@ -46,7 +46,7 @@ function initializeBackend() {
    /** Express  Middlewares */
    app.use(bodyParser.json())
    app.use(cors());
-   app.use(morgan('combined'))
+   app.use(morgan('dev'))
    app.use('/api', router);
    
    
