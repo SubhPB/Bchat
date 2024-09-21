@@ -5,9 +5,9 @@
 import { useSession } from 'next-auth/react';
 import React, { useEffect, createContext, useState, useMemo } from 'react';
 import IoSocket, {Socket} from "socket.io-client";
+import { useAppDispatch } from '@/lib/redux/hooks';
 
-import { useEventHandlers } from './handlers';
-import { useEventDispatcher } from './dispatchers';
+import { useIoEventManager } from '@/utils/react-hooks/use-socket-event-manager';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
@@ -16,7 +16,7 @@ type Props = {
     backendUrl ?: string;
 };
 
-type SocketContextType = ReturnType<typeof useEventDispatcher> | null;
+type SocketContextType = ReturnType<typeof useIoEventManager>['eventDispatchers'] | null;
 
 const SocketContext = createContext<SocketContextType>(null);
 
@@ -24,12 +24,15 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
 
     const [ioSocket, setIoSocket] = useState<Socket | null>(null);
     const session = useSession(), userId = (session.data?.user?.id ?? session.data?.adapterUser?.id) as string;
+    const appDispatch = useAppDispatch();
 
     /** useSocket will have all the methods to interact with the socket which will be used in different components */
-
-    const eventDispatchers = useMemo(() => (
-        useEventDispatcher(ioSocket)
-    ), [ioSocket]);
+    const {eventDispatchers, eventHandlers} = useMemo(
+        () => useIoEventManager(
+            ioSocket, appDispatch
+        ),
+        [ioSocket, appDispatch]
+    );
 
     useEffect(
         () => {
@@ -44,7 +47,6 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
              * Event handlers are the ones who handles events which are sent by server to us.
              * and the reason we passed eventDispatchers as a parameter is because we might need to dispatch some events back to the server
              */
-            const eventHandlers = useEventHandlers(eventDispatchers);
 
             /** Handle events here */
             Object.entries(eventHandlers).forEach(([eventName, eventHandler]) => {
@@ -82,7 +84,7 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
     )
 };
 
-export const useSocket = () => {
+export const useSocketEvents = () => {
     const context = React.useContext(SocketContext);
     if (!context) {
         throw new Error("useSocket must be used within a SocketProvider");
