@@ -10,6 +10,7 @@ import { ConversationSuccessReturnType } from "@/app/api/bchat/conversation/rout
 export type ExpectedConversationDataTypeFromAPI = ({
     unreadMessages ?: number,
     usersWhoAreTyping ?: string[], 
+    socketConnectionStatus ?: boolean
 } & 
     ConversationSuccessReturnType['GET'][number]
 )[];
@@ -35,4 +36,16 @@ const conversationsSlice = createSlice({
 });
 
 export const conversationsReducer = conversationsSlice.reducer;
-export const {fetchingAPI, gotErrorResponseFromAPI, gotSuccessResponseFromAPI, upsertConversation} = conversationsSlice.actions
+export const {
+    fetchingAPI,
+    gotErrorResponseFromAPI, 
+    gotSuccessResponseFromAPI,
+
+    upsertConversation,
+    addMessageToConversation,
+    deleteMessageFromConversation,
+    setConversationAsRead,
+    setSocketConnectionStatusOfConversation,
+    removeSomeoneWhoIsTyping,
+    addSomeoneWhoIsTyping
+} = conversationsSlice.actions
