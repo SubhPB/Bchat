@@ -26,4 +26,5 @@ export const selectChatUsersWhoAreOnline = () => createSelector(
 export const selectIsChatUserOnline = (id: string) => createSelector(
     selectChatUsers,
     (state) => state.find(user => user.userId === id)?.status === "online"
-)
+);
+

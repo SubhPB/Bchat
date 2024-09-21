@@ -164,5 +164,5 @@ export const ConversationsActions: ConversationActions = {
         }
     },
 
-};
+} as const;
 

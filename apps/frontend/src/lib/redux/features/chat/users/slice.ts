@@ -24,5 +24,12 @@ export const {
     removeChatUser,
     addChatUser,
     setChatUserToOnline,
-    setChatUserToOffline
+    setChatUserToOffline,
+
+    /** These two status upsert actions can handle following events:
+     * [1] SOMEONE_IS_ONLINE [2] SOMEONE_IS_OFFLINE
+     * [3] YOUR_REQUESTED_USER_IS_ONLINE [4] YOUR_REQUESTED_USER_IS_OFFLINE
+     */
+    upsertSomeoneIsOffline,
+    upsertSomeoneIsOnline
 } = chatUsersSlice.actions;

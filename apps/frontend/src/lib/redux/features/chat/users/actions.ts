@@ -2,7 +2,6 @@
 
 import { PayloadAction } from "@reduxjs/toolkit";
 import { ChatUsersSliceState } from "./slice";
-import { set } from "react-hook-form";
 
 type PayloadBase = {
     userId: string
@@ -49,5 +48,48 @@ export const ChatUsersActions = {
             action.payload
         ]
     },
+
+    upsertSomeoneIsOnline(state: ChatUsersSliceState, action: PayloadAction<PayloadBase>){
+        const newChatUserToUpsert: ChatUsersSliceState[number] = {
+            userId: action.payload.userId,
+            status: 'online'
+        }
+        if (!state.length){
+            state.push( newChatUserToUpsert )
+        } else {
+            state = state.map(
+                user => {
+                    if (user.userId === action.payload.userId){
+                        return {
+                            ...user,
+                            ...newChatUserToUpsert
+                        }
+                    };
+                    return user
+                }
+            )
+        }
+    },
+    upsertSomeoneIsOffline(state: ChatUsersSliceState, action: PayloadAction<PayloadBase>){
+        const newChatUserToUpsert : ChatUsersSliceState[number] = {
+            userId: action.payload.userId,
+            status: 'offline'
+        };
+
+        if (!state.length){
+            state.push(newChatUserToUpsert)
+        } else {
+            state = state.map(
+                user => {
+                    if (user.userId === action.payload.userId){
+                        return {
+                            ...user, ...newChatUserToUpsert
+                        }
+                    }
+                    return user
+                }
+            )
+        }
+    }
     
 }
