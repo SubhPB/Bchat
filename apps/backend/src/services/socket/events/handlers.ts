@@ -21,7 +21,7 @@ export type ConversationParticipantBaseProps = ConversationBaseProps & {
 
 export type HandleMessageProps =  {
     conversationId ?: string
-    message: Omit<Message, "updatedAt" | "deletedBy" >,
+    message: Message,
 }
 
 export type UserTypingProps = ConversationUserBaseProps & ConversationParticipantBaseProps
