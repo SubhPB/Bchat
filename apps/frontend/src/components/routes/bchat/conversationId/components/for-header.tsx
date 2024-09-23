@@ -41,7 +41,7 @@ type ChatProfileProps = Props & {
 };
 
 
-export function ChatProflile({className, chatName, activityText, chatImgSrc} : ChatProfileProps){
+export function ChatProfile({className, chatName, activityText, chatImgSrc} : ChatProfileProps){
     
     const router = useRouter()
 
