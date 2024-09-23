@@ -38,4 +38,7 @@ export const htmlMimeTypes = [
     mimeTypes: ["text/html", "text/css", "application/javascript", "application/json", "application/xml", "text/yaml", "text/*", "appliaction/*"]
 }
 ] as const;
+
+export type HtmlMimeType = typeof htmlMimeTypes[number];
+export type HtmlAllMimeTypes = HtmlMimeType['mimeTypes'][number];
   
