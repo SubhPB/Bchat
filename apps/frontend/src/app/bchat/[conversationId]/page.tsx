@@ -103,7 +103,7 @@ export default function page(){
                 {
                     (footerProps) => (
                         <>
-                            <div className="w-full max-w-[790px]">
+                            <div className="w-full max-w-[790px] flex justify-center">
                                 <ChatInput 
                                     {...footerProps}
                                 />
