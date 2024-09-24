@@ -133,8 +133,10 @@ export const ConversationsActions: ConversationActions = {
                         ...conversation,
                         messages: [
                             ...conversation.messages,
-                            action.payload.message,
-                            deletedBy,
+                            {
+                                ...action.payload.message,
+                                deletedBy
+                            },
                         ]
                     }
                 }
