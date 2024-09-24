@@ -30,13 +30,16 @@ export type IsUserOnlineProps = {
     userId: string;
 }
 
+const DebugLines = [ 41, 82]
+
 /** ------------ Events to send everybody in the room ------------ */
 
-const handleSendMessageToConversation = (socket: Socket, props:HandleMessageProps) => {
+const handleSendMessageToConversation = (socket: Socket, io: IoServer, props:HandleMessageProps) => {
     const conversationId = props?.conversationId ?? props.message.conversationId;
     if (typeof conversationId === 'string') {
         /** not broadcast send to all participant including sender according to the frontend logic*/
-        socket.to(conversationId).emit(CLIENT_EVENTS.RECEIVE_MESSAGE_FROM_CONVERSATION, props);
+        //@ts-ignore
+        io.in(conversationId).emit(CLIENT_EVENTS.RECEIVE_MESSAGE_FROM_CONVERSATION, props);
     };
 };
 
@@ -74,6 +77,7 @@ const handleDeleteMessageFromConversation = (socket: Socket, props: HandleMessag
 };
 
 const handleJoinConversation = (socket: Socket, {conversationId}: ConversationBaseProps) => {
+    console.log("A request to join conversation has been received to join conversation with following parameters ", {conversationId})
     if (typeof conversationId === 'string' && !socket.rooms.has(conversationId)) {
         socket.join(conversationId);
         socket.emit(CLIENT_EVENTS.YOU_HAVE_JOINED_CONVERSATION, {conversationId} )

@@ -21,11 +21,11 @@ import { addMessageToConversation, addSomeoneWhoIsTyping, deleteMessageFromConve
 
 import { upsertSomeoneIsOnline, upsertSomeoneIsOffline } from "@/lib/redux/features/chat/users/slice";
 
-
 export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnType<typeof useAppDispatch>) => {
     const eventDispatchers =  {
         //Done
         dispatchJoinConversation: ({conversationId}: ConversationBaseProps) => {
+                        
             if (!socket){
                 return
             };
