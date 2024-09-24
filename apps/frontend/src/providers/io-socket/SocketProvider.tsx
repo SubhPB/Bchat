@@ -34,8 +34,14 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
         [ioSocket, appDispatch]
     );
 
+
     useEffect(
         () => {
+            const isAuthenticated = session.status === 'authenticated';
+
+            if (!isAuthenticated){
+                return
+            };
 
             const socket = IoSocket(backendUrl, {
                 query: {
@@ -56,6 +62,10 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
             setIoSocket(socket);
 
             return () => {
+
+                if (!isAuthenticated){
+                    return
+                }
                 
                 /**
                  * Make sure to `off` all the events here
@@ -74,7 +84,7 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
                 setIoSocket(null);
             }
 
-        }, []
+        }, [session.status]
     );
 
     return (
