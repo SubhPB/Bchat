@@ -90,7 +90,7 @@ const onConnection = (socket: Socket, io : IoServer) => {
 
     /** Join this user in a room named after his userId */
     //@ts-ignore
-    if (socket?.userId && typeof socket?.userId === 'string') {
+    if (socket?.userId && typeof socket?.userId === 'string' && socket?.userId !== 'undefined') {
         //@ts-ignore
         const userRoomId = socket?.userId as string;
 
@@ -148,13 +148,12 @@ const onConnection = (socket: Socket, io : IoServer) => {
 
     socket.on(
         EVENTS.SEND_MESSAGE_TO_CONVERSATION,
-        (props: HandleMessageProps) => handleSendMessageToConversation(socket, props)
+        (props: HandleMessageProps) => handleSendMessageToConversation(socket, io, props)
     )
 
 };
 const userIdMiddleware = (socket: Socket, next: Function) => {
     const userId = socket?.handshake?.query?.userId;
-
     if (typeof userId === 'string') {
         //@ts-ignore
         socket.userId = userId;
