@@ -2,7 +2,7 @@
 
 'use client';
 
-import React from "react";
+import React,{useRef, useEffect, use} from "react";
 import { cn } from "@/lib/utils";
 
 import { useAppSelector } from "@/lib/redux/hooks";
@@ -26,6 +26,8 @@ type Conversation = {
     body: React.FC<Props<MessageProps['message'][]>>;
     footer: React.FC<Props<(Omit<ChatInputProps, 'className'>)>>
 };
+
+const SCROLL_BOTTOM_THRESHOLD_IN_PX = 300;
 
 /**
  * Will use Render Prop pattern to provide the prop values to the children
@@ -81,9 +83,43 @@ export const Conversation : Conversation = {
     body: ({children, className, validConversationId}) => {
         
         const messages = useAppSelector(selectConversationById(validConversationId))?.messages ?? [];
+        const scrollableRef = React.useRef<HTMLDivElement>(null);
+        /** 
+         * Scrolling behavior we need for this component:-
+         *  [1] Keep it at the bottom so tht user can always see the latest message
+         *  [2] If user manually is in the middle of scroll then do not go to the bottom
+         */
+        const isUserAtBottom = () => {
+            if (scrollableRef.current) {
+                const { scrollTop, scrollHeight, clientHeight } = scrollableRef.current,
+                    scrollBottom = scrollHeight - scrollTop - clientHeight;
+                return scrollBottom < SCROLL_BOTTOM_THRESHOLD_IN_PX;
+            }
+            return false;
+        };
+
+        useEffect(
+            () => {
+                /* By default scrolling stay at bottom */
+                if (scrollableRef.current) {
+                    const { scrollHeight, clientHeight } = scrollableRef.current;
+                    scrollableRef.current.scrollTop = scrollHeight - clientHeight;
+                }
+            }, []
+        );
+
+        useEffect(
+            () => {
+                /** We need to take scroll to bottom if user did not manually scrolled to the top  */
+                if (scrollableRef.current && isUserAtBottom()) {
+                    const { scrollHeight, clientHeight } = scrollableRef.current;
+                    scrollableRef.current.scrollTop = scrollHeight - clientHeight;
+                }
+            }, [messages.length]
+        );
 
         return (
-            <div className={cn(className)}>
+            <div ref={scrollableRef} className={cn(className)}>
                 {
                     children(messages)
                 }
