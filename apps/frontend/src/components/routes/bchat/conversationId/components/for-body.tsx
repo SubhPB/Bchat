@@ -64,7 +64,7 @@ export function Message({className, message, alignRight, children, writerName} :
                 {/* Message */}
                 <div className="">
                     {children}
-                    <p className="min-h-3 text-xs whitespace-pre-wrap">{message.text}</p>
+                    <p className="min-h-3 text-xs break-words whitespace-pre-wrap">{message.text}</p>
                 </div>
 
 
