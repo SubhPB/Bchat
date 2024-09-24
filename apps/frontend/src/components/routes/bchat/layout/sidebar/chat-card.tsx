@@ -5,11 +5,16 @@
 
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
+
+import { useSocketEvents } from '@/providers/io-socket/SocketProvider';
+
 import { CustomImgAvatar } from '@/components/common/custom-img-avatar';
 import { useRouter, useParams } from 'next/navigation';
 import { captializeText } from '@/utils/features/typing/text';
+
+
 type Props = {
   chatId : string;
   className ?: string;
@@ -32,7 +37,18 @@ function ChatCard({className, chatImgSrc, chatName, unReadCount, recentMessage, 
 
   const handleClick = () => {
     !isActive && router.push(`/bchat/${chatId}`)
-  }
+  };
+
+  const {dispatchJoinConversation} = useSocketEvents();
+
+  useEffect(
+    () => {
+      /** We need to join the conversation room in order to receive messages */
+      dispatchJoinConversation({
+        conversationId: chatId
+      })
+    }, [chatId]
+  )
 
   return (
     <div onClick={handleClick} className={cn('w-full flex gap-1 shadow py-3 px-1 cursor-pointer', className, isActive && 'bg-gray-200 cursor-default')}>
