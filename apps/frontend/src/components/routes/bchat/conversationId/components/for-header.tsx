@@ -34,7 +34,7 @@ type Props = {
     className ?: string 
 };
 
-type ChatProfileProps = Props & {
+export type ChatProfileProps = Props & {
     chatName : string;
     activityText : string;
     chatImgSrc : string | null;

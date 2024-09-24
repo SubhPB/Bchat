@@ -63,50 +63,54 @@ export default function page(){
         )
     };
 
-    let activityText = '', chatName = conversation.name ?? "N/A";
-    const usersWhoAreTyping = conversation?.usersWhoAreTyping
+    const determineWriterName = (senderUserId: string) => {
+        const senderName = conversation.participants.find(participant => participant.user.id === senderUserId)?.user?.name;
+        return senderName
+    }
 
-    if (conversation.type === 'ONE_TO_ONE'){
-        const otherUser = conversation.participants.find(participant => participant.userId !== myUserId),
-            otherUserOnlineStatus = useAppSelector(selectChatUserByID(otherUser?.id ?? 'N/A'))?.status,
-              isOtherUserIsTyping = (!!otherUser && usersWhoAreTyping?.includes(otherUser.id));
-        
-        chatName = otherUser?.user.name ?? chatName;
-
-        activityText = isOtherUserIsTyping ? (
-            'is typing...'
-        ) : (
-            otherUserOnlineStatus ?? ''
-        )
-    } else {
-        if (usersWhoAreTyping?.length){
-            activityText = "Some one is typing..."
-        }
-    };
     return (
         <Workarea.main className="relative overflow-hidden">
 
-            <Conversation.header className="absolute top-0 left-0 p-2 flex justify-between bg-slate-100 items-center w-full">
-                <ChatProfile chatName={chatName} activityText={activityText} chatImgSrc={conversation.image}/>
-                <ChatOptions />
+            <Conversation.header className="absolute top-0 left-0 p-2 flex justify-between bg-slate-100 items-center w-full" validConversationId={conversation.id}>
+                {
+                    (headerProps) => (
+                        <>
+                            <ChatProfile {...headerProps}/>
+                            <ChatOptions />
+                        </>
+                    )
+                }
             </Conversation.header>
 
-            <Conversation.body className="size-full overflow-y-scroll app-scrollbar pb-12 pt-14 px-2 space-y-2 md:px-14">
-                {/* Multiple messages to be shown here */}
-                {/* {
-                    Array.from('abcdefghijklmnopqrstuvwxyz').map((c, i) => (<Message key={i} message={messsageJson(c, conversation.id)} alignRight={i % 2 === 0}/>))
-                } */}
+            <Conversation.body className="size-full overflow-y-scroll app-scrollbar pb-12 pt-14 px-2 space-y-2 md:px-14" validConversationId={conversation.id}>
                 {
-                    conversation.messages.map(
-                        (message) => (
-                            <Message key={message.id} message={message} alignRight={message.senderUserId === myUserId}/>
+                    (messages) => (
+                        messages.map(
+                            message => (
+                                <Message 
+                                    key={message.id} 
+                                    message={message}
+                                    alignRight={message.senderUserId === myUserId}
+                                    writerName={determineWriterName(message.senderUserId)}
+                                />
+                            )
                         )
                     )
                 }
             </Conversation.body>
 
-            <Conversation.footer className="absolute w-full bottom-0 left-0 pb-2 flex justify-center items-center">
-                <ChatInput />
+            <Conversation.footer className="absolute w-full bottom-0 left-0 pb-2 flex justify-center items-center" validConversationId={conversation.id}>
+                {
+                    (footerProps) => (
+                        <>
+                            <div className="w-full max-w-[790px]">
+                                <ChatInput 
+                                    {...footerProps}
+                                />
+                            </div>
+                        </>
+                    )
+                }
             </Conversation.footer>
 
         </Workarea.main>

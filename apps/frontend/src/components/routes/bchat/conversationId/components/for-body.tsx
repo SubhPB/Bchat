@@ -9,16 +9,23 @@ import { cn } from "@/lib/utils";
 
 import { ExpectedConversationDataTypeFromAPI } from "@/lib/redux/features/chat/conversations/slice";
 import { captializeText } from "@/utils/features/typing/text";
+import { date } from "zod";
 
 type Props = {
     className ?: string,
-    message: ExpectedConversationDataTypeFromAPI[number]['messages'][number],
+    message: 
+    ExpectedConversationDataTypeFromAPI[number]['messages'][number] & {
+        createdAt ?: string | Date
+    },
     alignRight ?: boolean,
 
     /** Leaving room if we decide to use it to show images or files. */
     children ?: React.ReactNode,
     writerName ?: string
 };
+
+const DEBUG = [48]
+export type MessageProps = Props;
 
 /**
  * 
@@ -32,10 +39,17 @@ type Props = {
 
 export function Message({className, message, alignRight, children, writerName} : Props){
 
-    writerName = captializeText(writerName ?? message.participantId);
-    // e.g "10:30 AM"
-    const dayTime = message.createdAt.toLocaleDateString("en-US", {hour: 'numeric', minute: 'numeric', hour12: true}).split(", ")[0];
+    let dayTime = '';
+    if (typeof message.createdAt === 'string'){
+         dayTime = new Date(message.createdAt).toLocaleDateString("en-US", {hour: 'numeric', minute: 'numeric', hour12: true}).split(", ")[0];
+    } else if (message.createdAt instanceof Date){
+        dayTime = message.createdAt.toLocaleDateString("en-US", {hour: 'numeric', minute: 'numeric', hour12: true}).split(", ")[0];
+    };
 
+    if (typeof writerName === 'string'){
+        writerName = captializeText(writerName);
+    };
+    
     return (
         <div id={message.id} className={cn('mesage-container w-full flex', alignRight && 'flex-row-reverse' , className)}>
             <div className={cn("w-fit min-w-[30%] md:min-w-[20%] max-w-[80%] md:max-w-[75%] p-2 text-sm space-y-2 bg-gray-200 rounded-md text-secondary-foreground", alignRight && 'text-right')}>
@@ -50,7 +64,7 @@ export function Message({className, message, alignRight, children, writerName} :
                 {/* Message */}
                 <div className="">
                     {children}
-                    <p className="min-h-3 text-xs">{message.text}</p>
+                    <p className="min-h-3 text-xs whitespace-pre-wrap">{message.text}</p>
                 </div>
 
 
