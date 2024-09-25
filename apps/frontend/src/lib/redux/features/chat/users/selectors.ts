@@ -8,10 +8,14 @@ import { ChatUsersSliceState } from "./slice";
 
 export const selectChatSlice= (state: RootState) => state.chat ;
 
-export const selectChatUsers = createSelector(
+export const selectChatUsers =  createSelector(
     selectChatSlice,
     (state) => state.users
 );
+
+export const selectAllChatUsers = () => createSelector(
+    selectChatUsers, state => state
+)
 
 export const selectChatUserByID = (id: string) => createSelector(
     selectChatUsers,
