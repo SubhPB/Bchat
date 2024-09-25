@@ -28,12 +28,33 @@ type Props = {
 
 const getChatCardPropsOutOfData = (data: ExpectedConversationDataTypeFromAPI[number], myUserId: string): ChatCardProps => {
   
+  let notifyTyping = null;
+  /** It all about prioritize the typing over recent message if possible */
+  if (data.usersWhoAreTyping?.length){
+    if (data.type === "ONE_TO_ONE"){
+      const personIdWhoIsTyping = data.usersWhoAreTyping[data.usersWhoAreTyping.length - 1];
+      const personWhoIsTyping = data.participants.find(p => p.user.id === personIdWhoIsTyping)?.user.name ?? null;
+
+      if (personWhoIsTyping) {
+        notifyTyping = `${personWhoIsTyping} is typing...`;
+      }
+    } else {
+      notifyTyping = "Someone is typing...";
+    }
+  }
+
   return {
     chatId: data.id,
     chatName: (data.type === "GROUP" ? data.name : data.participants.find(p => p.user.id !== myUserId)?.user.name) ?? '',
     unReadCount: data?.unreadMessages ?? 0,
     chatImgSrc: data.image,
-    recentMessage: data.messages[0]?.text ?? '',
+
+    /** Get last message OR last typing */
+    recentMessage: notifyTyping ?? (
+      data.messages[
+        data.messages.length - 1
+      ]?.text ?? ''
+    ),
   }
 }
 
