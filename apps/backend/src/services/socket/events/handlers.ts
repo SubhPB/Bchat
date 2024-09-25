@@ -77,7 +77,6 @@ const handleDeleteMessageFromConversation = (socket: Socket, props: HandleMessag
 };
 
 const handleJoinConversation = (socket: Socket, {conversationId}: ConversationBaseProps) => {
-    console.log("A request to join conversation has been received to join conversation with following parameters ", {conversationId})
     if (typeof conversationId === 'string' && !socket.rooms.has(conversationId)) {
         socket.join(conversationId);
         socket.emit(CLIENT_EVENTS.YOU_HAVE_JOINED_CONVERSATION, {conversationId} )
