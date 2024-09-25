@@ -13,6 +13,7 @@ import { ChatInputProps } from "./components/for-footer";
 
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import { selectAllChatUsers } from "@/lib/redux/features/chat/users/selectors";
 
 type Props<ChildrenProps> = {
     children : (props: ChildrenProps) => React.ReactNode;
@@ -40,11 +41,13 @@ export const Conversation : Conversation = {
     header: ({children, className, validConversationId }) => {
 
         const conversation = useAppSelector(selectConversationById(validConversationId));
+        const chatUsers = useAppSelector(selectAllChatUsers());
+
         const session = useSession();
 
         
         if (!conversation) {
-            toast.error('Oops!Conversation not found');
+            toast.error('Oops! Conversation not found');
             return (
                 <div className={cn(className)}>
                     {/* {children({})} */}
@@ -59,6 +62,12 @@ export const Conversation : Conversation = {
 
         let chatName = conversation?.name ?? "N/A", activityText = "", chatImgSrc = conversation?.image ?? null;
 
+        /**
+         * Summary of what has been done in this if-else statement,
+         * Assign a value to chatName, chatImgSrc and activityText based on the conversation type
+         * activityText give priority to typing over recent message if possible
+         * 
+         */
         if (conversation.type === 'ONE_TO_ONE') {
             const otherUser = conversation.participants.find(participant => participant.id !== meAsParticipant?.id);
             chatName = otherUser?.user.name ?? chatName;
@@ -67,10 +76,18 @@ export const Conversation : Conversation = {
                 otherUser?.id ?? 'N/A'
             )){
                 activityText = 'typing...';
+            };
+
+            if (!activityText){
+                /** let's see if other person is online */
+                const isOtherUserOnline = chatUsers.some(user => user.userId === otherUser?.user?.id);
+                if (isOtherUserOnline){
+                    activityText = 'online';
+                }
             }
         } else {
             if (folksWhoAreTyping?.length) {
-                activityText = 'some one is typing...';
+                activityText = 'Someone is typing...';
             }
         } 
 
