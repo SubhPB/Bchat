@@ -9,13 +9,14 @@ type PayloadBase = {
 
 export const ChatUsersActions = {
 
+    //Done
     removeChatUser(state: ChatUsersSliceState, action: PayloadAction<
         PayloadBase>){
             if(state.length){
                 state = state.filter(user => user.userId !== action.payload.userId)
             }
     },
-
+    //Done : Only apply if user already exist in state
     setChatUserToOnline(state: ChatUsersSliceState, action: PayloadAction<PayloadBase>){
         state = state.map(user => {
             if (user.userId === action.payload.userId){
@@ -27,7 +28,7 @@ export const ChatUsersActions = {
             return user
         })
     },
-
+    //Done: Only apply if user already exist in state
     setChatUserToOffline(state: ChatUsersSliceState, action: PayloadAction<PayloadBase>){
         state = state.map(user => {
             if (user.userId === action.payload.userId){
@@ -39,7 +40,7 @@ export const ChatUsersActions = {
             return user
         })
     },
-
+    //Done: If user already then that would be replaced otherwise new user would be added
     addChatUser(state: ChatUsersSliceState, action: PayloadAction<ChatUsersSliceState[number]>){
         const filteredState = state.filter(user => user.userId !== action.payload.userId);
 
@@ -48,7 +49,7 @@ export const ChatUsersActions = {
             action.payload
         ]
     },
-
+    //Done 
     upsertSomeoneIsOnline(state: ChatUsersSliceState, action: PayloadAction<PayloadBase>){
         const newChatUserToUpsert: ChatUsersSliceState[number] = {
             userId: action.payload.userId,
@@ -70,6 +71,7 @@ export const ChatUsersActions = {
             )
         }
     },
+    //Done
     upsertSomeoneIsOffline(state: ChatUsersSliceState, action: PayloadAction<PayloadBase>){
         const newChatUserToUpsert : ChatUsersSliceState[number] = {
             userId: action.payload.userId,

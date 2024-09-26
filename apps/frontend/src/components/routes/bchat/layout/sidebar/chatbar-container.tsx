@@ -7,7 +7,7 @@
 
 'use client'
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -15,12 +15,15 @@ import ChatCardSkeleton from './chat-card-skeleton';
 import ChatCard from './chat-card';
 import Infobar from '@/components/common/Infobar';
 
+import { useSession } from 'next-auth/react';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { useSocketEvents } from '@/providers/io-socket/SocketProvider';
+
 import { fetchConversations } from '@/lib/redux/features/chat/conversations/thunk';
 import { ChatCardProps } from './chat-card';
 import { ExpectedConversationDataTypeFromAPI } from '@/lib/redux/features/chat/conversations/slice';
-import { useSession } from 'next-auth/react';
 
+import { selectAllChatUsers } from '@/lib/redux/features/chat/users/selectors';
 
 type Props = {
   className: string
@@ -73,10 +76,12 @@ function ChatbarContainer({className}: Props) {
 
   /** Redux<conversations> Init */
   const appDispatch = useAppDispatch();
+  const {dispatchJoinUserRooms} = useSocketEvents();
 
   const initialized = useRef(false);
 
   const {data, gotError, isLoading} = useAppSelector(state => state.chat.conversations);
+  const usersWhomWeAreAwareOf = useAppSelector(selectAllChatUsers());
   
   if (!initialized.current){
     if (!data && !gotError){
@@ -84,6 +89,51 @@ function ChatbarContainer({className}: Props) {
     };
     initialized.current = true
   };
+
+  /** Here we would have all the conversations that user is engaged with
+   * There is one functionality that we need to implement
+   *  which is to stay update about users who are in the conversations
+   *  for which we need to join their personal rooms 
+   */
+
+
+  useEffect(
+    () => {
+      const myUserId = session.data?.user?.id ?? session.data?.adapterUser?.id;
+
+      if (myUserId && data?.length && session.status === 'authenticated'){
+
+        let userIdsWhomWeConcernAbout : string[] = [];
+
+        /** basically we need to stay update about the users who we are not aware of.
+         *  The way to find them is using data and compare the `usersWhoWeAreAwareOf`
+         */
+        data.forEach(
+          conversation => {
+            conversation.participants.forEach(
+              participant => {
+                if (
+                  participant.user.id !== myUserId
+                   && !usersWhomWeAreAwareOf.find(user => user.userId === participant.user.id
+                    && !userIdsWhomWeConcernAbout.includes(participant.user.id)
+                   )){
+                  /** We are not aware of this user */
+                  userIdsWhomWeConcernAbout.push(participant.user.id);
+                }
+              }
+            )
+          }
+        );
+
+
+        if (userIdsWhomWeConcernAbout.length){
+          dispatchJoinUserRooms({
+            userIds: userIdsWhomWeConcernAbout
+          })
+        }
+      }
+    }, [data, session.status]
+  )
 
   
   if (isLoading){

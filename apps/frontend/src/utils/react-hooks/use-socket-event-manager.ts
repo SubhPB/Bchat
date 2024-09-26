@@ -14,12 +14,13 @@ import {
     ConversationUserBaseProps,
     HandleMessageProps,
     IsUserOnlineProps,
-    UserTypingProps
+    UserTypingProps,
+    ConversationUsersBaseProps
 } from '../../providers/io-socket/types';
 
 import { addMessageToConversation, addSomeoneWhoIsTyping, deleteMessageFromConversation, removeSomeoneWhoIsTyping, setSocketConnectionStatusOfConversation } from "@/lib/redux/features/chat/conversations/slice";
 
-import { upsertSomeoneIsOnline, upsertSomeoneIsOffline } from "@/lib/redux/features/chat/users/slice";
+import { upsertSomeoneIsOnline, upsertSomeoneIsOffline, addChatUser, setChatUserToOffline } from "@/lib/redux/features/chat/users/slice";
 
 export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnType<typeof useAppDispatch>) => {
     const eventDispatchers =  {
@@ -35,7 +36,15 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
              */
             socket.emit(EVENTS.JOIN_CONVERSATION, {conversationId})
         },
-
+        //Done
+        dispatchJoinUserRooms: ({userIds}: Omit<ConversationUsersBaseProps, 'conversationId'>) => {
+            if (!socket){
+                return
+            };
+            userIds.forEach(userId => {
+                socket.emit(EVENTS.JOIN_USER_ROOM, {userId})
+            })
+        },
         //Done
         dispatchJoinUserRoom: ({userId}: Omit<ConversationUserBaseProps, 'conversationId'>) => {
             if (!socket){
@@ -203,6 +212,10 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
              * Responsibilities in this handler are following
              * [1] This is supposed to be received after dispatched event of `JOIN_USER_ROOM` and indicates that now we are part of the user 's personal room this room will helpful in the ways like knowing whether user's online status or more...
              */
+            appDispatch(
+                /** if user is online then it is backend s responsibility to inform us. By default we will set it to `offline` */
+                addChatUser({userId, status: 'offline'})
+            )
         },
         //Partial
         [CLIENT_EVENTS.YOU_HAVE_LEFT_USER_ROOM] : function handleYouHaveLeftUserRoom({userId} : ConversationUserBaseProps) {
@@ -210,7 +223,14 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
              * Responsibilities in this handler are following
              * [1] This is supposed to be received after dispatched event of `LEAVE_USER_ROOM` and indicates that user who owned this room has gone offline.
              */
-
+            appDispatch(
+                /** there are 2 choices for us to do
+                 * either we can remove the user from redux state
+                 * else we can set the user's online status to `offline`
+                 * --> we can set it to `offline` 
+                 */
+                setChatUserToOffline({userId})
+            )
         },
         //Done
         [CLIENT_EVENTS.YOU_HAVE_TO_LEAVE_USER_ROOM] : function handleYouHaveToLeaveUserRoom({userId} : ConversationUserBaseProps) {

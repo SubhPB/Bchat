@@ -10,6 +10,10 @@ export type ConversationUserBaseProps = ConversationBaseProps & {
     userId: string
 }
 
+export type ConversationUsersBaseProps = ConversationBaseProps & {
+    userIds: string[]
+}
+
 export type ConversationParticipantBaseProps = ConversationBaseProps & {
     participantId: string
 }
