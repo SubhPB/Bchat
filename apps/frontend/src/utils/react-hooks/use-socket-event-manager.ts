@@ -22,6 +22,8 @@ import { addMessageToConversation, addSomeoneWhoIsTyping, deleteMessageFromConve
 
 import { upsertSomeoneIsOnline, upsertSomeoneIsOffline, addChatUser, setChatUserToOffline } from "@/lib/redux/features/chat/users/slice";
 
+const DEBUG = [49, 229]
+
 export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnType<typeof useAppDispatch>) => {
     const eventDispatchers =  {
         //Done
@@ -41,7 +43,12 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
             if (!socket){
                 return
             };
-            userIds.forEach(userId => {
+
+            const userIdsSet = new Set(userIds)
+
+            console.log("The user rooms we want to join are ", userIdsSet)
+
+            userIdsSet.forEach(userId => {
                 socket.emit(EVENTS.JOIN_USER_ROOM, {userId})
             })
         },
@@ -183,6 +190,14 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
             appDispatch(upsertSomeoneIsOffline({userId}))
         },
 
+        [CLIENT_EVENTS.SOMEONE_S_USER_ROOM_SHOULD_BE_JOINED]: function handleSomeoneSUserRoomShouldBeJoined({userId} : ConversationUserBaseProps) {
+            /**
+             * Responsibility in this handler are following
+             *   [1] Server has felt the necessity of us to join the user's room
+             */
+            eventDispatchers.dispatchJoinUserRoom({userId})
+        },
+
         
 
         /** ------------ Events that i (this user) has received ------------ */
@@ -212,6 +227,9 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
              * Responsibilities in this handler are following
              * [1] This is supposed to be received after dispatched event of `JOIN_USER_ROOM` and indicates that now we are part of the user 's personal room this room will helpful in the ways like knowing whether user's online status or more...
              */
+
+
+            console.log('You have joined user room', userId);
             appDispatch(
                 /** if user is online then it is backend s responsibility to inform us. By default we will set it to `offline` */
                 addChatUser({userId, status: 'offline'})

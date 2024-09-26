@@ -80,6 +80,19 @@ const handleJoinConversation = (socket: Socket, {conversationId}: ConversationBa
     if (typeof conversationId === 'string' && !socket.rooms.has(conversationId)) {
         socket.join(conversationId);
         socket.emit(CLIENT_EVENTS.YOU_HAVE_JOINED_CONVERSATION, {conversationId} )
+        /**
+         * Suppose the other users in chat are not aware that this user who just joined is online if they are subscribed to user's personal room.
+         * Let them know that they should join this user's room.
+         * Dispatch  SOMEONE_S_USER_ROOM_SHOULD_BE_JOINED for the remaining users
+         */
+
+
+        socket.broadcast.to(conversationId).emit(
+            CLIENT_EVENTS.SOMEONE_S_USER_ROOM_SHOULD_BE_JOINED, {
+                //@ts-ignore
+                userId: socket?.userId
+            } 
+        )
     };
 };
 

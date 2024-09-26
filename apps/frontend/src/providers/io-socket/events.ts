@@ -48,5 +48,7 @@ export const CLIENT_EVENTS = {
     SOMEONE_HAS_STOPPED_TYPING_IN_CONVERSATION : "someone_has_stopped_typing_in_conversation",
     SOMEONE_IS_ONLINE : "someone_is_online",
     SOMEONE_IS_OFFLINE : "someone_is_offline",
+    SOMEONE_S_USER_ROOM_SHOULD_BE_JOINED : "someone_s_user_room_should_be_joined"
+
 
 } as const;
