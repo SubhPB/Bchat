@@ -21,7 +21,6 @@ import { ChatInput } from "@/components/routes/bchat/conversationId/components/f
 import { ExpectedConversationDataTypeFromAPI } from "@/lib/redux/features/chat/conversations/slice";
 import Infobar from "@/components/common/Infobar";
 import { useSession } from "next-auth/react";
-import { selectChatUserByID } from "@/lib/redux/features/chat/users/selectors";
 
 
 type Conversation = ExpectedConversationDataTypeFromAPI[number];

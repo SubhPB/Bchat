@@ -80,7 +80,7 @@ export const Conversation : Conversation = {
 
             if (!activityText){
                 /** let's see if other person is online */
-                const isOtherUserOnline = chatUsers.some(user => user.userId === otherUser?.user?.id);
+                const isOtherUserOnline = chatUsers.some(user => user.status === 'online' && user.userId === otherUser?.user?.id);
                 if (isOtherUserOnline){
                     activityText = 'online';
                 }
