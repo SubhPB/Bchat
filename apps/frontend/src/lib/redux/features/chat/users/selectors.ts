@@ -14,7 +14,7 @@ export const selectChatUsers =  createSelector(
 );
 
 export const selectAllChatUsers = () => createSelector(
-    selectChatUsers, state => state
+    selectChatSlice, state => state.users
 )
 
 export const selectChatUserByID = (id: string) => createSelector(

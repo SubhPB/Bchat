@@ -71,7 +71,7 @@ export default function page(){
     return (
         <Workarea.main className="relative overflow-hidden">
 
-            <Conversation.header className="absolute top-0 left-0 p-2 flex justify-between bg-slate-100 items-center w-full" validConversationId={conversation.id}>
+            <Conversation.header className="absolute top-0 left-0 z-10 p-2 flex justify-between bg-slate-100 items-center w-full" validConversationId={conversation.id}>
                 {
                     (headerProps) => (
                         <>
