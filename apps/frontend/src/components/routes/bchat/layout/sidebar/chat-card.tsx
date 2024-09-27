@@ -58,7 +58,7 @@ function ChatCard({className, chatImgSrc, chatName, unReadCount, recentMessage, 
                 <p className='font-bold text-md text-primary-bchat w-[70%] truncate'>{chatName}</p>
                 {!!unReadCount && <p className='rounded-full text-xs bg-primary-bchat text-white p-1 w-[6ch] truncate'>{unReadCount}</p>}
             </div>
-            <p className='text-sm w-[90%] truncate '>{recentMessage}</p>
+            <p className='text-[0.8em] w-[90%] truncate font-[500] relative top-[-0.5rem]'>{recentMessage}</p>
         </div>   
     </div>
   )

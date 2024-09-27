@@ -44,7 +44,6 @@ export const Conversation : Conversation = {
         const chatUsers = useAppSelector(selectAllChatUsers());
 
         const session = useSession();
-
         
         if (!conversation) {
             toast.error('Oops! Conversation not found');
@@ -73,7 +72,7 @@ export const Conversation : Conversation = {
             chatName = otherUser?.user.name ?? chatName;
             chatImgSrc = otherUser?.user.image ?? chatImgSrc;
             if (folksWhoAreTyping?.length && folksWhoAreTyping?.includes(
-                otherUser?.id ?? 'N/A'
+                otherUser?.user?.id ?? 'N/A'
             )){
                 activityText = 'typing...';
             };
@@ -87,7 +86,7 @@ export const Conversation : Conversation = {
             }
         } else {
             if (folksWhoAreTyping?.length) {
-                activityText = 'Someone is typing...';
+                activityText = 'someone is typing...';
             }
         } 
 
@@ -158,7 +157,6 @@ export const Conversation : Conversation = {
         };
 
         const meAsParticipant = conversation?.participants.find(participant => participant.userId === myUserId);
-
 
         return (
             <div className={cn(className)}>

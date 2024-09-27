@@ -39,10 +39,10 @@ const getChatCardPropsOutOfData = (data: ExpectedConversationDataTypeFromAPI[num
       const personWhoIsTyping = data.participants.find(p => p.user.id === personIdWhoIsTyping)?.user.name ?? null;
 
       if (personWhoIsTyping) {
-        notifyTyping = `${personWhoIsTyping} is typing...`;
+        notifyTyping = `typing...`;
       }
     } else {
-      notifyTyping = "Someone is typing...";
+      notifyTyping = "ssomeone is typing...";
     }
   }
 

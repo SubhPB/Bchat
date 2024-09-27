@@ -55,7 +55,7 @@ export function ChatProfile({className, chatName, activityText, chatImgSrc} : Ch
             <CustomImgAvatar className="w-10 h-10 ml-3 mr-2" isAwsObject imgSrc={chatImgSrc ?? undefined} fallback={String(chatName).toUpperCase().slice(0, 2)}/>
             <div className="self-start">
                 <p className="font-bold text-[0.8em] truncate w-[14ch] md:w-[24ch]">{captializeText(chatName)}</p>
-                <p className="text-[0.5em] text-secondary-foreground leading-[0] ">{activityText}</p>
+                <p className="text-[0.65em] text-primary-foreground leading-[0] font-[500] ">{activityText}</p>
             </div>
         </aside>
     );
