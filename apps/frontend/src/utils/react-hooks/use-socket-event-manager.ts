@@ -5,8 +5,11 @@
  * Ctrl+F [1] //Done [2] //Partial
 */
 
+'use client';
+
 import { Socket } from "socket.io-client";
 import { useAppDispatch } from "@/lib/redux/hooks";
+import { useParams } from "next/navigation";
 
 import {EVENTS, CLIENT_EVENTS} from '../../providers/io-socket/events';
 import {
@@ -18,13 +21,17 @@ import {
     ConversationUsersBaseProps
 } from '../../providers/io-socket/types';
 
-import { addMessageToConversation, addSomeoneWhoIsTyping, deleteMessageFromConversation, removeSomeoneWhoIsTyping, setSocketConnectionStatusOfConversation } from "@/lib/redux/features/chat/conversations/slice";
+import { addMessageToConversation, addSomeoneWhoIsTyping, deleteMessageFromConversation, incrementConversationUnreadMessages, removeSomeoneWhoIsTyping, setSocketConnectionStatusOfConversation } from "@/lib/redux/features/chat/conversations/slice";
 
 import { upsertSomeoneIsOnline, upsertSomeoneIsOffline, addChatUser, setChatUserToOffline } from "@/lib/redux/features/chat/users/slice";
 
 const DEBUG = [49, 229]
 
 export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnType<typeof useAppDispatch>) => {
+
+    /* some event handlers may need to know the current conversationId if user is currently in that conversation */
+    const { conversationId : currentConversationId} = useParams();
+
     const eventDispatchers =  {
         //Done
         dispatchJoinConversation: ({conversationId}: ConversationBaseProps) => {
@@ -45,8 +52,6 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
             };
 
             const userIdsSet = new Set(userIds)
-
-            console.log("The user rooms we want to join are ", userIdsSet)
 
             userIdsSet.forEach(userId => {
                 socket.emit(EVENTS.JOIN_USER_ROOM, {userId})
@@ -148,7 +153,17 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
             /**
              * Responsibilities in this handler are following
              *  [1] Update the redux store with the new message after figuring out the conversation id
+             *  [2] If user is not at the conversation interface right now then we would mark this message as unread
              */
+
+            const userIsAtThisConversation = conversationId === currentConversationId;
+
+            if (!userIsAtThisConversation){
+                appDispatch(incrementConversationUnreadMessages({conversationId}))
+            };
+
+            /** If user already at he conversation interface then means he already read the message */
+
             appDispatch(addMessageToConversation({conversationId, message}))
         },
 
@@ -227,9 +242,6 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
              * Responsibilities in this handler are following
              * [1] This is supposed to be received after dispatched event of `JOIN_USER_ROOM` and indicates that now we are part of the user 's personal room this room will helpful in the ways like knowing whether user's online status or more...
              */
-
-
-            console.log('You have joined user room', userId);
             appDispatch(
                 /** if user is online then it is backend s responsibility to inform us. By default we will set it to `offline` */
                 addChatUser({userId, status: 'offline'})
