@@ -96,7 +96,7 @@ export default function page(){
                 }
             </Conversation.header>
 
-            <Conversation.body className="size-full overflow-y-scroll app-scrollbar pb-12 pt-14 px-2 space-y-2 md:px-14" validConversationId={conversation.id}>
+            <Conversation.body className="size-full overflow-y-scroll app-scrollbar pb-12 pt-14 px-2 flex flex-col gap-[2px] md:px-14" validConversationId={conversation.id}>
                 {
                     (messages) => (
                         messages.map(
