@@ -7,10 +7,12 @@
 
 'use client';
 
-import React from "react";
-import { useAppSelector } from "@/lib/redux/hooks";
-import { selectConversationById } from "@/lib/redux/features/chat/conversations/selectors";
+import React, {useEffect} from "react";
 import { useParams } from "next/navigation";
+
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { setConversationAsRead } from "@/lib/redux/features/chat/conversations/slice";
+import { selectConversationById } from "@/lib/redux/features/chat/conversations/selectors";
 
 import { Workarea } from "@/components/routes/bchat/layout/workarea";
 import { Conversation } from "@/components/routes/bchat/conversationId";
@@ -42,7 +44,9 @@ export default function page(){
 
     const {conversationId} = useParams();
     let conversation : Conversation | undefined;
+
     const session = useSession();
+    const appDispatch = useAppDispatch();
 
     const myUserId = session.data?.user?.id ?? session.data?.adapterUser?.id ?? '';
 
@@ -50,6 +54,17 @@ export default function page(){
     if (typeof conversationId === 'string' && conversationId.length > 5){
         conversation = useAppSelector(selectConversationById(conversationId));
     };
+
+    useEffect(
+        () => {
+            if (conversation && conversation?.unreadMessages){
+                /** If there are any unread messages, mark them as read */
+                appDispatch(
+                    setConversationAsRead({conversationId: conversation.id})
+                )
+            }
+        }, [conversation]
+    )
 
     if (!conversation){
         return (

@@ -45,6 +45,8 @@ export const {
     addMessageToConversation,
     deleteMessageFromConversation,
     setConversationAsRead,
+    incrementConversationUnreadMessages,
+
     setSocketConnectionStatusOfConversation,
     removeSomeoneWhoIsTyping,
     addSomeoneWhoIsTyping

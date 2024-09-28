@@ -60,6 +60,20 @@ export const ConversationsActions: ConversationActions = {
             })
         }
     },
+
+    incrementConversationUnreadMessages(state: ConversationsSliceState, action: PayloadAction<ConversationBaseProps>){
+        if (state.data){
+            state.data = state.data.map((conversation) => {
+                if (conversation.id === action.payload.conversationId){
+                    return {
+                        ...conversation,
+                        unreadMessages: (conversation?.unreadMessages ?? 0) + 1
+                    }
+                }
+                return conversation
+            })
+        }
+    },
     
     /** The following action might be called after YOU_HAVE_JOINED_CONVERSATION */
     setSocketConnectionStatusOfConversation(state: ConversationsSliceState, action: PayloadAction<ConversationBaseProps & {socketConnectionStatus: boolean}>){
