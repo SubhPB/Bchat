@@ -8,6 +8,7 @@ import IoSocket, {Socket} from "socket.io-client";
 import { useAppDispatch } from '@/lib/redux/hooks';
 
 import { useIoEventManager } from '@/utils/react-hooks/use-socket-event-manager';
+import { useParams } from 'next/navigation';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
@@ -24,12 +25,14 @@ function SocketProvider({children, backendUrl=BACKEND_URL}:Props) {
 
     const [ioSocket, setIoSocket] = useState<Socket | null>(null);
     const session = useSession(), userId = (session.data?.user?.id ?? session.data?.adapterUser?.id) as string;
+
     const appDispatch = useAppDispatch();
 
     /** useSocket will have all the methods to interact with the socket which will be used in different components */
     const {eventDispatchers, eventHandlers} = useMemo(
         () => useIoEventManager(
-            ioSocket, appDispatch
+            ioSocket,
+            appDispatch
         ),
         [ioSocket, appDispatch]
     );

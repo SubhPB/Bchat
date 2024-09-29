@@ -9,7 +9,6 @@
 
 import { Socket } from "socket.io-client";
 import { useAppDispatch } from "@/lib/redux/hooks";
-import { useParams } from "next/navigation";
 
 import {EVENTS, CLIENT_EVENTS} from '../../providers/io-socket/events';
 import {
@@ -30,8 +29,6 @@ const DEBUG = [49, 229]
 export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnType<typeof useAppDispatch>) => {
 
     /* some event handlers may need to know the current conversationId if user is currently in that conversation */
-    const { conversationId : currentConversationId} = useParams();
-
     const eventDispatchers =  {
         //Done
         dispatchJoinConversation: ({conversationId}: ConversationBaseProps) => {
@@ -153,17 +150,9 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
             /**
              * Responsibilities in this handler are following
              *  [1] Update the redux store with the new message after figuring out the conversation id
-             *  [2] If user is not at the conversation interface right now then we would mark this message as unread
              */
 
-            const userIsAtThisConversation = conversationId === currentConversationId;
-
-            if (!userIsAtThisConversation){
-                appDispatch(incrementConversationUnreadMessages({conversationId}))
-            };
-
-            /** If user already at he conversation interface then means he already read the message */
-
+            appDispatch(incrementConversationUnreadMessages({conversationId}))
             appDispatch(addMessageToConversation({conversationId, message}))
         },
 
