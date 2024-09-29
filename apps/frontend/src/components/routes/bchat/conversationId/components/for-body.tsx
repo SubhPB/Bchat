@@ -5,10 +5,17 @@
  */
 
 import React, { useEffect, useRef } from "react";
+import { useSocketEvents } from "@/providers/io-socket/SocketProvider";
+
 import { cn } from "@/lib/utils";
 
 import { ExpectedConversationDataTypeFromAPI } from "@/lib/redux/features/chat/conversations/slice";
 import { captializeText } from "@/utils/features/typing/text";
+
+import { MdOutlineCrisisAlert } from "react-icons/md";
+import { MdOutlineDeleteOutline } from "react-icons/md"
+import toast from "react-hot-toast";
+import { useClickScopeEffect } from "@/utils/react-hooks/use-click-scope";
 
 type Props = {
     className ?: string,
@@ -42,7 +49,9 @@ const MAX_HEIGHT_OF_MESSAGE_CONTENT_IN_TW = 'max-h-[250px] overflow-y-hidden';
 export function Message({className, message, alignRight, children, writerName} : Props){
     
     const [readMore, setReadMore] = React.useState(false);
-    const msgRef = useRef<HTMLDivElement>(null);
+    const [openPanel, setOpenPanel] = React.useState(false);
+
+    const msgRef = useRef<HTMLDivElement>(null), msgPanelRef = useRef<HTMLDivElement>(null);
 
     let dayTime = '';
     if (typeof message.createdAt === 'string'){
@@ -53,6 +62,19 @@ export function Message({className, message, alignRight, children, writerName} :
 
     if (typeof writerName === 'string'){
         writerName = captializeText(writerName);
+    };
+
+    const togglePanel = () => {
+        alignRight && setOpenPanel(!openPanel);
+    };
+
+    const openUpThePanel = ()=> {
+        alignRight && !openPanel && setOpenPanel(true);
+    }
+
+    const handleReadMore = (e:  React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.stopPropagation();
+        setReadMore(false);
     };
 
     /** 
@@ -66,11 +88,37 @@ export function Message({className, message, alignRight, children, writerName} :
                 setReadMore(true);
             };
         }, []
-    )
+    );
     
     return (
-        <div id={message.id} className={cn('mesage-container w-full flex', alignRight && 'flex-row-reverse' , className)}>
-            <div className={cn("w-fit min-w-[30%] md:min-w-[20%] max-w-[80%] md:max-w-[75%] p-2 pb-4 text-sm space-y-2 bg-gray-200 rounded-md text-secondary-foreground", alignRight && 'text-right')}>
+        <div 
+            id={message.id} 
+            className={
+                cn('mesage-container w-full flex relative transition-all',
+                    alignRight && 'flex-row-reverse',
+                    className,
+                    openPanel  && `mt-[2rem]`
+                )
+            }>
+
+            {
+                alignRight && openPanel && (
+                    <MessagePanel 
+                        ref={msgPanelRef}
+                        togglePanel={togglePanel}
+                        message={message}   
+                        className="w-fit pt-2 px-2 pb-1 rounded-t-md absolute right-0 bottom-full bg-white flex flex-row-reverse gap-2 z-[20]"
+                    />
+                )
+            }
+
+            <div
+                className={
+                    cn("w-fit min-w-[30%] md:min-w-[20%] max-w-[80%] md:max-w-[75%] p-2 pb-4 text-sm space-y-2 bg-gray-200 rounded-md text-secondary-foreground", alignRight && 'text-right'
+                    )
+                }
+                onClick={openUpThePanel}
+                >
                 {/* Header */}
                 <div className="flex flex-row-reverse items-center justify-between gap-2 ">
                     <p className="text-[0.6em] ">{dayTime}</p>
@@ -81,14 +129,21 @@ export function Message({className, message, alignRight, children, writerName} :
 
                 {/* Message */}
                 <div className={cn("relative", readMore && MAX_HEIGHT_OF_MESSAGE_CONTENT_IN_TW)} ref={msgRef}>
-                    {children}
+
+                    {
+                        children
+                    }
+
                     <p className="min-h-3 text-xs break-words whitespace-pre-wrap">
                         {message.text}
                     </p>
 
                     {
                         readMore && (
-                            <div onClick={() => setReadMore(false)} className="absolute w-fit bottom-[-.1rem] right-0 z-[5] text-xs text-primary-bchat cursor-pointer backdrop-blur bg-gray-200">
+                            <div
+                                onClick={handleReadMore}
+                                className="absolute w-fit bottom-[-.1rem] right-0 z-[5] text-xs text-primary-bchat cursor-pointer backdrop-blur bg-gray-200"
+                            >
                                 <p className="pl-2 leading-3"> more...</p>
                             </div>
                         )
@@ -99,4 +154,85 @@ export function Message({className, message, alignRight, children, writerName} :
             </div>
         </div>
     )
+};
+type Panel = {
+    togglePanel : () => void;
+    message: Props['message'];
+    className ?: string
 }
+
+const MessagePanel = React.forwardRef<HTMLDivElement, Panel>(
+
+    function (
+        {className, message, togglePanel},
+        ref
+    ){
+
+        useClickScopeEffect({
+            rootRef: ref,
+            state: true,
+            setState: togglePanel,
+            dependencies: []
+        })
+
+        return (
+            <div ref={ref} className={cn(className)}>
+                {
+                    PanelOptions.map(
+                        (PanelOption, index) => (
+                            <PanelOption
+                                key={index}
+                                className="cursor-pointer font-semibold text-sm"
+                                message={message}
+                                togglePanel={togglePanel}
+                            />
+                        )
+                    )
+                }
+            </div>
+        )
+    }
+)
+
+
+
+
+const PanelOptions = [
+
+    function DeleteOption({message, className, togglePanel}: Panel){
+
+        const {dispatchDeleteMessageFromConversation} = useSocketEvents();
+
+        const handleDelete = () => {
+            toast.loading("Deleting message...", {
+                duration:2000
+            });
+            /** 
+             * Process request
+             */
+            dispatchDeleteMessageFromConversation({
+                conversationId: message.conversationId,
+                message: message
+            })
+            togglePanel();
+        }
+        return (
+            <MdOutlineDeleteOutline onClick={handleDelete} className={cn("text-red-500", className)}/>
+        );
+    },
+
+    function EditOption({message, className, togglePanel}: Panel){
+        const handleEdit = () => {
+            toast.loading("This option is not available yet", {
+                duration: 2000
+            });
+            /** 
+             * Process request
+             */
+            togglePanel();
+        }
+        return (
+            <MdOutlineCrisisAlert onClick={handleEdit} className={cn("text-primary-bchat", className)}/>
+        );
+    }
+]
