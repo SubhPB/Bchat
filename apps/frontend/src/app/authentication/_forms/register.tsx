@@ -97,7 +97,7 @@ export default function RegisterForm(){
                     return
                 } else {
                     // even though this condition is very rare but still useful to handle it.
-                    toast.error("Oops! Somthing unexpected happened");
+                    toast.error("Oops! Something unexpected happened");
                 }
             }
     
