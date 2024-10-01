@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ButtonProps } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import FieldNotify from '@/components/common/field-notify-box';
 import { cn } from '@/lib/utils';
