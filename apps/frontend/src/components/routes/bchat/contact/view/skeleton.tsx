@@ -12,7 +12,7 @@ type Props = {
   className: string
 }
 
-function ContactCardSkeleton() {
+const  ContactCardSkeleton: React.FC = () => {
   const Skeleton = ({className}: Props) => <ShadCnSkeleton className={cn("bg-gray-300", className)}/>
   return (
     <Card className="w-full sm:w-[330px] lg:w-[390px] flex-shrink-0 p-4 ">

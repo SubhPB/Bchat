@@ -16,6 +16,7 @@ import { Duration } from "@/utils/features/time/duration";
 type Props = {
     className: string;
     children: (cards: ExpectedContactsDataTypeFromAPI) => React.ReactNode;
+    ChildSkeleton ?: React.ComponentType;
     contacts: ExpectedContactsDataTypeFromAPI;
     renderSearchbar: boolean
 };
@@ -37,7 +38,7 @@ const defaultStrategy: FilterStrategy = {
     attribute: 'NAME'
 };
 
-export function  ContactsHandler({className, children, contacts, renderSearchbar}:Props){
+export function  ContactsHandler({className, children, contacts, renderSearchbar, ChildSkeleton=ContactCardSkeleton}:Props){
     
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStrategy, setFilterStrategy] = useState(defaultStrategy);
@@ -109,7 +110,7 @@ export function  ContactsHandler({className, children, contacts, renderSearchbar
             {
                 isTransitioning ? (
                     // In between the time user is entering query display the contact skeleton
-                    Array.from('abcd').map( i => <ContactCardSkeleton key={i}/> )
+                    Array.from('abcd').map( i => <ChildSkeleton key={i}/> )
                 ) : (
                     // fiteredContacts's value will be reassigned by filterContacts:fn
                     children(filterContacts(searchQuery))
