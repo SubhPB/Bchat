@@ -64,6 +64,11 @@ export function ParticipantsField({
     isLoading
 }: ParticipantsFieldProps){
 
+    /** There are 2 options to update form 
+     * either we update from this component whenever the selectedContacts change
+     * else we update right after the selection of contact card
+     * We will see...
+     */
 
     const onCancel = (userId: string) => {
         /** Un select the contact */
