@@ -46,7 +46,7 @@ function InitData({className, children}: Props) {
     )
   };
 
-  if (!gotError){
+  if (gotError){
     return (
         <Infobar error allowDefaultIcons>
             Oops! Something went wrong while fetching your contact details. You could try again later
