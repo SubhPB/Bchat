@@ -11,6 +11,10 @@ import z from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 
+import { Card, CardContent, CardHeader,CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+
+import { CreateChatGroupButtons } from './buttons';
+
 export type ChatGroupForm = UseFormReturn<ChatGroupFormValues>;
 
 type Props = {
@@ -42,12 +46,33 @@ function ChatGroupForm({className, children, defaultValues, submitAtAPIEndpoint}
     }
 
     return (
-        <form 
-            className={className} 
-            onSubmit={form.handleSubmit(handleFormSubmit)}
-        >
-            {children(form)}
-        </form>
+        <Card className={className}>
+            <CardHeader>
+                <CardTitle>Create Chat Group</CardTitle>
+            </CardHeader>
+                <form 
+                    onSubmit={form.handleSubmit(handleFormSubmit)}
+                    >
+
+                    <CardContent>
+                        <div className="grid w-full items-center gap-4">
+                            <div className="flex flex-col md:flex-row gap-3">
+                                {children(form)}
+                            </div>
+                        </div>
+                    </CardContent>
+
+                    <CardFooter>
+                        <CreateChatGroupButtons.Cancel 
+                            type='reset'
+                        />
+                        <CreateChatGroupButtons.Create
+                            type="submit" 
+                        />
+                    </CardFooter>
+                </form>
+        </Card>
+
     )
 }
 
