@@ -19,7 +19,7 @@ export const CreateChatGroupButtons = {
         const commonClassName = CreateChatGroupButtons.className;
 
         return (
-            <Button className={cn(commonClassName, className)} type={type}>
+            <Button className={cn(commonClassName, className)} variant={"outline"} type={type}>
                 Cancel
             </Button>
         )

@@ -48,7 +48,7 @@ function ChatGroupForm({className, children, defaultValues, submitAtAPIEndpoint}
     return (
         <Card className={className}>
             <CardHeader>
-                <CardTitle>Create Chat Group</CardTitle>
+                <CardTitle className='text-primary-bchat'>Create Chat Group</CardTitle>
             </CardHeader>
                 <form 
                     onSubmit={form.handleSubmit(handleFormSubmit)}
@@ -56,17 +56,19 @@ function ChatGroupForm({className, children, defaultValues, submitAtAPIEndpoint}
 
                     <CardContent>
                         <div className="grid w-full items-center gap-4">
-                            <div className="flex flex-col md:flex-row gap-3">
+                            <div className="flex flex-col gap-3">
                                 {children(form)}
                             </div>
                         </div>
                     </CardContent>
 
-                    <CardFooter>
+                    <CardFooter className='w-full justify-end gap-2'>
                         <CreateChatGroupButtons.Cancel 
                             type='reset'
+                            
                         />
                         <CreateChatGroupButtons.Create
+                            className='bg-primary-bchat '
                             type="submit" 
                         />
                     </CardFooter>
