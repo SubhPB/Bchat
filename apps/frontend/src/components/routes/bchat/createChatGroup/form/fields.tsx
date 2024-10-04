@@ -7,13 +7,15 @@ import FormField from "../../account/account-fields/account-field";
 import {ChatGroupForm} from ".";
 import { SelectedContacts } from "@/app/bchat/createChatGroup/page";
 import { X } from "lucide-react";
+import { generateRandomColor } from "@/utils/features/general";
 type Props = {
     form: ChatGroupForm;
     className ?: string;
     isLoading: boolean
 }
 
-export function GroupNameField({form, className, isLoading}: Props){
+
+export function GroupNameField({form, isLoading, className=''}: Props){
 
 
     return (
@@ -26,8 +28,9 @@ export function GroupNameField({form, className, isLoading}: Props){
                 }
             }
             notification={form.formState.errors.name?.message}
+            className={className}
         >
-            <Input id='groupName' {...form.register('name')} className={className}/>
+            <Input id='groupName' {...form.register('name')}/>
         </FormField>
     )
 };
@@ -41,17 +44,22 @@ type ParticipantBoxProps = {
     data: string;
     className ?: string;
     onCancel: (userId: string) => void;
-    userId: string
+    userId: string;
+    allowRandomBgColor: boolean
 }
 
 function ParticipantBox(
-    {data, onCancel, className, userId}: ParticipantBoxProps
+    {data, onCancel, className, userId, allowRandomBgColor}: ParticipantBoxProps
 ){
 
     return (
-        <span className={className}>
+        <span
+            className={className}
+            style={{
+                backgroundColor: allowRandomBgColor ? generateRandomColor() : undefined
+            }}>
             <p>{data}</p>
-            <X className="cursor-pointer" onClick={() => onCancel(userId)}/>
+            <X className="cursor-pointer text-white" onClick={() => onCancel(userId)}/>
         </span>
     )
 }
@@ -72,29 +80,35 @@ export function ParticipantsField({
 
     const onCancel = (userId: string) => {
         /** Un select the contact */
+        setSelectedContacts(
+            selectedContacts.filter(
+                selectedContact => selectedContact.contact.id !== userId
+            )
+        )
     };
 
     return (
         <FormField
          notification={form.formState.errors.userIdOfParticipants?.message}
-         isLoading={isLoading}
+         isLoading={isLoading} className={className}
          >
-            <div className={className}>
-                {
-                    selectedContacts.map(
-                        selectedContact => (
-                            <ParticipantBox 
-                                key={selectedContact.contactId}
-                                userId={selectedContact.contact.id}
-                                data={
-                                    selectedContact.contact?.name ?? selectedContact.contact?.name 
-                                }
-                                onCancel={onCancel}
-                            />
-                        )
+            {
+                selectedContacts.map(
+                    selectedContact => (
+                        <ParticipantBox 
+                            key={selectedContact.contactId}
+                            userId={selectedContact.contact.id}
+                            className="p-2 rounded-lg text-white text-sm flex gap-2  items-center"
+                            data={
+                                selectedContact.contact?.name ?? selectedContact.contact?.name 
+                            }
+                            onCancel={onCancel}
+                            allowRandomBgColor
+                        />
                     )
-                }
-            </div>
+                )
+            }
         </FormField>
     )
-}
+};
+
