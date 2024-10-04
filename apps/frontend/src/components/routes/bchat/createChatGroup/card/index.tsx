@@ -33,7 +33,7 @@ function SelectCard({contact, className, isSelected, onSelect}: Props) {
                 <CustomImgAvatar
                     imgSrc={contactUser.image ?? undefined}
                     fallback={imgFallback}
-                    className="mb-1 "
+                    className="mb-1 h-[unset] w-full aspect-[2] rounded-sm self-center "
                     isAwsObject
                 />
                 <div className='space-y-2 text-xs'>

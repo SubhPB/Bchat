@@ -15,7 +15,8 @@ type Props = {
         value: string
     };
     notification ?: string | undefined;
-    children: React.ReactNode
+    children: React.ReactNode;
+    className ?: string;
 }; 
 
 
@@ -23,7 +24,7 @@ type Props = {
 
 const AccountField = (props:Props) =>  {
 
-    const{isLoading, label, notification, children} = props;
+    const{isLoading, label, notification, children, className} = props;
 
     if (isLoading){
         return (
@@ -32,7 +33,7 @@ const AccountField = (props:Props) =>  {
     }
 
     return (
-        <div className={cn( (!!label || !!notification) && 'space-y-1')}>
+        <div className={cn( (!!label || !!notification) && 'space-y-1', className)}>
             {
                 label && <Label htmlFor={label.htmlFor}> {label.value} </Label>
             }
