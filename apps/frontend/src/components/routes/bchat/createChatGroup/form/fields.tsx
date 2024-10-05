@@ -90,22 +90,30 @@ export function ParticipantsField({
     return (
         <FormField
          notification={form.formState.errors.userIdOfParticipants?.message}
-         isLoading={isLoading} className={className}
+         isLoading={isLoading} className={'w-full'}
          >
             {
-                selectedContacts.map(
-                    selectedContact => (
-                        <ParticipantBox 
-                            key={selectedContact.contactId}
-                            userId={selectedContact.contact.id}
-                            className="p-2 rounded-lg text-white text-sm flex gap-2  items-center"
-                            data={
-                                selectedContact.contact?.name ?? selectedContact.contact?.name 
-                            }
-                            onCancel={onCancel}
-                            allowRandomBgColor
-                        />
-                    )
+                // only render participants if at least one is selected
+                selectedContacts.length > 0 && (
+                    
+                    <div className={className}>
+                        {
+                            selectedContacts.map(
+                                selectedContact => (
+                                    <ParticipantBox 
+                                        key={selectedContact.contactId}
+                                        userId={selectedContact.contact.id}
+                                        className="p-2 rounded-lg text-white text-sm flex gap-2  items-center"
+                                        data={
+                                            selectedContact.contact?.name ?? selectedContact.contact?.name 
+                                        }
+                                        onCancel={onCancel}
+                                        allowRandomBgColor
+                                    />
+                                )
+                            )
+                        }
+                    </div>
                 )
             }
         </FormField>
