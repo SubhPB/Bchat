@@ -9,30 +9,31 @@ import React from "react";
 type Props = {
     className ?: string;
     type: "button" | "submit" | "reset";
+    disable ?: boolean
 }
 
 export const CreateChatGroupButtons = {
 
     className: "",
 
-    Cancel: ({className, type}:Props) => {
+    Cancel: ({className, type, disable=false}:Props) => {
         const commonClassName = CreateChatGroupButtons.className;
 
         return (
-            <Button className={cn(commonClassName, className)} variant={"outline"} type={type}>
+            <Button disabled={disable} className={cn(commonClassName, className)} variant={"outline"} type={type}>
                 Cancel
             </Button>
         )
 
     },
 
-    Create: ({className, type}:Props) => {
+    Create: ({className, type, disable=false}:Props) => {
 
         const commonClassName = CreateChatGroupButtons.className;
 
         return (
-            <Button type={type} className={cn(commonClassName, className)}>
-                Create
+            <Button disabled={disable} type={type} className={cn(commonClassName, className)}>
+                Create 
             </Button>
         )
     },
