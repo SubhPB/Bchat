@@ -18,7 +18,6 @@ import SelectCard,{SelectCardSkeleton} from '@/components/routes/bchat/createCha
 
 export type SelectedContacts = NonNullable<ContactsSliceState['data']>;
 
-
 function page() {
   
   const apiEndpointToSubmitForm = "/api/bchat/create-chat-group/not-available";
@@ -51,6 +50,7 @@ function page() {
                   <div className='w-full max-w-[790px]'>
                     <ChatGroupForm
                       submitAtAPIEndpoint={apiEndpointToSubmitForm}
+                      selectedContacts={selected}
                     >
                       {
                         (form) => (
@@ -61,7 +61,6 @@ function page() {
                               className='w-full'
                             />
                             {
-                              selected.length > 0 && (
                                 <ParticipantsField
                                   className='w-full flex rounded-lg border-2 border-secondary-bchat flex-wrap gap-2 p-3'
                                   form={form}
@@ -69,7 +68,6 @@ function page() {
                                   selectedContacts={selected}
                                   setSelectedContacts={setSelection}
                                 />
-                              )
                             }
                           </>
                         )
@@ -91,7 +89,7 @@ function page() {
                           <ContactsHandler
                             contacts={data}
                             renderSearchbar
-                            className=''
+                            className={''}
                             ChildSkeleton={SelectCardSkeleton}
                           >
                             {
