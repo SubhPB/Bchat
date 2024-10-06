@@ -58,7 +58,7 @@ function ParticipantBox(
             style={{
                 backgroundColor: allowRandomBgColor ? generateRandomColor() : undefined
             }}>
-            <p>{data}</p>
+            <p className="w-[80%] truncate">{data}</p>
             <X className="cursor-pointer text-white" onClick={() => onCancel(userId)}/>
         </span>
     )
@@ -103,7 +103,7 @@ export function ParticipantsField({
                                     <ParticipantBox 
                                         key={selectedContact.contactId}
                                         userId={selectedContact.contact.id}
-                                        className="p-2 rounded-lg text-white text-sm flex gap-2  items-center"
+                                        className="p-2 rounded-lg text-white text-sm flex gap-2  items-center max-w-[220px]"
                                         data={
                                             selectedContact.contact?.name ?? selectedContact.contact?.name 
                                         }
