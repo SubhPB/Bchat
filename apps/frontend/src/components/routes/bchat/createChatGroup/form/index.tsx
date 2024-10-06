@@ -24,6 +24,7 @@ type Props = {
     defaultValues ?: ChatGroupFormValues;
     submitAtAPIEndpoint : string;
     selectedContacts: SelectedContacts;
+    setSelectedContacts: React.Dispatch<React.SetStateAction<SelectedContacts>>
 };
 
 
@@ -35,7 +36,7 @@ const chatGroupSchema = z.object({
 
 type ChatGroupFormValues = z.infer<typeof chatGroupSchema>
 
-function ChatGroupForm({className, children, defaultValues, submitAtAPIEndpoint, selectedContacts}:Props) {
+function ChatGroupForm({className, children, defaultValues, submitAtAPIEndpoint, selectedContacts, setSelectedContacts}:Props) {
   
   
     const form = useForm<ChatGroupFormValues>({
@@ -78,6 +79,7 @@ function ChatGroupForm({className, children, defaultValues, submitAtAPIEndpoint,
                     <CardFooter className='w-full justify-end gap-2'>
                         <CreateChatGroupButtons.Cancel 
                             type='reset'
+                            setSelection={setSelectedContacts}
                         />
                         <CreateChatGroupButtons.Create
                             className='bg-primary-bchat '

@@ -51,6 +51,7 @@ function page() {
                     <ChatGroupForm
                       submitAtAPIEndpoint={apiEndpointToSubmitForm}
                       selectedContacts={selected}
+                      setSelectedContacts={setSelection}
                     >
                       {
                         (form) => (

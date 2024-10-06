@@ -5,6 +5,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import React from "react";
+import { SelectedContacts } from "@/app/bchat/createChatGroup/page";
 
 type Props = {
     className ?: string;
@@ -12,15 +13,28 @@ type Props = {
     disable ?: boolean
 }
 
+type CancelProps = Props & {
+    setSelection : React.Dispatch<React.SetStateAction<SelectedContacts>>
+}
+
 export const CreateChatGroupButtons = {
 
     className: "",
 
-    Cancel: ({className, type, disable=false}:Props) => {
+    Cancel: ({className, type, disable=false, setSelection}: CancelProps) => {
         const commonClassName = CreateChatGroupButtons.className;
 
+        const handleClick = (e:  React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+            e.preventDefault();
+            /** Upon cancel we need to unselect everybody */
+            setSelection([]);
+            if (type==='reset'){
+                e.currentTarget.form?.reset();
+            }
+        }
+
         return (
-            <Button disabled={disable} className={cn(commonClassName, className)} variant={"outline"} type={type}>
+            <Button disabled={disable} className={cn(commonClassName, className)} onClick={handleClick} variant={"outline"} type={type}>
                 Cancel
             </Button>
         )
@@ -37,16 +51,4 @@ export const CreateChatGroupButtons = {
             </Button>
         )
     },
-
-    render: ({className, buttonCommonClassName=''}: Pick<Props, "className"> & {
-        buttonCommonClassName ?: string
-    }) => {
-        CreateChatGroupButtons.className = buttonCommonClassName
-        return (
-            <div className={cn(className)}>
-                <CreateChatGroupButtons.Cancel type="reset"/>
-                <CreateChatGroupButtons.Create type="submit"/>
-            </div>
-        )
-    }
 }
