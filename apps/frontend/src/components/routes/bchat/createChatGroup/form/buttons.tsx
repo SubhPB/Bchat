@@ -2,9 +2,13 @@
  * Byimaan
  */
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+'use client';
+
 import React from "react";
+import { useFiles } from "@/providers/file";
+import { Button } from "@/components/ui/button";
+
+import { cn } from "@/lib/utils";
 import { SelectedContacts } from "@/app/bchat/createChatGroup/page";
 
 type Props = {
@@ -24,12 +28,16 @@ export const CreateChatGroupButtons = {
     Cancel: ({className, type, disable=false, setSelection}: CancelProps) => {
         const commonClassName = CreateChatGroupButtons.className;
 
+        const {files, setFiles} = useFiles();
+
         const handleClick = (e:  React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
             e.preventDefault();
             /** Upon cancel we need to unselect everybody */
             setSelection([]);
             if (type==='reset'){
                 e.currentTarget.form?.reset();
+                /** If any image was selected, we need to remove it */
+                files.length && setFiles([]);
             }
         }
 

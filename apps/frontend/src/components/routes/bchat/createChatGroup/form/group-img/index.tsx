@@ -15,7 +15,7 @@ import {ChatGroupForm} from '..';
 import { useFiles } from '@/providers/file';
 
 import { Button } from '@/components/ui/button';
-import {FileInputFR} from '@/components/common/file-input';
+import FileInputFR from '@/components/common/file-input';
 import { CustomImgAvatar as GroupImgAvatar } from '@/components/common/custom-img-avatar';
 
 type Props = {
