@@ -30,7 +30,11 @@ type Props = {
 
 const chatGroupSchema = z.object({
     name: z.string().min(4, "*Minimum 4 characters").max(20, "*Maximum 20 characters"),
-    image: z.string().optional(),
+    /** We just need to inform the user whether image is selected or not
+     * & our server already knows what would be the keyName of the Image
+     * So true means that selected image is valid and if false it represents that no image is selected
+     */
+    image: z.boolean(),
     userIdOfParticipants: z.array(z.string()).min(1, "*Minimum 1 participant is needed"),
 })
 
