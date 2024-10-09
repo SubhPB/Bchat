@@ -20,6 +20,17 @@ import SelectCard,{SelectCardSkeleton} from '@/components/routes/bchat/createCha
 
 export type SelectedContacts = NonNullable<ContactsSliceState['data']>;
 
+/**
+ * Components we may need:
+ * 
+ * [1] Provider to maintain the state that which users are been selected for group and this state will be accessible to all the components
+ * 
+ * [2] Init wrapper to initialize the contacts
+ * [3] Form
+ * [4] SearchBar to select contacts to be added in group chat
+*/
+             
+
 function page() {
   
   const apiEndpointToSubmitForm = "/api/bchat/create-chat-group/not-available";
@@ -28,19 +39,6 @@ function page() {
     <Workarea.main
         className='px-2 pt-2 app-scrollbar overflow-y-scroll space-y-2 flex flex-col items-center'
     >
-            {
-              /**
-               * Components we may need:
-               * 
-               * [1] Provider to maintain the state that which users are been selected for group and this state will be accessible to all the components
-               * 
-               * [2] Init wrapper to initialize the contacts
-               * [3] Form
-               * [4] SearchBar to select contacts to be added in group chat
-              */
-             
-            }
-
             {/* 
               For the GroupImage this context will keep record of the actual file image 
               & set useByRenderProps to true to use it with renderProps pattern

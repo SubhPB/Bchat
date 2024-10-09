@@ -38,7 +38,16 @@ const chatGroupSchema = z.object({
     userIdOfParticipants: z.array(z.string()).min(1, "*Minimum 1 participant is needed"),
 })
 
-type ChatGroupFormValues = z.infer<typeof chatGroupSchema>
+type ChatGroupFormValues = z.infer<typeof chatGroupSchema>;
+
+/***
+ * ### Submission logic: need 2 server actions
+ * - Generate pre_signed_url (if image is selected) : {pre_signed_url, keyName}
+ * - Create Chat Group
+ *    Needs [name, image=keyName, memberUserIds, adminUserId]
+ *    
+ *    Upon success then update the conversation slice of redux
+ */
 
 function ChatGroupForm({className, children, defaultValues, submitAtAPIEndpoint, selectedContacts, setSelectedContacts}:Props) {
   
