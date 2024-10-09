@@ -62,7 +62,7 @@ function GroupImage({className, form}:Props) {
 
     const selectedFile = files[0] ?? undefined;
 
-    const defaultButtonClassName = 'rounded-lg w-full text-white text-semibold text-sm cursor-pointer mb-1';
+    const defaultButtonClassName = ' rounded-lg w-full text-semibold text-sm cursor-pointer mb-1 text-white ';
 
     return (
         <div className={cn(className)}>
@@ -70,7 +70,7 @@ function GroupImage({className, form}:Props) {
             imgSrc={
               selectedFile ? URL.createObjectURL(selectedFile) : undefined
             }
-            className='w-full aspect-square rounded-none mb-2 h-[265px] max-h-[76vw]' fallback='Select Group Image'             
+            className='w-full rounded-none mb-2 h-[265px] max-h-[76vw]' fallback='Select Group Image'             
           />
 
           {/* It is there but not be shown on UI */}
@@ -92,12 +92,12 @@ function GroupImage({className, form}:Props) {
                 <Button key='change' type='button' className={cn(defaultButtonClassName, 'bg-zinc-700 hover:bg-primary-bchat')} onClick={selectImage}>
                   Change
                 </Button>
-                <Button key='cancel' type='button' variant='outline' className={cn(defaultButtonClassName, '')} onClick={handleCancel}>
+                <Button key='cancel' type='button' variant='outline' className={cn(defaultButtonClassName, 'text-[unset]')} onClick={handleCancel}>
                   Cancel
                 </Button>
               </>
             ) : (
-              <Button key='upload' type='button' className={cn(defaultButtonClassName, '')} onClick={selectImage} variant='outline'>
+              <Button key='upload' type='button' className={cn(defaultButtonClassName, 'text-primary-bchat')} onClick={selectImage} variant='outline'>
                 Upload Image
               </Button>
             )

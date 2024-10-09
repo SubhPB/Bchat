@@ -71,10 +71,10 @@ function page() {
                                 className='w-full'
                               />
 
-                              <div className='columns-[300px]'>
-                                <GroupImage form={form} className='break-inside-avoid max-w-[300px]'/>
+                              <div className='grid grid-rows-[auto_auto]  grid-cols-[100%] lg:grid-cols-[300px_1fr] gap-1'>
+                                <GroupImage form={form} className='w-full max-w-[300px] shrink-0'/>
                                 <ParticipantsField
-                                  className='w-full flex rounded-lg border-2 border-secondary-bchat flex-wrap gap-2 p-3 break-inside-avoid'
+                                  className=' flex rounded-lg border-2 border-secondary-bchat flex-wrap gap-2 p-3 shrink-0'
                                   form={form}
                                   isLoading={form.formState.isSubmitting}
                                   selectedContacts={selected}
