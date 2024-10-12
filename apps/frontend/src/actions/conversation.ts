@@ -5,6 +5,9 @@
 "use server";
 
 import { db } from "@/lib/db";
+import uuid from "uuid";
+
+import { generatePreSignedUrlInstance } from "../../aws/S3/pre_signed_url/generate";
 
 type CreateConversationAmongTwoUsers = {
     user1Id : string;
@@ -71,4 +74,103 @@ export const createConversationAmongTwoUsers = async (users: CreateConversationA
         }
     });
     return conversation
+}
+
+/*
+* So the props to create group conversation would be different from the previous one
+*/
+
+type CreateGroupConversation = {
+    groupName: string;
+    leaderUserId: string;
+    memberUserIds: string[];
+    imageContentType ?: string;
+};
+
+
+const S3_ROOT_PATH = 'public/app',
+ SIGNED_URL_EXPIRES_IN_SECS = 2 * 60,
+ MODEL_NAME = 'conversation',
+ OBJECT_KEY_NAME = 'image';
+
+
+export const createGroupConversation = async (
+    {
+        groupName,
+        leaderUserId,
+        memberUserIds,
+        imageContentType
+    } : CreateGroupConversation
+) => {
+
+    memberUserIds = memberUserIds.filter((id) => id !== leaderUserId);
+
+    if (memberUserIds.length === 0) {
+        throw new Error("Group should have at least one member");
+    };
+
+    const objectId = uuid.v4();
+
+    let keyName : undefined |string = undefined, 
+     signedUrl: undefined | string = undefined;
+
+    if (imageContentType && imageContentType.includes('/')){
+        try {
+            keyName = `${S3_ROOT_PATH}/${MODEL_NAME}/${objectId}/${OBJECT_KEY_NAME}.${imageContentType.split('/')[1]}`;
+            signedUrl = await generatePreSignedUrlInstance.PUT({
+                keyName,
+                expiresIn: SIGNED_URL_EXPIRES_IN_SECS,
+                contentType: imageContentType
+            });
+        } catch (error) {
+            keyName = undefined;
+        }
+    }
+
+    const conversation = await db.conversation.create({
+        data: {
+            id: objectId,
+            name: groupName,
+            type: "GROUP",
+            image: keyName,
+            participants: {
+                create: [
+                    {
+                        userId: leaderUserId,
+                        status: "ADMIN"
+                    },
+                    ...memberUserIds.map((id) => ({
+                        userId: id,
+                    }))
+                ]
+            }
+        },
+        
+        include: {
+            participants: {
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            emailVerified: true,
+                            image: true,
+                            firstName: true,
+                            lastName: true,
+                            isActive: true,
+                            createdAt: true,
+                            updatedAt: true,
+                        }
+                    },   
+                }
+            },
+            messages: true
+        }
+    });
+
+    return {
+        conversation,
+        pre_signed_url: signedUrl
+    }
 }

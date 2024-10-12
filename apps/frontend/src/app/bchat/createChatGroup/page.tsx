@@ -32,8 +32,6 @@ export type SelectedContacts = NonNullable<ContactsSliceState['data']>;
              
 
 function page() {
-  
-  const apiEndpointToSubmitForm = "/api/bchat/create-chat-group/not-available";
 
   return (
     <Workarea.main
@@ -56,7 +54,6 @@ function page() {
                     
                     <div className='w-full max-w-[790px]'>
                       <ChatGroupForm
-                        submitAtAPIEndpoint={apiEndpointToSubmitForm}
                         selectedContacts={selected}
                         setSelectedContacts={setSelection}
                       >
