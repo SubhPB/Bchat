@@ -22,7 +22,7 @@ function CustomImgAvatar({className, imgSrc, fallback, isAwsObject}: Props) {
 
   return (
     <Avatar className={cn('relative ', className)}>
-        <AvatarImage className="absolute rounded-none inset-0" alt='img-avatar' src={imgSrc}/>
+        <AvatarImage className="absolute rounded-none inset-0 bg-[#dadada] object-contain" alt='img-avatar' src={imgSrc}/>
         <AvatarFallback className='absolute inset-0 grid text-xl place-content-center rounded-none bg-zinc-300 text-gray-100'> {fallback} </AvatarFallback>
     </Avatar>
   )
