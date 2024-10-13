@@ -59,7 +59,7 @@ function InitData({className, children}: Props) {
     if (data.length === 0){
       return (
         <Infobar success renderCloseButton>
-            It look like you have not saved any contacts yet. We recommend you to add contacts <span><Link className='underline text-blue-400' href="/bchat/contacts">Add Contact</Link></span>.
+            It look like you have not saved any contacts yet. We recommend you to add contacts <span><Link className='underline text-blue-400' href="/bchat/contact">Add Contact</Link></span>.
         </Infobar>
       )
     }

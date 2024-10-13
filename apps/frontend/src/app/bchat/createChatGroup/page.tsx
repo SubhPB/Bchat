@@ -25,7 +25,7 @@ export type SelectedContacts = NonNullable<ContactsSliceState['data']>;
  * 
  * [1] Provider to maintain the state that which users are been selected for group and this state will be accessible to all the components
  * 
- * [2] Init wrapper to initialize the contacts
+ * [2] Init wrapper to initialize the contacts (So user can select chat members)
  * [3] Form
  * [4] SearchBar to select contacts to be added in group chat
 */

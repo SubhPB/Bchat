@@ -7,7 +7,9 @@
 
 import React, { useEffect } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
+
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 import z from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,7 +37,7 @@ type Props = {
 
 const chatGroupSchema = z.object({
     name: z.string().min(4, "*Minimum 4 characters").max(20, "*Maximum 20 characters"),
-    image: z.boolean(),
+    image: z.boolean().optional(),
     userIdOfParticipants: z.array(z.string()).min(1, "*Minimum 1 participant is needed"),
 })
 
@@ -49,6 +51,7 @@ function ChatGroupForm({className, children, defaultValues, selectedContacts, se
   
     const {data} = useSession();
     const appDispatch = useAppDispatch();
+    const router = useRouter();
   
     const form = useForm<ChatGroupFormValues>({
         resolver: zodResolver(chatGroupSchema),
@@ -84,7 +87,12 @@ function ChatGroupForm({className, children, defaultValues, selectedContacts, se
         /** Two jobs: (1) Upload image to S3 (If needed) (2) Update redux state*/
         const {conversation, pre_signed_url} = res;
 
-        const onImageFailure = () => toast.error("Oops! failed to upload image.");
+        // Helper functions
+        const onImageFailure = () => toast.error("Oops! failed to upload image."), resetForm = ()  => {
+            form.reset();
+            setFiles([]);
+            setSelectedContacts([]);
+        };
 
         // <-- Task 1 -->
         if (!pre_signed_url && imageContentType){
@@ -110,13 +118,13 @@ function ChatGroupForm({className, children, defaultValues, selectedContacts, se
         // <-- Task 2 -->
         if (conversation){
             appDispatch(upsertConversation(conversation));
-            toast.success("Successfully created a chat group.")
+            toast.success("Successfully created a chat group.");
+            router.push(`/bchat/${conversation.id}`);
         } else {
             toast.error("Oops! Something went wrong. Failed to create chat group.")
-        }
+        };
 
-        form.reset();
-        setFiles([]);
+        resetForm();
     };
 
     useEffect(
