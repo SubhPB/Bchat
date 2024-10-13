@@ -5,7 +5,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import uuid from "uuid";
+import {nanoid} from "nanoid"
 
 import { generatePreSignedUrlInstance } from "../../aws/S3/pre_signed_url/generate";
 
@@ -91,7 +91,8 @@ type CreateGroupConversation = {
 const S3_ROOT_PATH = 'public/app',
  SIGNED_URL_EXPIRES_IN_SECS = 2 * 60,
  MODEL_NAME = 'conversation',
- OBJECT_KEY_NAME = 'image';
+ OBJECT_KEY_NAME = 'image',
+ DEFAULT_OBJECT_ID_LENGTH = 24;
 
 
 export const createGroupConversation = async (
@@ -109,7 +110,7 @@ export const createGroupConversation = async (
         throw new Error("Group should have at least one member");
     };
 
-    const objectId = uuid.v4();
+    const objectId = nanoid(DEFAULT_OBJECT_ID_LENGTH);
 
     let keyName : undefined |string = undefined, 
      signedUrl: undefined | string = undefined;
