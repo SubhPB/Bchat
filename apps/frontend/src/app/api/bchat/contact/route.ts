@@ -138,7 +138,7 @@ export async function POST(request: Request){
 
         let {name, email, block=false} = await request.json();
 
-        if (typeof name === 'string' && name.length < MINIMUM_ACCEPTABLE_CONTACT_NAME){
+        if (name?.length && name.length < MINIMUM_ACCEPTABLE_CONTACT_NAME){
             errorMessage = "Invalid name, name should be of atleast four characters", statusCode = 400;
             throw new Error(errorMessage)
         };
