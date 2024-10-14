@@ -36,7 +36,7 @@ import { createConversationAmongTwoUsers } from '@/actions/conversation';
 
 const formSchema = z.object({
     email: z.string().min(1, "* This field is required").email("* Incorrect email"),
-    name: z.string().min(1, '* This field is required').min(4, "* Name is too short").optional()
+    name: z.string().optional()
 });
 
 type formValues = z.infer<typeof formSchema>
@@ -53,7 +53,8 @@ function AddForm({className=''}: Props) {
     const form = useForm<formValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            email: ''
+            email: '',
+            name: undefined,
         }
     });
 
@@ -77,6 +78,7 @@ function AddForm({className=''}: Props) {
 
     const handleForm = async (values: formValues) => {
         const userSOwnEmail = session?.user?.email ?? session?.adapterUser?.email;
+        
         if (typeof userSOwnEmail !== 'string'){
             toast.error("Oops! Something went wrong!")
             return

@@ -42,7 +42,7 @@ const getChatCardPropsOutOfData = (data: ExpectedConversationDataTypeFromAPI[num
         notifyTyping = `typing...`;
       }
     } else {
-      notifyTyping = "ssomeone is typing...";
+      notifyTyping = "someone is typing...";
     }
   }
 
@@ -167,11 +167,12 @@ function ChatbarContainer({className}: Props) {
     )
   }
 
-  if (data) { 
+  if (data as NonNullable<ExpectedConversationDataTypeFromAPI>) { 
+    
     return (
       <section className={cn(xClassName, className)}>
         {
-            (data as NonNullable<ExpectedConversationDataTypeFromAPI>).map(
+            data.map(
               (conversation) => (
                 <ChatCard key={conversation.id}
                   // myUserId will be helpful to identify the name of chat card in the case of ONE_TO_ONE conversation

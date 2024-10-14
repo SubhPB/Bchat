@@ -88,7 +88,8 @@ function ChatGroupForm({className, children, defaultValues, selectedContacts, se
         const {conversation, pre_signed_url} = res;
 
         // Helper functions
-        const onImageFailure = () => toast.error("Oops! failed to upload image."), resetForm = ()  => {
+        const onImageFailure = () => toast.error("Oops! failed to upload image."),
+         resetForm = ()  => {
             form.reset();
             setFiles([]);
             setSelectedContacts([]);
