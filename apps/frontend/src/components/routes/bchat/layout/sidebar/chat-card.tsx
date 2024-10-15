@@ -56,7 +56,12 @@ function ChatCard({className, chatImgSrc, chatName, unReadCount, recentMessage, 
         <div className='space-y-1 flex-grow max-w-[75%] px-2'>
             <div className="card-header flex justify-between md:justify-start lg:justify-between">
                 <p className='font-bold text-md text-primary-bchat w-[70%] truncate'>{chatName}</p>
-                {!!unReadCount && <p className='rounded-full text-xs bg-primary-bchat text-white p-1 w-[6ch] truncate'>{unReadCount}</p>}
+                {
+                  !!unReadCount
+                   && <p className='rounded-full text-xs bg-primary-bchat text-white p-[6px_12px] w-fit max-w-[6ch] truncate'>
+                    {unReadCount}
+                   </p>
+                }
             </div>
             <p className='text-[0.8em] w-[90%] truncate font-[500] relative top-[-0.5rem]'>{recentMessage}</p>
         </div>   
