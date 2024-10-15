@@ -168,11 +168,18 @@ function ChatbarContainer({className}: Props) {
   }
 
   if (data as NonNullable<ExpectedConversationDataTypeFromAPI>) { 
+    /**
+     * Data is not been sorted yet according to the latest messages
+     */
     
+    const sortedData = Array.from(data).sort(
+      (a, b) => (b.unreadMessages || 0) - (a.unreadMessages || 0)
+    )
+
     return (
       <section className={cn(xClassName, className)}>
         {
-            data.map(
+            sortedData.map(
               (conversation) => (
                 <ChatCard key={conversation.id}
                   // myUserId will be helpful to identify the name of chat card in the case of ONE_TO_ONE conversation
