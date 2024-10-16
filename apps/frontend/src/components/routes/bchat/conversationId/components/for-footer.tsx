@@ -9,14 +9,13 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from "react";
-import {v4 as uuidV4} from 'uuid';
+import { nanoid } from "nanoid";
 import { cn } from "@/lib/utils";   
 import { MdArrowOutward } from "react-icons/md";
 
 import { HtmlAllMimeTypes } from "@/constants/file-type";
 import { Message } from "@repo/db";
 import { useSocketEvents } from "@/providers/io-socket/SocketProvider";
-import toast from "react-hot-toast";
 
 const DEFAULT_CONTENT_TYPE: HtmlAllMimeTypes = "text/plain"
 
@@ -27,7 +26,9 @@ type Props = {
     conversationId: string;  
 };
 
-export type ChatInputProps = Props
+export type ChatInputProps = Props;
+
+const DEFAULT_MSG_ID_LENGTH = 24;
 
 export function ChatInput({className, myParticipantId, myUserId, conversationId} : Props){
 
@@ -48,7 +49,7 @@ export function ChatInput({className, myParticipantId, myUserId, conversationId}
 
     const dispatchMessage = (contentType: HtmlAllMimeTypes=DEFAULT_CONTENT_TYPE) => {
         const messageToDispatch : Message = {
-          id: uuidV4(),
+          id: nanoid(DEFAULT_MSG_ID_LENGTH),
           conversationId,
           senderUserId: myUserId,
           participantId: myParticipantId,
