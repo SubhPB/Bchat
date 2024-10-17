@@ -14,6 +14,8 @@ export const EVENTS = {
     USER_IS_TYPING_IN_CONVERSATION : "user_is_typing_in_conversation",
     USER_STOPPED_TYPING_IN_CONVERSATION : "user_stopped_typing_in_conversation",
 
+    A_CONVERSATION_HAS_BEEN_CREATED: "a_conversation_has_been_created",
+
     /* Client can make special request to check if someone is online */
     IS_USER_ONLINE : "is_user_online",
 

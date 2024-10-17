@@ -43,6 +43,9 @@ export const EVENTS = {
     /* Client can make special request to check if someone is online */
     IS_USER_ONLINE : "is_user_online",
 
+    /** If one user creates a conversation then other participants needs to join that conversation */
+    A_CONVERSATION_HAS_BEEN_CREATED: "a_conversation_has_been_created",
+
     DISCONNECT: "disconnect",
 
 } as const;
