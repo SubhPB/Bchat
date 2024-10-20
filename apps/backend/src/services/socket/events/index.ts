@@ -13,6 +13,7 @@ import {
     IsUserOnlineProps,
     UserTypingProps
  } from "./handlers";
+import { DataAfterConversationCreation } from "./type";
 
 const {
     handleSendMessageToConversation,    
@@ -23,7 +24,9 @@ const {
     handleJoinUserRoom,
     handleIsUserOnline,
     handleLeaveUserRoom,
-    handleOnDisconnect
+    handleOnDisconnect,
+
+    handleNewConversationHasBeenCreated
 } = socketEventHandlers;
 
 /** The events that will be received from client */
@@ -64,6 +67,9 @@ export const CLIENT_EVENTS = {
 
     YOU_HAVE_JOINED_USER_ROOM : "you_have_joined_user_room",
     YOU_HAVE_LEFT_USER_ROOM : "you_have_left_user_room",
+
+    YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION : "you_are_included_in_newly_created_conversation",
+
 
     YOUR_REQUESTED_USER_IS_ONLINE : "your_requested_user_is_online",
     YOUR_REQUESTED_USER_IS_OFFLINE : "your_requested_user_is_offline",
@@ -131,6 +137,11 @@ const onConnection = (socket: Socket, io : IoServer) => {
         EVENTS.LEAVE_USER_ROOM,
         (props: Omit<ConversationUserBaseProps, 'conversationId'>) => handleLeaveUserRoom(socket, props)
     );
+
+    socket.on(
+        EVENTS.A_CONVERSATION_HAS_BEEN_CREATED, 
+        (props: DataAfterConversationCreation) => handleNewConversationHasBeenCreated(socket, io, props)
+    )
 
     socket.on(EVENTS.DISCONNECT, () => handleOnDisconnect(socket));
 

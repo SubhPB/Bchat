@@ -7,6 +7,8 @@ import { Message } from "@prisma/client";
 import { Socket, Server as IoServer } from "socket.io";
 import { CLIENT_EVENTS } from ".";
 
+import { DataAfterConversationCreation } from "./type";
+
 export type ConversationBaseProps = {
     conversationId: string
 };
@@ -160,6 +162,61 @@ const handleOnDisconnect = (socket: Socket) => {
     };
 };
 
+// continue from here... 
+const handleNewConversationHasBeenCreated = (socket: Socket, io: IoServer, conversationData: DataAfterConversationCreation) =>{
+
+    /**
+     * Tasks:
+     * [1] After conversation creation we need to let the participants know that they are been included in the conversation
+     * [2] We would need to pass them that entire conversation which they can update their redux state
+     */
+    const {id, participants, messages} = conversationData;
+    
+    if (typeof id === 'string' && Array.isArray(participants)) {
+        
+        for(let i = 0; i < participants.length; i++){
+            const participant = participants[i];
+            
+            if (participant){
+                const {userId} = participant;
+
+                // No corrupted data allowed.
+                if (typeof userId !== 'string') break;
+
+                const participantOwnIORoom = io.sockets.adapter.rooms.get(userId);
+                const participantIsNotOnline = !participantOwnIORoom;
+
+                // our concern is only those who are online
+                if (participantIsNotOnline) continue;
+
+                let participantSocket : Socket | null = null;
+                
+                // participantOwnIoRoom can include other users too who have joined original user's room.
+                Array.from(participantOwnIORoom).find(
+                    socketID => {
+                        //@ts-ignore
+                        const socket : Socket | null = io.sockets.sockets.get(socketID)?.(userId as string) ?? null;
+                        if (socket){
+                            participantSocket = socket;
+                            return true
+                        };
+                        return false
+                    }
+                );
+
+                if (participantSocket){
+                    // Informing the user that they are included in conversation by sending them this event
+                    socket.emit(
+                        CLIENT_EVENTS.YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION,
+                        {conversationData}
+                    )
+                }
+            }
+            
+        };
+    }
+}
+
 export const socketEventHandlers = {
     handleSendMessageToConversation,
     handleUserIsTypingInConversation,
@@ -169,6 +226,8 @@ export const socketEventHandlers = {
     handleJoinUserRoom,
     handleIsUserOnline,
     handleLeaveUserRoom,
-    handleOnDisconnect
+    handleOnDisconnect,
+
+    handleNewConversationHasBeenCreated
 };
 

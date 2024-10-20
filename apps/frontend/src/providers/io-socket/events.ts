@@ -36,6 +36,8 @@ export const CLIENT_EVENTS = {
     YOU_HAVE_JOINED_USER_ROOM : "you_have_joined_user_room",
     YOU_HAVE_LEFT_USER_ROOM : "you_have_left_user_room",
 
+    YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION : "you_are_included_in_newly_created_conversation",
+
     YOUR_REQUESTED_USER_IS_ONLINE : "your_requested_user_is_online",
     YOUR_REQUESTED_USER_IS_OFFLINE : "your_requested_user_is_offline",
 
