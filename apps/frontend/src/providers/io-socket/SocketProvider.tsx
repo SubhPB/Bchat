@@ -8,7 +8,6 @@ import IoSocket, {Socket} from "socket.io-client";
 import { useAppDispatch } from '@/lib/redux/hooks';
 
 import { useIoEventManager } from '@/utils/react-hooks/use-socket-event-manager';
-import { useParams } from 'next/navigation';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 

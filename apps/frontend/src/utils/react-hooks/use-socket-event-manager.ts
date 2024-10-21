@@ -17,14 +17,26 @@ import {
     HandleMessageProps,
     IsUserOnlineProps,
     UserTypingProps,
-    ConversationUsersBaseProps
+    ConversationUsersBaseProps,
+    YouAreIncludedInNewlyCreatedConversationProps,
+    IHaveCreatedANewConversationProps
 } from '../../providers/io-socket/types';
 
-import { addMessageToConversation, addSomeoneWhoIsTyping, deleteMessageFromConversation, incrementConversationUnreadMessages, removeSomeoneWhoIsTyping, setSocketConnectionStatusOfConversation } from "@/lib/redux/features/chat/conversations/slice";
+import { addMessageToConversation, addSomeoneWhoIsTyping, deleteMessageFromConversation, incrementConversationUnreadMessages, removeSomeoneWhoIsTyping, setSocketConnectionStatusOfConversation, upsertConversation } from "@/lib/redux/features/chat/conversations/slice";
 
 import { upsertSomeoneIsOnline, upsertSomeoneIsOffline, addChatUser, setChatUserToOffline } from "@/lib/redux/features/chat/users/slice";
 
-const DEBUG = [49, 229]
+const DEBUG = [49, 229];
+
+class Debug {
+    constructor(public title ?: string){
+        this.title = title || "CODE";
+    }
+
+    log(...args : any){
+        console.log(`[DEBUG] : ${this.title}`, ...args)
+    }
+}
 
 export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnType<typeof useAppDispatch>) => {
 
@@ -138,6 +150,15 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
              *  [1] Dispatch USER_STOPPED_TYPING_IN_CONVERSATION event to the server so that other user can know that i no longer typing in a conversation
              */
             socket.emit(EVENTS.USER_STOPPED_TYPING_IN_CONVERSATION,{conversationId, userId})
+        },
+
+        dispatchIHaveCreatedANewConversation: ({conversationData}:IHaveCreatedANewConversationProps) => {
+            if (!socket){
+                return
+            }
+            const debug = new Debug(" feat/Handler : dispatchIHaveCreatedANewConversation | CODE > 159 ");
+            debug.log("Dispatching a event named I_HAVE_CREATED_A_NEW_CONVERSATION ", {conversationData} )
+            socket.emit(EVENTS.A_CONVERSATION_HAS_BEEN_CREATED, {conversationData})
         }
     } as const;
 
@@ -274,7 +295,73 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
              * [1] Server has sent this event to us to inform that user we requested about is offline
              */
             appDispatch(upsertSomeoneIsOffline({userId}))
+        },
+        //Partial
+        [CLIENT_EVENTS.YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION]: function handleYouAreIncludedInNewlyCreatedConversation({conversationData}: YouAreIncludedInNewlyCreatedConversationProps) {
+            const debug = new Debug(` Feat/${CLIENT_EVENTS.YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION} | 290 `);
+
+            debug.log(`argument.conversationData = `, conversationData);
+            /** Means We to dispatch upsertConversation and then also need to join conversation through dispatchJoinConversation.
+             * Before that it is better to verify the conversation data.
+             */
+
+            if (typeof conversationData !== 'object') return;
+
+            // @ts-ignore
+            const myUserId = socket?.userId;
+
+            const {id, participants, messages=[]} = conversationData;
+
+            if (
+                Array.isArray(participants) 
+
+                && [
+                    'id',
+                    'userId',
+                    'status',
+                    'createdAt',
+                    'updatedAt'
+                ].every(key => key in conversationData)
+
+                && participants.every(
+                    participant => (
+                        typeof participant === 'object'
+                         && 'user' in participant
+                         && typeof participant.user === 'object'
+                         && [
+                            'id', 
+                            'name', 
+                            'email', 
+                            'emailVerified', 
+                            'image', 
+                            'firstName', 
+                            'lastName', 
+                            'isActive', 
+                            'createdAt', 
+                            'updatedAt',
+                         ].every(key => key in participant.user) 
+                    )
+                )
+
+                && Array.isArray(messages)
+                
+                && participants.some(
+                    participant => participant?.userId === myUserId
+                )
+            ){
+                debug.log("All tests passed! Valid conversation data received");
+                debug.log("Going to upsert this conversation into the redux store");
+                // we are truly included in this conversation
+                appDispatch(upsertConversation(conversationData));
+
+                debug.log("Going to join this conversation through socket");
+                eventDispatchers.dispatchJoinConversation({
+                    conversationId: id
+                })
+            };
+        
         }
+
     } as const;
     
     
