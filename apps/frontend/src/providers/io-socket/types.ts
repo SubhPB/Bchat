@@ -1,6 +1,6 @@
 /** Byimaan */
 
-import {Message} from "@prisma/client";
+import {Message, Conversation, Participant, User} from "@prisma/client";
 
 export type ConversationBaseProps = {
     conversationId: string
@@ -27,4 +27,20 @@ export type UserTypingProps = ConversationUserBaseProps & ConversationParticipan
 
 export type IsUserOnlineProps = {
     userId: string;
+};
+export type DataAfterConversationCreation = Conversation & {
+    participants: (
+        Participant & {
+            user: Omit<User, 'password'>
+        }
+    )[];
+    messages: Message[]
 }
+
+export type YouAreIncludedInNewlyCreatedConversationProps = {
+    conversationData: DataAfterConversationCreation
+};
+
+export type IHaveCreatedANewConversationProps = {
+    conversationData: DataAfterConversationCreation
+} ;
