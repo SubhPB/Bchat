@@ -170,7 +170,7 @@ const handleNewConversationHasBeenCreated = (socket: Socket, io: IoServer, conve
      * [1] After conversation creation we need to let the participants know that they are been included in the conversation
      * [2] We would need to pass them that entire conversation which they can update their redux state
      */
-    const {id, participants, messages} = conversationData;
+    const {id, participants} = conversationData;
     
     if (typeof id === 'string' && Array.isArray(participants)) {
         
@@ -183,34 +183,39 @@ const handleNewConversationHasBeenCreated = (socket: Socket, io: IoServer, conve
                 // No corrupted data allowed.
                 if (typeof userId !== 'string') break;
 
+                //@ts-ignore
+                const isCreatorItSelf = userId === socket?.userId;
+
+                if (isCreatorItSelf){
+                    socket.emit(
+                        CLIENT_EVENTS.YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION,
+                        {conversationData}
+                    )
+                    continue;
+                }
+
                 const participantOwnIORoom = io.sockets.adapter.rooms.get(userId);
                 const participantIsNotOnline = !participantOwnIORoom;
 
                 // our concern is only those who are online
                 if (participantIsNotOnline) continue;
-
-                let participantSocket : Socket | null = null;
                 
                 // participantOwnIoRoom can include other users too who have joined original user's room.
                 Array.from(participantOwnIORoom).find(
                     socketID => {
                         //@ts-ignore
-                        const socket : Socket | null = io.sockets.sockets.get(socketID)?.(userId as string) ?? null;
-                        if (socket){
-                            participantSocket = socket;
+                        const participantSocket : Socket | null = io.sockets.sockets.get(socketID)?.(userId as string) ?? null;
+                        if (participantSocket){
+                            // Informing the user that they are included in conversation by sending them this event
+                            participantSocket.emit(
+                                CLIENT_EVENTS.YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION,
+                                {conversationData}
+                            )
                             return true
                         };
                         return false
                     }
                 );
-
-                if (participantSocket){
-                    // Informing the user that they are included in conversation by sending them this event
-                    socket.emit(
-                        CLIENT_EVENTS.YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION,
-                        {conversationData}
-                    )
-                }
             }
             
         };
