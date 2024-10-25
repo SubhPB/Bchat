@@ -32,6 +32,17 @@ export type IsUserOnlineProps = {
     userId: string;
 }
 
+class Debug {
+    constructor(public title ?: string){
+        this.title = title || "CODE";
+    }
+
+    log(...args : any){
+        console.log(`[DEBUG] : ${this.title}`, ...args)
+    }
+}
+
+
 const DebugLines = [ 41, 82]
 
 /** ------------ Events to send everybody in the room ------------ */
@@ -165,6 +176,8 @@ const handleOnDisconnect = (socket: Socket) => {
 // continue from here... 
 const handleNewConversationHasBeenCreated = (socket: Socket, io: IoServer, conversationData: DataAfterConversationCreation) =>{
 
+    const debug = new Debug(" feat/Handler : handleNewConversationHasBeenCreated | CODE > 177 ");
+    debug.log("Check args ", {conversationData} );
     /**
      * Tasks:
      * [1] After conversation creation we need to let the participants know that they are been included in the conversation
@@ -174,6 +187,8 @@ const handleNewConversationHasBeenCreated = (socket: Socket, io: IoServer, conve
     
     if (typeof id === 'string' && Array.isArray(participants)) {
         
+        debug.log("Traversing the participants ", {participants} );
+        //Goal is inform all participants by computing socket of each participant.
         for(let i = 0; i < participants.length; i++){
             const participant = participants[i];
             
@@ -187,30 +202,43 @@ const handleNewConversationHasBeenCreated = (socket: Socket, io: IoServer, conve
                 const isCreatorItSelf = userId === socket?.userId;
 
                 if (isCreatorItSelf){
+                    debug.log("Creator's socket has been found")
                     socket.emit(
                         CLIENT_EVENTS.YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION,
                         {conversationData}
-                    )
+                    );
+                    debug.log("Event<YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION> has been sent to creator>")
                     continue;
                 }
 
                 const participantOwnIORoom = io.sockets.adapter.rooms.get(userId);
                 const participantIsNotOnline = !participantOwnIORoom;
 
+                debug.log("Is participant online? " + participant.user.name , {participantIsNotOnline} );
                 // our concern is only those who are online
                 if (participantIsNotOnline) continue;
+
+                debug.log("How many sockets are there in participant's user room ", {participantOwnIORoom} );
                 
                 // participantOwnIoRoom can include other users too who have joined original user's room.
                 Array.from(participantOwnIORoom).find(
                     socketID => {
                         //@ts-ignore
                         const participantSocket : Socket | null = io.sockets.sockets.get(socketID)?.(userId as string) ?? null;
-                        if (participantSocket){
+                        //@ts-ignore
+                        debug.log("UserId assigned to participant socket ", participantSocket?.userId );
+                        if (
+                            // This `if` ensures that event is sent only to one and only actual recipient instead of random socket who have joined recipient's room.
+                            participantSocket 
+                            //@ts-ignore
+                             && participantSocket?.userId === userId
+                        ){
                             // Informing the user that they are included in conversation by sending them this event
                             participantSocket.emit(
                                 CLIENT_EVENTS.YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION,
                                 {conversationData}
-                            )
+                            );
+                            debug.log("Event<YOU_ARE_INCLUDED_IN_NEWLY_CREATED_CONVERSATION> has been sent to participant>")
                             return true
                         };
                         return false

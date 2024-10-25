@@ -30,6 +30,7 @@ import { Button } from '@/components/ui/button';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { upsertContact } from '@/lib/redux/features/contacts/slice';
 
+import { useSocketEvents } from '@/providers/io-socket/SocketProvider';
 import { upsertConversation } from '@/lib/redux/features/chat/conversations/slice';
 
 import { createConversationAmongTwoUsers } from '@/actions/conversation';
@@ -61,13 +62,18 @@ function AddForm({className=''}: Props) {
     const {data: session} = useSession();
     const appDispatch = useAppDispatch();
 
-    const createConversationAndUpdateRedux = async (userId: string, contactId: string, contactName: string) => {
+    const {dispatchIHaveCreatedANewConversation} = useSocketEvents();
+
+    const createConversationThenDispatchSocketEventToBackend = async (userId: string, contactId: string, contactName: string) => {
         try {
             const conversation = await createConversationAmongTwoUsers({user1Id: userId, user2Id: contactId});
-            /** If conversation is created, add it to redux store */
-            if (conversation){
 
-                appDispatch(upsertConversation(conversation));
+            if (conversation){
+                //This will be sent to the server then server will share this across all participants including us.
+                //All Participants (including us) respond to the event sent by server to join conversation socket room.
+                dispatchIHaveCreatedANewConversation({
+                    conversationData: conversation
+                })
             } else {
                 throw new Error("Failed to create conversation");
             }
@@ -108,7 +114,7 @@ function AddForm({className=''}: Props) {
 
             /** After contact is created, create a conversation between the two */
             const toastRef2 = toast.loading("Initializing conversation...");
-            await createConversationAndUpdateRedux(session?.user?.id ?? session?.adapterUser?.id, actionPayload.contact.id, actionPayload.contact.name);
+            await createConversationThenDispatchSocketEventToBackend(session?.user?.id ?? session?.adapterUser?.id, actionPayload.contact.id, actionPayload.contact.name);
             toast.dismiss(toastRef2)
             
         } else {
