@@ -152,13 +152,13 @@ export const useIoEventManager  = (socket: Socket | null, appDispatch: ReturnTyp
             socket.emit(EVENTS.USER_STOPPED_TYPING_IN_CONVERSATION,{conversationId, userId})
         },
 
-        dispatchIHaveCreatedANewConversation: ({conversationData}:IHaveCreatedANewConversationProps) => {
+        dispatchIHaveCreatedANewConversation: (conversationData:IHaveCreatedANewConversationProps) => {
             if (!socket){
                 return
             }
             const debug = new Debug(" feat/Handler : dispatchIHaveCreatedANewConversation | CODE > 159 ");
             debug.log("Dispatching a event named I_HAVE_CREATED_A_NEW_CONVERSATION ", {conversationData} )
-            socket.emit(EVENTS.A_CONVERSATION_HAS_BEEN_CREATED, {conversationData})
+            socket.emit(EVENTS.A_CONVERSATION_HAS_BEEN_CREATED, conversationData)
         }
     } as const;
 
