@@ -140,7 +140,7 @@ const onConnection = (socket: Socket, io : IoServer) => {
 
     socket.on(
         EVENTS.A_CONVERSATION_HAS_BEEN_CREATED, 
-        (props: DataAfterConversationCreation) => handleNewConversationHasBeenCreated(socket, io, props)
+        (props: {conversationData: DataAfterConversationCreation}) => handleNewConversationHasBeenCreated(socket, io, props)
     )
 
     socket.on(EVENTS.DISCONNECT, () => handleOnDisconnect(socket));

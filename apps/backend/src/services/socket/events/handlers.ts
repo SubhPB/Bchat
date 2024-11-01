@@ -174,10 +174,11 @@ const handleOnDisconnect = (socket: Socket) => {
 };
 
 // continue from here... 
-const handleNewConversationHasBeenCreated = (socket: Socket, io: IoServer, conversationData: DataAfterConversationCreation) =>{
+const handleNewConversationHasBeenCreated = (socket: Socket, io: IoServer, data: {conversationData: DataAfterConversationCreation}) =>{
 
+    const {conversationData} = data
     const debug = new Debug(" feat/Handler : handleNewConversationHasBeenCreated | CODE > 177 ");
-    debug.log("Check args ", {conversationData} );
+    debug.log("Check args ", conversationData );
     /**
      * Tasks:
      * [1] After conversation creation we need to let the participants know that they are been included in the conversation
